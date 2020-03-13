@@ -28,8 +28,8 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../InformationSystem19-20-master" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -81,6 +81,8 @@
       <workItem from="1583850120267" duration="1949000" />
       <workItem from="1583854469353" duration="635000" />
       <workItem from="1583936366736" duration="4762000" />
+      <workItem from="1584010340914" duration="202000" />
+      <workItem from="1584010563814" duration="2246000" />
     </task>
     <servers />
   </component>
