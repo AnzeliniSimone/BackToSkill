@@ -11,6 +11,8 @@
 
 <body>
     <header>
+        <!-- navbar with login button, probably to change into a dropdown with options: my profile, logout-->
+        <!-- TODO modify button-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light" id="loginNavbar">
             <a class="navbar-brand" href="#">BackToSkill</a>
             <div class="ml-auto">
@@ -18,6 +20,7 @@
             </div>
         </nav>
 
+        <!-- navbar with dropdown buttons to navigate the site-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light" id="menuNavbar">
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -25,60 +28,72 @@
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
+
+                 <!-- Main page dropdown button -->
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="mainPageDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Main Page
+                <a class="nav-link dropdown-toggle" href="#" id="homepageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Home
                 </a>
-                <div class="dropdown-menu" aria-labelledby="mainPageDropDown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
+                <div class="dropdown-menu" aria-labelledby="homepageDropdown">
+                    <a class="dropdown-item" href="#">Welcome</a>
+                    <a class="dropdown-item" href="#">How to use</a>
+                    <!-- submenu for how to use -->
+                    <ul>
+                        <li>
+                            <a class="dropdown-item" href="#">Guide</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Documentation</a>
+                        </li>
+                    </ul>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Contacts</a>
+                    <a class="dropdown-item" href="#">About BackToSkill</a>
                 </div>
               </li>
 
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Projects
+                <a class="nav-link dropdown-toggle" href="#" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Skills
                 </a>
-                <div class="dropdown-menu" aria-labelledby="projectsDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
+                <div class="dropdown-menu" aria-labelledby="skillsDropdown">
+                  <a class="dropdown-item" href="#">Soft skills list</a>
+                  <a class="dropdown-item" href="#">Technical skills list</a>
                 </div>
               </li>
 
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="employeesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <li class="nav-item">
+                <a class="nav-link" href="#" id="employeesButton" role="button" aria-haspopup="true" aria-expanded="false">
                   Employees
                 </a>
-                <div class="dropdown-menu" aria-labelledby="employeesDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="#" id="jobsButton" role="button" aria-haspopup="true" aria-expanded="false">
+                  Job Openings
+                </a>
               </li>
 
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="coursesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Courses & Trainings
+                <a class="nav-link dropdown-toggle" href="#" id="trainingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Trainings
                 </a>
-                <div class="dropdown-menu" aria-labelledby="coursesDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
+                <div class="dropdown-menu" aria-labelledby="trainingsDropdown">
+                  <a class="dropdown-item" href="#">Upcoming courses</a>
+                  <a class="dropdown-item" href="#">Courses archive</a>
                 </div>
               </li>
 
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Reports
-                </a>
-                <div class="dropdown-menu" aria-labelledby="reportsDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Projects
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="projectsDropdown">
+                      <a class="dropdown-item" href="#">Current projects</a>
+                      <a class="dropdown-item" href="#">Projects archive</a>
+                    </div>
+                </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
               <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -87,6 +102,9 @@
           </div>
         </nav>
     </header>
+
+
+<h1>Ciao stronzi</h1>
 </body>
 
 <footer class="page-footer font-small blue pt-4">
