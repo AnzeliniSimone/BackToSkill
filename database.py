@@ -31,19 +31,25 @@ class Project(Base)
     description=Column(String)
     start=Column(String)
     end=Column(String)
+    
+employee_softskill=table('employee_softskill',Base.metadata,Column('employee',Integer,ForeignKey(employee.id)),Column('softskill',Integer,ForeignKey(softskills.id)),Column('grade',Integer))
+#tabella intermedia che collega many to many employees e softskills
+
+employee_hardskill=table('employee_hardskill',Base.metadata,Column('employee',Integer,ForeignKey(employee.id)),Column('hardskill',Integer,ForeignKey(hardskills.id)),Column('grade',Integer))
+#tabella che collega many to many employees e hardskills 
 
 class Soft_skill(Base)
     __tablename__='softskills'
     id=Column(Integer,primary_key=true)
     description=Column(String)
+    employee = Relationship('Employee',secondary=employee_softskill,backref=backref('softskills'))
 
 class Hard_skill(Base)
     __tablename__='hardskills'
     id=Column(Integer,primary_key=true)
     description=Column(String)
-    
-    
-    kksksksk
+    employee= Relationship ('Employee',secondary=employee_hardskill,backref=backref('hardskills'))
+  
 
     
 
