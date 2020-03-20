@@ -41,6 +41,9 @@ class Hard_skill(Base)
     __tablename__='hardskills'
     id=Column(Integer,primary_key=true)
     description=Column(String)
+    
+    
+    kksksksk
 
     
 
