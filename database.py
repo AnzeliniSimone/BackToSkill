@@ -23,7 +23,7 @@ class Role(Base)
     id=Column(Integer,primary_key=true)
     name=Column(String)
     description=Column(string)
-
+#hhhh
 class Project(Base)
     __tablename__='progetti'
     id=Column(Integer,primary_key=true)
