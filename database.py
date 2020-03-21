@@ -52,12 +52,12 @@ class Hard_skill(Base)
   
 
 #---------------------------------------------------------------------------------
-class Employees_Personal(Base):
+class employee(Base):
 
     #Personal
-    _tablename_ = 'Employees Personal'
+    _tablename_ = 'employees'
     id = Column(Integer, primary_key = True)
-    Photo =
+    Photo = ''  #links to be added
     Name_and_Surname = Column(String)
     Email = Column(String)
     Telephone_Number = Column(String)
@@ -68,158 +68,64 @@ class Employees_Personal(Base):
     Healthy_State = Column(String)
     State_in_the_company = Column(String)
 
-class Employees_Education(Base):
-    # Education
-    _tablename_ = 'Employees Education'
+class education(Base):
+    _tablename_ = 'education'
     id = Column(Integer, primary_key=True)
     Degree = Column(String)
     Language_Certification = Column(String)
     Course_Certification = Column(String)
 
-class Employees_Skills(Base):
-    _tablename_ = 'Employees Skills'
+
+
+employee_trainings= table('employee_trainings',Base.metadata,
+                         Column('employee',Integer,ForeignKey(employee.id)),
+                         Column('trainings',Integer,ForeignKey(trainings.id))
+                         )
+#tabella che collega many to many employees e trainings
+
+
+employee_assessment = table('employee_assessment', Base.metadata,
+                            Column('employee', Integer, ForeignKey(employee.id)),
+                            Column('assessment', Integer, ForeignKey(assessment.id))
+                            )
+# tabella che collega many to many employees e assessment
+
+
+employee_projects = table('employee_projects', Base.metadata,
+                          Column('employee', Integer, ForeignKey(employee.id)),
+                          Column('projects', Integer, ForeignKey(projects.id)),
+                          )
+# tabella che collega many to many employees e projects
+
+
+
+class trainings(Base):
+    _tablename_ = 'trainings'
     id = Column(Integer, primary_key=True)
-    #Skills
-    Soft_Skill1 = Column(Integer)
-    Soft_Skill2 = Column(Integer)
-    Soft_Skill3 = Column(Integer)
-    Soft_Skill4 = Column(Integer)
-    Soft_Skill5 = Column(Integer)
+    Training = Column(String)
+    Starting_Date = Column(String)
+    Ending_Date = Column(String)
+    Skill_Acquired = Column(String)
+    employee = Relationship('employee', secondary=employee_trainings, backref=backref('trainings');
 
-    Technical_Skill1 = Column(Integer)
-    Technical_Skill2 = Column(Integer)
-    Technical_Skill3 = Column(Integer)
-    Technical_Skill4 = Column(Integer)
-    Technical_Skill5 = Column(Integer)
 
-class Employees_TrainingsUpcomings(Base):
-    _tablename_ = 'Employees Trainings Upcoming'
+class assessment(Base):
+    _tablename_ = 'assessment'
     id = Column(Integer, primary_key=True)
-    #Trainings Upcomings
-    Training1 = Column(String)
-    Date1 = Column(String)
-    Training_Type1 = Column(String)
-    Skill_Acquired1 = Column(String)
+    Assessment = Column(String)
+    Date = Column(String)
+    Made_By = Column(String)
+    employee = Relationship('employee', secondary=employee_assessment, backref=backref('assessment');
 
-    Training2 = Column(String)
-    Date2 = Column(String)
-    Training_Type2 = Column(String)
-    Skill_Acquired2 = Column(String)
 
-    Training3 = Column(String)
-    Date3 = Column(String)
-    Training_Type3 = Column(String)
-    Skill_Acquired3 = Column(String)
-
-    Training4 = Column(String)
-    Date4 = Column(String)
-    Training_Type4 = Column(String)
-    Skill_Acquired4 = Column(String)
-
-    Training5 = Column(String)
-    Date5 = Column(String)
-    Training_Type5 = Column(String)
-    Skill_Acquired5 = Column(String)
-
-class Employees_TrainingsCompleted(Base):
-    _tablename_ = 'Employees Trainings Completed'
+class projects(Base):
+    _tablename_ = 'projects'
     id = Column(Integer, primary_key=True)
-    #Trainings Complete
-    Training1 = Column(String)
-    Date1 = Column(String)
-    Training_Type1 = Column(String)
-    Skill_Acquired1 = Column(String)
+    Project = Column(String)
+    Starting_Date = Column(String)
+    Ending_Date = Column(String)
+    employee = Relationship('employee', secondary=employee_projects, backref=backref('projects');
 
-    Training2 = Column(String)
-    Date2 = Column(String)
-    Training_Type2 = Column(String)
-    Skill_Acquired2 = Column(String)
-
-    Training3 = Column(String)
-    Date3 = Column(String)
-    Training_Type3 = Column(String)
-    Skill_Acquired3 = Column(String)
-
-    Training4 = Column(String)
-    Date4 = Column(String)
-    Training_Type4 = Column(String)
-    Skill_Acquired4 = Column(String)
-
-    Training5 = Column(String)
-    Date5 = Column(String)
-    Training_Type5 = Column(String)
-    Skill_Acquired5 = Column(String)
-
-class Employees_Assessment(Base):
-    _tablename_ = 'Employees Assessment'
-    id = Column(Integer, primary_key=True)
-    #Assessment
-    Assessment1 = Column(String)
-    Date1 = Column(String)
-    Made_By1 = Column(String)
-
-    Assessment2 = Column(String)
-    Date2 = Column(String)
-    Made_By2 = Column(String)
-
-    Assessment3 = Column(String)
-    Date3 = Column(String)
-    Made_By3 = Column(String)
-
-    Assessment4 = Column(String)
-    Date4 = Column(String)
-    Made_By4 = Column(String)
-
-    Assessment5 = Column(String)
-    Date5 = Column(String)
-    Made_By5 = Column(String)
-
-class Employees_Project_Upcomings(Base):
-    _tablename_ = 'Employees Projects Upcoming'
-    id = Column(Integer, primary_key=True)
-    #Project_Works
-    Project_Work1 = Column(String)
-    Beginning_Date1 = Column(String)
-    Ending_Date1 = Column(String)
-
-    Project_Work2 = Column(String)
-    Beginning_Date2 = Column(String)
-    Ending_Date2 = Column(String)
-
-    Project_Work3 = Column(String)
-    Beginning_Date3 = Column(String)
-    Ending_Date3 = Column(String)
-
-class Employees_Project_WorkInProgress(Base):
-    _tablename_ = 'Employees Projects in Progress'
-    id = Column(Integer, primary_key=True)
-    #Project_Works
-    Project_Work1 = Column(String)
-    Beginning_Date1 = Column(String)
-    Ending_Date1 = Column(String)
-
-    Project_Work2 = Column(String)
-    Beginning_Date2 = Column(String)
-    Ending_Date2 = Column(String)
-
-    Project_Work3 = Column(String)
-    Beginning_Date3 = Column(String)
-    Ending_Date3 = Column(String)
-
-class Employees_Project_Completed(Base):
-    _tablename_ = 'Employees Projects Completed'
-    id = Column(Integer, primary_key=True)
-    Project_Work1 = Column(String)
-    Beginning_Date1 = Column(String)
-    Ending_Date1 = Column(String)
-
-    Project_Work2 = Column(String)
-    Beginning_Date2 = Column(String)
-    Ending_Date2 = Column(String)
-
-    Project_Work3 = Column(String)
-    Beginning_Date3 = Column(String)
-    Ending_Date3 = Column(String)
 
 
     
