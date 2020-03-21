@@ -19,13 +19,13 @@ class User(Base):
 
 ### utenti che si registrano, bisogna implemantare la divisione tra common e admin
 
-class Role(Base)
+class Role(Base):
     __tablename__='ruolo'
     id=Column(Integer,primary_key=true)
     name=Column(String)
     description=Column(string)
 
-class Project(Base)
+class Project(Base):
     __tablename__='progetti'
     id=Column(Integer,primary_key=true)
     name=Column(String)
@@ -33,19 +33,25 @@ class Project(Base)
     start=Column(String)
     end=Column(String)
     
-employee_softskill=table('employee_softskill',Base.metadata,Column('employee',Integer,ForeignKey(employee.id)),Column('softskill',Integer,ForeignKey(softskills.id)),Column('grade',Integer))
+employee_softskill=table('employee_softskill',Base.metadata,
+                         Column('employee',Integer,ForeignKey(employee.id)),
+                         Column('softskill',Integer,ForeignKey(softskills.id)),
+                         Column('grade',Integer))
 #tabella intermedia che collega many to many employees e softskills
 
-employee_hardskill=table('employee_hardskill',Base.metadata,Column('employee',Integer,ForeignKey(employee.id)),Column('hardskill',Integer,ForeignKey(hardskills.id)),Column('grade',Integer))
+employee_hardskill=table('employee_hardskill',Base.metadata,
+                         Column('employee',Integer,ForeignKey(employee.id)),
+                         Column('hardskill',Integer,ForeignKey(hardskills.id)),
+                         Column('grade',Integer))
 #tabella che collega many to many employees e hardskills 
 
-class Soft_skill(Base)
+class Soft_skill(Base):
     __tablename__='softskills'
     id=Column(Integer,primary_key=true)
     description=Column(String)
     employee = Relationship('Employee',secondary=employee_softskill,backref=backref('softskills'))
 
-class Hard_skill(Base)
+class Hard_skill(Base):
     __tablename__='hardskills'
     id=Column(Integer,primary_key=true)
     description=Column(String)
@@ -58,7 +64,7 @@ class Employees_Personal(Base):
     #Personal
     _tablename_ = 'Employees Personal'
     id = Column(Integer, primary_key = True)
-    Photo =
+    Photo = ''
     Name_and_Surname = Column(String)
     Email = Column(String)
     Telephone_Number = Column(String)
