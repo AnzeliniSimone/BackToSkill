@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 
 #bisogna ancora creare la sessione
 
-engine = create_engine('sqlite:///testdb.db')
+engine = create_engine('sqlite:///testdb.db') #non so che path bisogna usare
 
 Base= declarative_base()
 
@@ -21,7 +21,7 @@ class User(Base):
 class employee(Base):
 
     #Personal
-    _tablename_ = 'employees'
+    _tablename_ = 'employee'
     id = Column(Integer, primary_key = True)
     Photo = ''  #links to be added
     Name_and_Surname = Column(String)
@@ -43,13 +43,13 @@ class Role(Base):
 
 employee_softskill=table('employee_softskill',
                          Base.metadata,
-                         Column('employee',Integer,ForeignKey(employees.id)),
+                         Column('employee',Integer,ForeignKey(employee.id)),
                          Column('softskill',Integer,ForeignKey(softskills.id)),
                          Column('grade',Integer))
 #tabella intermedia che collega many to many employees e softskills
 
 employee_hardskill=table('employee_hardskill',Base.metadata,
-                         Column('employee',Integer,ForeignKey(employees.id)),
+                         Column('employee',Integer,ForeignKey(employee.id)),
                          Column('hardskill',Integer,ForeignKey(hardskills.id)),
                          Column('grade',Integer))
 #tabella che collega many to many employees e hardskills 
@@ -81,27 +81,28 @@ class Hard_skill(Base):
 class education(Base):
     _tablename_ = 'education'
     id = Column(Integer, primary_key=True)
+    employee_id=Column(Integer,ForeignKey(employee.id))
     Degree = Column(String)
     Language_Certification = Column(String)
     Course_Certification = Column(String)
 
 
 employee_trainings= table('employee_trainings',Base.metadata,
-                         Column('employee',Integer,ForeignKey(employees.id)),
+                         Column('employee',Integer,ForeignKey(employee.id)),
                          Column('trainings',Integer,ForeignKey(trainings.id))
                          )
 #tabella che collega many to many employees e trainings
 
 
 employee_assessment = table('employee_assessment', Base.metadata,
-                            Column('employee', Integer, ForeignKey(employees.id)),
+                            Column('employee', Integer, ForeignKey(employee.id)),
                             Column('assessment', Integer, ForeignKey(assessment.id))
                             )
 # tabella che collega many to many employees e assessment
 
 
 employee_projects = table('employee_projects', Base.metadata,
-                          Column('employee', Integer, ForeignKey(employees.id)),
+                          Column('employee', Integer, ForeignKey(employee.id)),
                           Column('projects', Integer, ForeignKey(projects.id)),
                           )
 # tabella che collega many to many employees e project
@@ -146,6 +147,7 @@ class RoleinProject(Base):
     description=Column(String)
     project=Relationship('project',secondary=project_roleinaproject,backref=backref('roleinproject'))
 
+Base.metadata.create_all(engine)
 
 
 
