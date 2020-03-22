@@ -10,7 +10,7 @@ Base= declarative_base()
 
 class User(Base):
     __tablename__='user'
-    id=Column(Integer,primary_key=true)
+    id=Column(Integer,primary_key=True)
     name=Column(String)
     surname=Column(String)
     email=Column(String)
@@ -36,7 +36,7 @@ class employee(Base):
 
 class Role(Base):
     __tablename__='role'
-    id=Column(Integer,primary_key=true)
+    id=Column(Integer,primary_key=True)
     name=Column(String)
     description=Column(string)
 
@@ -66,14 +66,14 @@ hardskill_role=table('hardskill_role',Base.metadata,
 
 class Soft_skill(Base):
     __tablename__='softskills'
-    id=Column(Integer,primary_key=true)
+    id=Column(Integer,primary_key=True)
     description=Column(String)
     employee = Relationship('Employee',secondary=employee_softskill,backref=backref('softskills'))
     role=Relationship('Role',secondary=softskill_role,backref=backref('softskills'))
 
 class Hard_skill(Base):
     __tablename__='hardskills'
-    id=Column(Integer,primary_key=true)
+    id=Column(Integer,primary_key=True)
     description=Column(String)
     employee= Relationship ('Employee',secondary=employee_hardskill,backref=backref('hardskills'))
     role = Relationship('Role', secondary=hardskill_role, backref=backref('hardskills'))
@@ -141,7 +141,7 @@ project_roleinaproject=table('project_role',Base.metadata,
 
 class RoleinProject(Base):
     __tablename__='roleinproject'
-    id=Column(Integer,primary_key=true)
+    id=Column(Integer,primary_key=True)
     name=Column(String)
     description=Column(String)
     project=Relationship('project',secondary=project_roleinaproject,backref=backref('roleinproject'))
