@@ -49,28 +49,27 @@ class Role(Base):
     name=Column(String)
     description=Column(String)
 
-
 employee_softskill= Table('employee_softskill',
                          Base.metadata,
                          Column('employee',Integer,ForeignKey(employee.id)),
-                         Column('softskill',Integer,ForeignKey(softskills.id)),
+                         Column('softskill',Integer,ForeignKey(Soft_skill.id)),
                          Column('grade',Integer))
 #tabella intermedia che collega many to many employees e softskills
 
 employee_hardskill=Table('employee_hardskill',Base.metadata,
                          Column('employee',Integer,ForeignKey(employee.id)),
-                         Column('hardskill',Integer,ForeignKey(hardskill.id)),
+                         Column('hardskill',Integer,ForeignKey(Hard_skill.id)),
                          Column('grade',Integer))
 #tabella che collega many to many employees e hardskills
 
 softskill_role=Table('softskill_role',Base.metadata,
-                     Column('softskill',Integer,ForeignKey(softskills.id)),
-                     Column('role',Integer,ForeignKey(role.id)),
+                     Column('softskill',Integer,ForeignKey(Soft_skill.id)),
+                     Column('role',Integer,ForeignKey(Role.id)),
                      Column('grade_request',Integer))
 
 hardskill_role=Table('hardskill_role',Base.metadata,
-                     Column('hardskill',Integer,ForeignKey(hardskills.id)),
-                     Column('role',Integer,ForeignKey(role.id)),
+                     Column('hardskill',Integer,ForeignKey(Hard_skill.id)),
+                     Column('role',Integer,ForeignKey(Role.id)),
                      Column('grade_request',Integer))
 
 class Soft_skill(Base):
@@ -147,7 +146,6 @@ project_roleinaproject = Table('project_role',Base.metadata,
                              Column('project',Integer,ForeignKey(projects.id)),
                              Column('roleinproject',Integer,ForeignKey(roleinaproject.id)),
                              Column('numberofpeople',Integer))
-
 
 class roleinaproject(Base):
     __tablename__='roleinaproject'
