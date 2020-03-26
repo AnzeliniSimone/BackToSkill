@@ -6,6 +6,27 @@
     <title>Main page</title>
 </head>
 <body>
-    <p>Main page</p>
+    {% block pageContent %}
+        <div class="row">
+        <div class="col-md-2">
+          <div class="content-section">
+{#            <p class='text-muted'>You can put any information here you'd like.#}
+              <div class="list-group">
+                  <a href="#" class="list-group-item list-group-item-action">Welcome</a>
+                  <a href="#" class="list-group-item list-group-item-action">How to use</a>
+                  <a href="#" class="list-group-item list-group-item-action">Guide</a>
+                  <a href="#" class="list-group-item list-group-item-action">Documentation</a>
+                  <a href="#" class="list-group-item list-group-item-action">Contacts</a>
+                  <a href="#" class="list-group-item list-group-item-action">About BackToSkill</a>
+              </div>
+{#            </p>#}
+          </div>
+        </div>
+          <div class="col-md-10">
+              {% block sectionContent %}
+              {% endblock %}
+          </div>
+      </div>
+    {% endblock %}
 </body>
 </html>

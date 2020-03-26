@@ -6,9 +6,10 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'hakunamatata'
 
-#db=SQLAlchemy(app)
-#login_manager=LoginManager()
-#login_manager.init_app(app)
+
+# db=SQLAlchemy(app)
+# login_manager=LoginManager()
+# login_manager.init_app(app)
 
 
 @app.route('/')
@@ -29,6 +30,11 @@ def register():
 @app.route('/layout')
 def layout():
     return render_template('layout.html')
+
+
+@app.route('/skills')
+def skills():
+    return render_template('skills.html')
 
 
 if __name__ == '__main__':

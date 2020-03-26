@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.css') }}" >
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-override.css') }}" >
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
@@ -15,9 +16,12 @@
         <!-- TODO modify button-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light" id="loginNavbar">
             <a class="navbar-brand" href="#">BackToSkill</a>
-            <div class="ml-auto">
-                Login
-            </div>
+                {% if session.get('id') %}
+                    <button class="btn btn-danger ml-auto">Logout</button>
+                    <a href="/user" class="btn btn-info ml-auto mr-1" role="button">My Profile</a>
+                {% else %}
+                    <a href="/login" class="btn btn-info ml-auto mr-1" role="button">Login</a>
+                {% endif %}
         </nav>
 
         <!-- navbar with dropdown buttons to navigate the site-->
@@ -35,7 +39,7 @@
                   Home
                 </a>
                 <div class="dropdown-menu" aria-labelledby="homepageDropdown">
-                    <a class="dropdown-item" href="#">Welcome</a>
+                    <a class="dropdown-item" href="/">Welcome</a>
                     <a class="dropdown-item" href="#">How to use</a>
                     <!-- submenu for how to use -->
                     <ul>
@@ -54,7 +58,7 @@
               </li>
 
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="/skills" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Skills
                 </a>
                 <div class="dropdown-menu" aria-labelledby="skillsDropdown">
@@ -103,8 +107,10 @@
         </nav>
     </header>
 
-
-<h1>Ciao stronzi</h1>
+    <main role="main" id="main-container">
+        {% block pageContent %}
+        {% endblock %}
+    </main>
 </body>
 
 <footer class="page-footer font-small blue pt-4">
