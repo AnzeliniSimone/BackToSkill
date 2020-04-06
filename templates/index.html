@@ -1,31 +1,38 @@
 {% extends "layout.html" %}
 <!DOCTYPE html>
+{#Welcome page with basic information, all subsections of the "home" button will inherit from this page their layout,
+so they'll get the sidebar too#}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Main page</title>
+    <title>Home</title>
 </head>
 <body>
     {% block pageContent %}
         <div class="row">
+{#        container for the sidebar#}
         <div class="col-md-2">
-          <div class="content-section">
-{#            <p class='text-muted'>You can put any information here you'd like.#}
+{#            sidebar menu#}
               <div class="list-group">
-                  <a href="#" class="list-group-item list-group-item-action">Welcome</a>
-                  <a href="#" class="list-group-item list-group-item-action">How to use</a>
-                  <a href="#" class="list-group-item list-group-item-action">Guide</a>
-                  <a href="#" class="list-group-item list-group-item-action">Documentation</a>
+                  <a href="/welcome" class="list-group-item list-group-item-action">Welcome</a>
+                  <a href="/guide" class="list-group-item list-group-item-action">Guide</a>
+
+{#                  Do we really need these sections or we can group them in the "how to use" one?#}
+{#                  <a href="#" class="list-group-item list-group-item-action">Guide</a>#}
+{#                  <a href="#" class="list-group-item list-group-item-action">Documentation</a>#}
+
                   <a href="#" class="list-group-item list-group-item-action">Contacts</a>
                   <a href="#" class="list-group-item list-group-item-action">About BackToSkill</a>
               </div>
-{#            </p>#}
-          </div>
         </div>
-          <div class="col-md-10">
-              {% block sectionContent %}
-              {% endblock %}
-          </div>
+{#        container for the content part, the container stays the same in every subpage#}
+        <div class="col-md-10">
+{#        variable content, will be overwritten in every subpage#}
+            {% block sectionContent %}
+                <h1>Welcome to the main page of our website</h1>
+                <h3>Here is where we are going to write something to welcome you</h3>
+            {% endblock %}
+        </div>
       </div>
     {% endblock %}
 </body>
