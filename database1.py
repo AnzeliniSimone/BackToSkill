@@ -137,6 +137,6 @@ class Roleinaproject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     description = db.Column(db.String)
-    project = db.relationship('Project', secondary=project_roleinaproject, backref=db.backref('roleinaproject'))
+    project = db.relationship('Projects', secondary=project_roleinaproject, backref=db.backref('roleinaproject'))
     
-db.create_all()
+
