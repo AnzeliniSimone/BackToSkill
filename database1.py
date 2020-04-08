@@ -58,7 +58,7 @@ class User(db.Model):
     name = db.Column(db.String)
     surname = db.Column(db.String)
     email = db.Column(db.String)
-    Password = db.Column(db.String)
+    password = db.Column(db.String)
 
     def __repr__(self):
         return "User('{self.name}', '{self.email}')"
@@ -69,16 +69,16 @@ class User(db.Model):
 class Employee(db.Model):
     # Personal
     id = db.Column(db.Integer, primary_key=True)
-    Photo = db.Column(db.String(20), nullable=False, default='default.jpg')
-    Name_and_Surname = db.Column(db.String)
-    Email = db.Column(db.String)
-    Telephone_Number = db.Column(db.String)
-    Date_of_Birth = db.Column(db.String)
-    Living_Place = db.Column(db.String)
-    Drive_Licence = db.Column(db.String)
-    Superior = db.Column(db.String)
-    Healthy_State = db.Column(db.String)
-    State_in_the_company = db.Column(db.String)
+    photo = db.Column(db.String(20), nullable=False, default='default.jpg')
+    name_and_surname = db.Column(db.String)
+    email = db.Column(db.String)
+    telephone_number = db.Column(db.String)
+    date_of_birth = db.Column(db.String)
+    living_place = db.Column(db.String)
+    drive_licence = db.Column(db.String)
+    superior = db.Column(db.String)
+    healthy_state = db.Column(db.String)
+    state_in_the_company = db.Column(db.String)
 
 
 class Softskill(db.Model):
@@ -103,33 +103,33 @@ class Hardskill(db.Model):
 
 class Education(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Degree = db.Column(db.String)
-    Language_Certification = db.Column(db.String)
-    Course_Certification = db.Column(db.String)
+    degree = db.Column(db.String)
+    language_certification = db.Column(db.String)
+    course_certification = db.Column(db.String)
 
 
 class Trainings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Training = db.Column(db.String)
-    Starting_Date = db.Column(db.String)
-    Ending_Date = db.Column(db.String)
-    Skill_Acquired = db.Column(db.String)
+    training = db.Column(db.String)
+    starting_Date = db.Column(db.String)
+    ending_Date = db.Column(db.String)
+    skill_acquired = db.Column(db.String)
     employee = db.relationship('Employee', secondary=employee_trainings, backref=db.backref('trainings'))
 
 
 class Assessment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Assessment = db.Column(db.String)
-    Date = db.Column(db.String)
-    Made_By = db.Column(db.String)
+    assessment = db.Column(db.String)
+    date = db.Column(db.String)
+    made_by = db.Column(db.String)
     employee = db.relationship('Employee', secondary=employee_assessment, backref=db.backref('assessment'))
 
 
 class Projects(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Project = db.Column(db.String)
-    Starting_Date = db.Column(db.String)
-    Ending_Date = db.Column(db.String)
+    project = db.Column(db.String)
+    starting_date = db.Column(db.String)
+    ending_date = db.Column(db.String)
     employee = db.relationship('Employee', secondary=employee_projects, backref=db.backref('projects'))
 
 
