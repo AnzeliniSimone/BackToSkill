@@ -1,92 +1,123 @@
 <!DOCTYPE html>
+{#This is the main skeleton for the website, it is the page that most of the other pages will use (by 'extend' feature) to provide the
+user with the navbar and the main buttons like login and logout. Plus, it gives basic style to the website, so that if we want to make some
+changes in the layout of main components we just have to do it once in this file#}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+{#    Links to css files in the static folder#}
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.css') }}" >
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-override.css') }}" >
+{#    Links to jquery and popper#}
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+{#   link to bootstrap js in the static folder#}
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
 </head>
 
 <body>
     <header>
+        <!-- navbar with login button, probably to change into a dropdown with options: my profile, logout-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light" id="loginNavbar">
-            <a class="navbar-brand" href="#">BackToSkill</a>
-            <div class="ml-auto">
-                Login
-            </div>
+{#        logo#}
+            <a class="navbar-brand" href="/home"><img src="/static/images/Logosmall.png" alt=""></a>
+{#        check on authentication, if user logged in it shows logout button and link to user profile#}
+                {% if session.get('id') %}
+                    <button class="btn btn-danger ml-auto">Logout</button>
+                    <a href="/user" class="btn btn-info ml-auto mr-1" role="button">My Profile</a>
+{#        otherwise shows login button#}
+                {% else %}
+                    <a href="/login" class="btn btn-info ml-auto mr-1" role="button">Login</a>
+                {% endif %}
         </nav>
 
+        <!-- navbar with dropdown buttons to navigate the site-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light" id="menuNavbar">
+{#            button for responsive purposes, makes the navbar collapse when screen is too little#}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
 
+{#            Container for all the buttons linkin to the different pages and for the search bar#}
+
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="mainPageDropDown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Main Page
-                </a>
-                <div class="dropdown-menu" aria-labelledby="mainPageDropDown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </li>
 
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Projects
-                </a>
-                <div class="dropdown-menu" aria-labelledby="projectsDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </li>
+              <ul class="navbar-nav mr-auto">
 
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="employeesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Employees
-                </a>
-                <div class="dropdown-menu" aria-labelledby="employeesDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </li>
+                 <!-- Main page dropdown button -->
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="homepageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Home
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="homepageDropdown">
+                        <a class="dropdown-item" href="/home">Welcome</a>
+                        <a class="dropdown-item" href="/guide">Guide</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/about">About BackToSkill</a>
+                    </div>
+                  </li>
 
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="coursesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Courses & Trainings
-                </a>
-                <div class="dropdown-menu" aria-labelledby="coursesDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="/skills" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Skills
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="skillsDropdown">
+                      <a class="dropdown-item" href="/skills/soft">Soft skills list</a>
+                      <a class="dropdown-item" href="/skills/technical">Technical skills list</a>
+                    </div>
+                  </li>
 
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Reports
-                </a>
-                <div class="dropdown-menu" aria-labelledby="reportsDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/employees" id="employeesButton" role="button" aria-haspopup="true" aria-expanded="false">
+                      Employees
+                    </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a class="nav-link" href="/jobs" id="jobsButton" role="button" aria-haspopup="true" aria-expanded="false">
+                      Job Openings
+                    </a>
+                  </li>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="trainingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Trainings
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="trainingsDropdown">
+                      <a class="dropdown-item" href="/trainings">Courses list</a>
+                      <a class="dropdown-item" href="#">Upcoming courses</a>
+                      <a class="dropdown-item" href="#">Courses archive</a>
+                    </div>
+                  </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Projects
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="projectsDropdown">
+                          <a class="dropdown-item" href="/projects/all">Projects list</a>
+                          <a class="dropdown-item" href="/projects/current">Current projects</a>
+                          <a class="dropdown-item" href="/projects/past">Projects archive</a>
+                        </div>
+                    </li>
             </ul>
+
+{#              Search bar (not working right now)#}
             <form class="form-inline my-2 my-lg-0">
               <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
+
           </div>
         </nav>
     </header>
+
+{#    container for the "dynamic" content, will be overwritten in every different page#}
+    <main role="main" id="main-container">
+        {% block pageContent %}
+        {% endblock %}
+    </main>
 </body>
 
 <footer class="page-footer font-small blue pt-4">

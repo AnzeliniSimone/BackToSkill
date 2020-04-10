@@ -1,10 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '1234'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database1.db'
-db = SQLAlchemy(app)
+
+db = SQLAlchemy()
 
 employee_softskill = db.Table('employee_softskill',
                               db.Column('employee', db.Integer, db.ForeignKey('employee.id')),
@@ -62,6 +60,7 @@ class User(db.Model):
 
     def __repr__(self):
         return "User('{self.name}', '{self.email}')"
+
 
 
 ### utenti che si registrano, bisogna implemantare la divisione tra common e admin
@@ -138,5 +137,3 @@ class Roleinaproject(db.Model):
     name = db.Column(db.String)
     description = db.Column(db.String)
     project = db.relationship('Projects', secondary=project_roleinaproject, backref=db.backref('roleinaproject'))
-    
-

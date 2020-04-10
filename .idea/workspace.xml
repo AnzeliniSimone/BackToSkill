@@ -2,8 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a303f48-731f-4e1a-8642-c38f1325a365" name="Default Changelist" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database1.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/about.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/employee.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/jobs.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/project.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/training.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/projects.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/projects.html" afterDir="false" />
+>>>>>>> layoutChanges
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -11,10 +29,26 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Flask Main" />
+        <option value="CSS File" />
+        <option value="Python Script" />
         <option value="HTML File" />
       </list>
     </option>
@@ -29,6 +63,10 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+=======
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+>>>>>>> layoutChanges
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -51,7 +89,11 @@
       <option name="targetType" value="PATH" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+<<<<<<< HEAD
       <option name="SDK_HOME" value="C:\Users\checc\PycharmProjects\database\venv\Scripts\python.exe" />
+=======
+      <option name="SDK_HOME" value="C:\Python27\python.exe" />
+>>>>>>> layoutChanges
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -84,6 +126,7 @@
       <workItem from="1584010340914" duration="202000" />
       <workItem from="1584010563814" duration="2246000" />
       <workItem from="1584114878019" duration="40000" />
+<<<<<<< HEAD
 <<<<<<< Updated upstream
       <workItem from="1584786370231" duration="11000" />
 <<<<<<< Updated upstream
@@ -95,6 +138,24 @@
 =======
       <workItem from="1584786492831" duration="1095000" />
 >>>>>>> Stashed changes
+=======
+      <workItem from="1584371641553" duration="89000" />
+      <workItem from="1584372029202" duration="30000" />
+      <workItem from="1584372060611" duration="289000" />
+      <workItem from="1584636119502" duration="3451000" />
+      <workItem from="1584784449079" duration="2373000" />
+      <workItem from="1584810923960" duration="679000" />
+      <workItem from="1584870869102" duration="8868000" />
+      <workItem from="1584960556806" duration="6465000" />
+      <workItem from="1585240735020" duration="2803000" />
+      <workItem from="1585496553758" duration="5660000" />
+      <workItem from="1585750894636" duration="1681000" />
+      <workItem from="1585820943614" duration="1255000" />
+      <workItem from="1585991522375" duration="14329000" />
+      <workItem from="1586329846255" duration="8711000" />
+      <workItem from="1586346859756" duration="4907000" />
+      <workItem from="1586512560332" duration="2161000" />
+>>>>>>> layoutChanges
     </task>
     <servers />
   </component>
@@ -115,6 +176,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/BackToSkill$BackToSkill.coverage" NAME="BackToSkill Coverage Results" MODIFIED="1583939675848" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/BackToSkill$BackToSkill.coverage" NAME="BackToSkill Coverage Results" MODIFIED="1586513374409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

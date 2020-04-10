@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trainings</title>
+</head>
+<body>
+    {% block pageContent %}
+        <div class="row">
+        <div class="col-md-2">
+          <div class="content-section">
+              <div class="list-group">
+                  <a href="/trainings" class="list-group-item list-group-item-action">All courses</a>
+                  <a href="#" class="list-group-item list-group-item-action">Upcoming courses list</a>
+                  <a href="#" class="list-group-item list-group-item-action">Completed courses list</a>
+              </div>
+          </div>
+        </div>
+          <div class="col-md-10">
+{#          Table for the trainings that will be taken out from the db#}
+              {% block sectionContent %}
+                  <div class="table-responsive">
+                      <table class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">First</th>
+                              <th scope="col">Last</th>
+                              <th scope="col">Handle</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row">1</th>
+                              <td>Mark</td>
+                              <td>Otto</td>
+                              <td>@mdo</td>
+                            </tr>
+                            <tr>
+                              <th scope="row">2</th>
+                              <td>Jacob</td>
+                              <td>Thornton</td>
+                              <td>@fat</td>
+                            </tr>
+                            <tr>
+                              <th scope="row">3</th>
+                              <td colspan="2">Larry the Bird</td>
+                              <td>@twitter</td>
+                            </tr>
+                          </tbody>
+                      </table>
+                  </div>
+
+              {% endblock %}
+          </div>
+      </div>
+    {% endblock %}
+</body>
