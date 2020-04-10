@@ -36,10 +36,10 @@
                             {% for project in projects %}
                                 <tr>
                                   <th scope="row">{{loop.index}}</th>
-                                  <td>{{ project.name }}</td>
-                                  <td>{{ project.start }}</td>
-                                  <td>{{ project.end }}</td>
-                                  <td>{{ project.description }}</td>
+                                  <td>{{ project.project }}</td>
+                                  <td>{{ project.starting_date }}</td>
+                                  <td>{{ project.ending_date }}</td>
+{#                                  <td>{{ project.description }}</td>#}
                                 </tr>
                             {% endfor %}
                           </tbody>

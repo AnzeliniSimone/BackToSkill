@@ -21,7 +21,7 @@ changes in the layout of main components we just have to do it once in this file
         <!-- navbar with login button, probably to change into a dropdown with options: my profile, logout-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light" id="loginNavbar">
 {#        logo#}
-            <a class="navbar-brand" href="/welcome"><img src="/static/images/Logosmall.png" alt=""></a>
+            <a class="navbar-brand" href="/home"><img src="/static/images/Logosmall.png" alt=""></a>
 {#        check on authentication, if user logged in it shows logout button and link to user profile#}
                 {% if session.get('id') %}
                     <button class="btn btn-danger ml-auto">Logout</button>
@@ -51,11 +51,10 @@ changes in the layout of main components we just have to do it once in this file
                       Home
                     </a>
                     <div class="dropdown-menu" aria-labelledby="homepageDropdown">
-                        <a class="dropdown-item" href="/welcome">Welcome</a>
+                        <a class="dropdown-item" href="/home">Welcome</a>
                         <a class="dropdown-item" href="/guide">Guide</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Contacts</a>
-                        <a class="dropdown-item" href="#">About BackToSkill</a>
+                        <a class="dropdown-item" href="/about">About BackToSkill</a>
                     </div>
                   </li>
 
@@ -76,7 +75,7 @@ changes in the layout of main components we just have to do it once in this file
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link" href="#" id="jobsButton" role="button" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link" href="/jobs" id="jobsButton" role="button" aria-haspopup="true" aria-expanded="false">
                       Job Openings
                     </a>
                   </li>
