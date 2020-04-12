@@ -12,7 +12,7 @@ app.config['SECRET_KEY'] = '1234'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database1.db'
 db.init_app(app)
 
-
+# CAN USE THESE CLASSES TO DO SOME TRIALS, BUT THEN USE THE CLASSES FROM THE database1.py
 # class SoftSkill:
 #     def  __init__(self, name, description):
 #         self.name=name
@@ -68,14 +68,15 @@ def about():
 # //SKILLS PAGES (second dropdown menu)\\
 @app.route('/skills/<kind>')
 def skill(kind):
-    skills_list=[]
-
-    if kind == "soft":
-        skills_list = [SoftSkill("ss1", "una skill"), SoftSkill("ss2","due skill")]
-    elif kind == "technical":
-        skills_list = [HardSkill("hs1","una hard skill"), HardSkill("hs2", "due hard skill")]
-
-    return render_template('skills.html', skills=skills_list, skill_type=kind)
+    # skills_list=[]
+    #
+    # if kind == "soft":
+    #     skills_list = [SoftSkill("ss1", "una skill"), SoftSkill("ss2","due skill")]
+    # elif kind == "technical":
+    #     skills_list = [HardSkill("hs1","una hard skill"), HardSkill("hs2", "due hard skill")]
+    #
+    # return render_template('skills.html', skills=skills_list, skill_type=kind)
+    return render_template('skills.html', skill_type=kind)
 
 
 # //EMPLOYEES PAGES (third button of navbar)\\
@@ -122,22 +123,19 @@ def training(id):
 # //PROJECTS PAGES\\
 @app.route('/projects/<period>')
 def projects(period):
-    projects_list=[]
     # for i in range(20):
     #     projects_list.append(Project(datetime.date(2019,1,1), datetime.date(randint(2019,2021),i%12 + 1,i+1), "Project "+ str(i), "A project"))
 
-    # to_pass = []
-    # for project in projects_list:
-    #     if period=="past" and project.end<datetime.date.today():
-    #         to_pass.append(project)
-    #     elif period=="current" and project.end>datetime.date.today():
-    #         to_pass.append(project)
-    #     elif period=="all":
-    #         to_pass=projects_list
-    #
-    to_pass=Projects.query.all()
-    to_pass.sort(key=lambda x: x.starting_date)
-    return render_template('projects.html', projects=to_pass, period=period)
+    # if period=="past":
+    #     projects_list = Projects.query.filter_by(ending_date == datetime.date.today())
+    # elif period=="current":
+    #     projects_list = Projects.query.filter_by(Projects.ending_date > datetime.date.today())
+    # else:
+    projects_list = Projects.query.all()
+
+
+    projects_list.sort(key=lambda x: x.starting_date)
+    return render_template('projects.html', projects=projects_list, period=period)
 
 
 @app.route('/project/<int:id>')
