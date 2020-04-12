@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Skills</title>
+</head>
+<body>
+    {% block pageContent %}
+        <div class="row">
+        <div class="col-md-2">
+          <div class="content-section">
+              <div class="list-group">
+                  <a href="/skills/soft" class="list-group-item list-group-item-action">Soft skills list</a>
+                  <a href="/skills/technical" class="list-group-item list-group-item-action">Technical skills list</a>
+              </div>
+          </div>
+        </div>
+          <div class="col-md-10">
+{#          Table for the skills that will be taken out from the db#}
+              {% block sectionContent %}
+                  <h4>List of {{ skill_type }} skills</h4>
+                  <div class="table-responsive">
+                      <table class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Name</th>
+                              <th scope="col">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+{#                              {% set count=0 %}#}
+                              {% for skill in skills %}
+                                  <tr>
+                                      <th scope="row">{{ loop.index }}</th>
+                                      <td>{{skill.name}}</td>
+                                      <td>{{ skill.description }}</td>
+                                  </tr>
+                              {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
+
+              {% endblock %}
+          </div>
+      </div>
+    {% endblock %}
+</body>
+</html>

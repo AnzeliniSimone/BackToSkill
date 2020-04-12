@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects</title>
+</head>
+<body>
+ {% block pageContent %}
+        <div class="row">
+        <div class="col-md-2">
+          <div class="content-section">
+              <div class="list-group">
+                  <a href="/projects/all" class="list-group-item list-group-item-action">All projects</a>
+                  <a href="/projects/current" class="list-group-item list-group-item-action">Current projects</a>
+                  <a href="/projects/past" class="list-group-item list-group-item-action">Completed projects</a>
+              </div>
+          </div>
+        </div>
+          <div class="col-md-10">
+{#          Table for the trainings that will be taken out from the db#}
+              {% block sectionContent %}
+                  <h4>List of {{ period }} projects</h4>
+                  <div class="table-responsive">
+                      <table class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Project</th>
+                              <th scope="col">Beginning</th>
+                              <th scope="col">Ending</th>
+                              <th scope="col">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for project in projects %}
+                                <tr>
+                                  <th scope="row">{{loop.index}}</th>
+                                  <td>{{ project.project }}</td>
+                                  <td>{{ project.starting_date }}</td>
+                                  <td>{{ project.ending_date }}</td>
+{#                                  <td>{{ project.description }}</td>#}
+                                </tr>
+                            {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
+
+              {% endblock %}
+          </div>
+      </div>
+ {% endblock %}
+</body>
+</html>

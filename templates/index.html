@@ -1,11 +1,33 @@
 {% extends "layout.html" %}
 <!DOCTYPE html>
+{#Welcome page with basic information, all subsections of the "home" button will inherit from this page their layout,
+so they'll get the sidebar too#}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Main page</title>
+    <title>Home</title>
 </head>
 <body>
-    <p>Main page</p>
+    {% block pageContent %}
+        <div class="row">
+{#        container for the sidebar#}
+        <div class="col-md-2">
+{#            sidebar menu#}
+              <div class="list-group">
+                  <a href="/home" class="list-group-item list-group-item-action">Welcome</a>
+                  <a href="/guide" class="list-group-item list-group-item-action">Guide</a>
+                  <a href="/about" class="list-group-item list-group-item-action">About us</a>
+              </div>
+        </div>
+{#        container for the content part, the container stays the same in every subpage#}
+        <div class="col-md-10">
+{#        variable content, will be overwritten in every subpage#}
+            {% block sectionContent %}
+                <h1>Welcome to the main page of our website</h1>
+                <h3>Here is where we are going to write something to welcome you</h3>
+            {% endblock %}
+        </div>
+      </div>
+    {% endblock %}
 </body>
 </html>
