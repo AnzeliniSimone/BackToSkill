@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import datetime
 from random import random, randint
-from database1 import db,Assessment,Employee,Education,Hardskill,Projects,Role,Roleinaproject,Softskill,Trainings,User
+from database1 import db,Assessment,Employee,Education,Hardskill,Projects,Role,Roleinaproject,Softskill,Trainings,User,fill_table
 from database1 import employee_projects,employee_hardskill,employee_assessment,employee_softskill,employee_trainings,hardskill_role,project_roleinaproject,softskill_role
 
 
@@ -43,8 +43,7 @@ db.init_app(app)
 def create_all():
     db.drop_all()
     db.create_all()
-    db.session.add(Projects(project='PJ 1', starting_date=datetime.date(2019,1,1), ending_date=datetime.date(2020,1,1)))
-    db.session.add(Projects(project='PJ 5', starting_date=datetime.date(2019,1,1), ending_date=datetime.date(2021,1,1)))
+    db.fill_table()
     db.session.commit()
 
 

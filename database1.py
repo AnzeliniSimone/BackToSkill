@@ -138,3 +138,48 @@ class Roleinaproject(db.Model):
     description = db.Column(db.String)
     project = db.relationship('Projects', secondary=project_roleinaproject, backref=db.backref('roleinaproject'))
 
+<<<<<<< Updated upstream
+=======
+def fill_table():
+
+    employee1 = Employee(id=0,name_and_surname='Francesco De Zorzi',telephone_number='857384839')
+    employee2 = Employee(id=1, name_and_surname='Francesco Del Frabbro', telephone_number='75763893')
+    employee3 = Employee(id=2, name_and_surname='Giulia Ioannone', telephone_number='938723642')
+    employee4 = Employee(id=3, name_and_surname='Otabek Razakkov', telephone_number='428764728')
+    employee5 = Employee(id=4, name_and_surname='Matteo Piovesan', telephone_number='0872637123')
+
+    db.session.add(employee1)
+    db.session.add(employee2)
+    db.session.add(employee3)
+    db.session.add(employee4)
+    db.session.add(employee5)
+
+    project1 = Projects(id=0,project='create a new product',starting_date='04/05/2019',ending_date='02/05/2020',employee=[employee1,employee2,employee4])
+    project2 = Projects(id=1, project='analyze the balace sheet', starting_date='12/10/2019', ending_date='23/03/2019', employee=[employee5, employee2, employee1])
+    project3 = Projects(id=2, project='reorginize the production line ', starting_date='12/05/2020', ending_date='22/08/2020', employee=[employee5, employee3])
+    project4 = Projects(id=3, project='hire new workers ', starting_date='16/02/2019', ending_date='17/09/2019', employee=[employee1])
+
+    db.session.add(project1)
+    db.session.add(project2)
+    db.session.add(project3)
+    db.session.add(project4)
+
+    rolep1 = Roleinaproject(id=0,name='Manager',project=[project1,project2,project3,project4])
+    rolep2 = Roleinaproject(id=1, name='Normal employee', project=[project1, project2, project4])
+    rolep3 = Roleinaproject(id=2, name='Hr', project=[project1, project2, project3])
+    rolep4 = Roleinaproject(id=3, name='the thinker', project=[project2, project3, project4])
+    rolep5 = Roleinaproject(id=4, name='The one that do nothing', project=[project1, project3, project4])
+
+    db.session.add(rolep1)
+    db.session.add(rolep2)
+    db.session.add(rolep3)
+    db.session.add(rolep4)
+    db.session.add(rolep5)
+
+
+
+
+
+
+
+>>>>>>> Stashed changes
