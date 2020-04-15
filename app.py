@@ -3,13 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import datetime
 from random import random, randint
-from database1 import db,Assessment,Employee,Education,Hardskill,Projects,Role,Roleinaproject,Softskill,Trainings,User
-from database1 import employee_projects,employee_hardskill,employee_assessment,employee_softskill,employee_trainings,hardskill_role,project_roleinaproject,softskill_role
-
+# from database1 import db,Assessment,Employee,Education,Hardskill,Projects,Role,Roleinaproject,Softskill,Trainings,User
+# from database1 import employee_projects,employee_hardskill,employee_assessment,employee_softskill,employee_trainings,hardskill_role,project_roleinaproject,softskill_role
+from database import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1234'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database1.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db.init_app(app)
 
 # CAN USE THESE CLASSES TO DO SOME TRIALS, BUT THEN USE THE CLASSES FROM THE database1.py
@@ -43,8 +43,10 @@ db.init_app(app)
 def create_all():
     db.drop_all()
     db.create_all()
-    db.session.add(Projects(project='PJ 1', starting_date=datetime.date(2019,1,1), ending_date=datetime.date(2020,1,1)))
-    db.session.add(Projects(project='PJ 5', starting_date=datetime.date(2019,1,1), ending_date=datetime.date(2021,1,1)))
+    fillEmployee(db)
+    # emp=Employee(name="Simone", surname="Anzelini", email="anze@yeah.com", date_of_birth=datetime.date(1997,4,5), driving_licence=True)
+    # db.session.add(emp)
+    # db.session.add(Employee_Project(0,0,employee=simone,project=prj))
     db.session.commit()
 
 
@@ -123,30 +125,24 @@ def training(id):
 # //PROJECTS PAGES\\
 @app.route('/projects/<period>')
 def projects(period):
-    # for i in range(20):
-    #     projects_list.append(Project(datetime.date(2019,1,1), datetime.date(randint(2019,2021),i%12 + 1,i+1), "Project "+ str(i), "A project"))
-
-    # if period=="past":
-    #     projects_list = Projects.query.filter_by(ending_date == datetime.date.today())
-    # elif period=="current":
-    #     projects_list = Projects.query.filter_by(Projects.ending_date > datetime.date.today())
-    # else:
-    projects_list = Projects.query.all()
-
+    if period == "past":
+        projects_list = Project.query.filter(Project.ending_date < datetime.date.today()).all()
+    elif period == "current":
+        projects_list = Project.query.filter(Project.ending_date >= datetime.date.today()).all()
+    else:
+        projects_list = Project.query.all()
 
     projects_list.sort(key=lambda x: x.starting_date)
     return render_template('projects.html', projects=projects_list, period=period)
 
 
-@app.route('/project/<int:id>')
-def project(id):
-    # Here you have to add all the conditions and the instructions to retrieve the right project's information from the
-    # db
-    # Also, you will have to pass the entire project instance to the html page (see the skill(kind) function to see how
-    # to do it
-    # In the project.html you will have to take the information you have to show from the variable passed from here,
-    # see skills.html to have an example
-    return render_template('project.html')
+# def get_employees_in_project(prj):
+#     emp_ids= employee_projects.query.filter()
+
+# @app.route('/project/<int:id>')
+# def project(id):
+#     prj = Projects.query.filter(Projects.id == id).first()
+#     return render_template('project.html', project=prj)
 
 
 # //LOGIN AND USER MANAGEMENT\\
