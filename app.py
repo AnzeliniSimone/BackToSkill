@@ -2,36 +2,12 @@ from flask import Flask, request, session, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import datetime
-from random import random, randint
-# from database1 import db,Assessment,Employee,Education,Hardskill,Projects,Role,Roleinaproject,Softskill,Trainings,User
-# from database1 import employee_projects,employee_hardskill,employee_assessment,employee_softskill,employee_trainings,hardskill_role,project_roleinaproject,softskill_role
 from database import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1234'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db.init_app(app)
-
-# CAN USE THESE CLASSES TO DO SOME TRIALS, BUT THEN USE THE CLASSES FROM THE database1.py
-# class SoftSkill:
-#     def  __init__(self, name, description):
-#         self.name=name
-#         self.description=description
-#
-#
-# class HardSkill:
-#     def  __init__(self, name, description):
-#         self.name=name
-#         self.description=description
-#
-#
-# class Project:
-#     def __init__(self, start, end, name, description):
-#         self.start=start
-#         self.end=end
-#         self.name=name
-#         self.description=description
-
 
 # /// ROUTES \\\
 # Here we define the routes used to get to the html pages and the functions performing the actions needed to retrieve
@@ -44,6 +20,7 @@ def create_all():
     db.drop_all()
     db.create_all()
     fillEmployee(db)
+    #EXAMPLE FOR DB INSERT OF MANY-TO-MANY RELATIONSHIPS
     # emp=Employee(name="Simone", surname="Anzelini", email="anze@yeah.com", date_of_birth=datetime.date(1997,4,5), driving_licence=True)
     # db.session.add(emp)
     # db.session.add(Employee_Project(0,0,employee=simone,project=prj))
