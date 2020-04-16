@@ -2,36 +2,12 @@ from flask import Flask, request, session, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import datetime
-from random import random, randint
-# from database1 import db,Assessment,Employee,Education,Hardskill,Projects,Role,Roleinaproject,Softskill,Trainings,User
-# from database1 import employee_projects,employee_hardskill,employee_assessment,employee_softskill,employee_trainings,hardskill_role,project_roleinaproject,softskill_role
 from database import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1234'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database_per_prove.db'
 db.init_app(app)
-
-# CAN USE THESE CLASSES TO DO SOME TRIALS, BUT THEN USE THE CLASSES FROM THE database1.py
-# class SoftSkill:
-#     def  __init__(self, name, description):
-#         self.name=name
-#         self.description=description
-#
-#
-# class HardSkill:
-#     def  __init__(self, name, description):
-#         self.name=name
-#         self.description=description
-#
-#
-# class Project:
-#     def __init__(self, start, end, name, description):
-#         self.start=start
-#         self.end=end
-#         self.name=name
-#         self.description=description
-
 
 # /// ROUTES \\\
 # Here we define the routes used to get to the html pages and the functions performing the actions needed to retrieve
@@ -39,21 +15,23 @@ db.init_app(app)
 
 # I will subdivide the routes based on their "macro page"
 
-@app.before_first_request
-def create_all():
-    db.drop_all()
-    db.create_all()
-    fillEmployee(db)
-    # emp=Employee(name="Simone", surname="Anzelini", email="anze@yeah.com", date_of_birth=datetime.date(1997,4,5), driving_licence=True)
-    # db.session.add(emp)
-    # db.session.add(Employee_Project(0,0,employee=simone,project=prj))
-    db.session.commit()
+# @app.before_first_request
+# def create_all():
+#     db.drop_all()
+#     db.create_all()
+#     fillEmployee(db)
+#     # emp=Employee(name="Simone", surname="Anzelini", email="anze@yeah.com", date_of_birth=datetime.date(1997,4,5), driving_licence=True)
+#     #prj = Project(information...)
+#     # db.session.add(emp)
+#     # db.session.add(Employee_Project(0,0,employee=simone,project=prj))
+#     db.session.commit()
 
 
 # //MAIN PAGES (first dropdown menu)\\
 @app.route('/')
 @app.route('/home')
 def index():
+    trials()
     return render_template('index.html')
 
 
@@ -126,23 +104,20 @@ def training(id):
 @app.route('/projects/<period>')
 def projects(period):
     if period == "past":
-        projects_list = Project.query.filter(Project.ending_date < datetime.date.today()).all()
+        projects_list = get_past_projects()
     elif period == "current":
-        projects_list = Project.query.filter(Project.ending_date >= datetime.date.today()).all()
+        projects_list = get_current_projects()
     else:
-        projects_list = Project.query.all()
+        projects_list = get_projects()
 
     projects_list.sort(key=lambda x: x.starting_date)
     return render_template('projects.html', projects=projects_list, period=period)
 
 
-# def get_employees_in_project(prj):
-#     emp_ids= employee_projects.query.filter()
-
-# @app.route('/project/<int:id>')
-# def project(id):
-#     prj = Projects.query.filter(Projects.id == id).first()
-#     return render_template('project.html', project=prj)
+@app.route('/project/<int:id>')
+def project(id):
+    prj = get_project_by_id(id)
+    return render_template('project.html', project=prj)
 
 
 # //LOGIN AND USER MANAGEMENT\\
@@ -153,6 +128,9 @@ def login():
 
 # Should think about adding a user page and also the functionality to add more users with different permissionss
 
+
+def trials():
+    print(get_employees_having_a_skill(3))
 
 if __name__ == '__main__':
     app.run(debug=True)
