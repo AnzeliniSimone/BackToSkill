@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="database_per_prove">
+  <database-model serializer="dbm" dbms="SQLITE" family-id="SQLITE" format-version="4.16">
+    <root id="1">
+      <ServerVersion>3.25.1</ServerVersion>
+    </root>
+    <schema id="2" parent="1" name="main">
+      <Current>1</Current>
+    </schema>
+    <collation id="3" parent="1" name="BINARY"/>
+    <collation id="4" parent="1" name="NOCASE"/>
+    <collation id="5" parent="1" name="RTRIM"/>
+    <table id="6" parent="2" name="employee"/>
+    <table id="7" parent="2" name="employee_project"/>
+    <table id="8" parent="2" name="employee_skill"/>
+    <table id="9" parent="2" name="employee_training"/>
+    <table id="10" parent="2" name="project"/>
+    <table id="11" parent="2" name="project_skill"/>
+    <table id="12" parent="2" name="role"/>
+    <table id="13" parent="2" name="role_in_project"/>
+    <table id="14" parent="2" name="skill"/>
+    <table id="15" parent="2" name="sqlite_master">
+      <System>1</System>
+    </table>
+    <table id="16" parent="2" name="training"/>
+    <table id="17" parent="2" name="training_skill"/>
+    <table id="18" parent="2" name="user"/>
+    <column id="19" parent="6" name="id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="20" parent="6" name="photo">
+      <Position>2</Position>
+      <DataType>VARCHAR(100)|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="21" parent="6" name="cv">
+      <Position>3</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="22" parent="6" name="name">
+      <Position>4</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="23" parent="6" name="surname">
+      <Position>5</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="24" parent="6" name="email">
+      <Position>6</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="25" parent="6" name="telephone">
+      <Position>7</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="26" parent="6" name="date_of_birth">
+      <Position>8</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="27" parent="6" name="date_of_assumption">
+      <Position>9</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="28" parent="6" name="living_place">
+      <Position>10</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="29" parent="6" name="driving_licence">
+      <Position>11</Position>
+      <DataType>BOOLEAN|0s</DataType>
+    </column>
+    <column id="30" parent="6" name="role">
+      <Position>12</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <key id="31" parent="6">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="32" parent="6">
+      <ColNames>role</ColNames>
+      <RefTableName>role</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <check id="33" parent="6">
+      <Predicate>driving_licence IN (0, 1)</Predicate>
+    </check>
+    <column id="34" parent="7" name="emp_id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="35" parent="7" name="prj_id">
+      <Position>2</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="36" parent="7" name="role_id">
+      <Position>3</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <column id="37" parent="7" name="evaluation">
+      <Position>4</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <index id="38" parent="7" name="sqlite_autoindex_employee_project_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>emp_id
+prj_id</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="39" parent="7">
+      <ColNames>emp_id
+prj_id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_employee_project_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="40" parent="7">
+      <ColNames>emp_id</ColNames>
+      <RefTableName>employee</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <foreign-key id="41" parent="7">
+      <ColNames>prj_id</ColNames>
+      <RefTableName>project</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <foreign-key id="42" parent="7">
+      <ColNames>role_id</ColNames>
+      <RefTableName>role_in_project</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <column id="43" parent="8" name="emp_id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="44" parent="8" name="skill_id">
+      <Position>2</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="45" parent="8" name="grade">
+      <Position>3</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <index id="46" parent="8" name="sqlite_autoindex_employee_skill_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>emp_id
+skill_id</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="47" parent="8">
+      <ColNames>emp_id
+skill_id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_employee_skill_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="48" parent="8">
+      <ColNames>emp_id</ColNames>
+      <RefTableName>employee</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <foreign-key id="49" parent="8">
+      <ColNames>skill_id</ColNames>
+      <RefTableName>skill</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <column id="50" parent="9" name="emp_id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="51" parent="9" name="train_id">
+      <Position>2</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <index id="52" parent="9" name="sqlite_autoindex_employee_training_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>emp_id
+train_id</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="53" parent="9">
+      <ColNames>emp_id
+train_id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_employee_training_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="54" parent="9">
+      <ColNames>emp_id</ColNames>
+      <RefTableName>employee</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <foreign-key id="55" parent="9">
+      <ColNames>train_id</ColNames>
+      <RefTableName>training</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <column id="56" parent="10" name="id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="57" parent="10" name="name">
+      <Position>2</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="58" parent="10" name="description">
+      <Position>3</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="59" parent="10" name="starting_date">
+      <Position>4</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="60" parent="10" name="ending_date">
+      <Position>5</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="61" parent="10" name="supervisor">
+      <Position>6</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <key id="62" parent="10">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <foreign-key id="63" parent="10">
+      <ColNames>supervisor</ColNames>
+      <RefTableName>employee</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <column id="64" parent="11" name="prj_id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="65" parent="11" name="skill_id">
+      <Position>2</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="66" parent="11" name="grade_required">
+      <Position>3</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <index id="67" parent="11" name="sqlite_autoindex_project_skill_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>prj_id
+skill_id</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="68" parent="11">
+      <ColNames>prj_id
+skill_id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_project_skill_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="69" parent="11">
+      <ColNames>prj_id</ColNames>
+      <RefTableName>project</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <foreign-key id="70" parent="11">
+      <ColNames>skill_id</ColNames>
+      <RefTableName>skill</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <column id="71" parent="12" name="id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="72" parent="12" name="name">
+      <Position>2</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="73" parent="12" name="description">
+      <Position>3</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <key id="74" parent="12">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="75" parent="13" name="id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="76" parent="13" name="name">
+      <Position>2</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="77" parent="13" name="description">
+      <Position>3</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <key id="78" parent="13">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="79" parent="14" name="id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="80" parent="14" name="name">
+      <Position>2</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="81" parent="14" name="description">
+      <Position>3</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="82" parent="14" name="type">
+      <Position>4</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <key id="83" parent="14">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="84" parent="15" name="type">
+      <Position>1</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="85" parent="15" name="name">
+      <Position>2</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="86" parent="15" name="tbl_name">
+      <Position>3</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="87" parent="15" name="rootpage">
+      <Position>4</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <column id="88" parent="15" name="sql">
+      <Position>5</Position>
+      <DataType>text|0s</DataType>
+    </column>
+    <column id="89" parent="16" name="id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="90" parent="16" name="name">
+      <Position>2</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="91" parent="16" name="starting_Date">
+      <Position>3</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="92" parent="16" name="ending_Date">
+      <Position>4</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="93" parent="16" name="hours">
+      <Position>5</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <key id="94" parent="16">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="95" parent="17" name="train_id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="96" parent="17" name="skill_id">
+      <Position>2</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="97" parent="17" name="points">
+      <Position>3</Position>
+      <DataType>INTEGER|0s</DataType>
+    </column>
+    <index id="98" parent="17" name="sqlite_autoindex_training_skill_1">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>train_id
+skill_id</ColNames>
+      <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
+    </index>
+    <key id="99" parent="17">
+      <ColNames>train_id
+skill_id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>sqlite_autoindex_training_skill_1</UnderlyingIndexName>
+    </key>
+    <foreign-key id="100" parent="17">
+      <ColNames>train_id</ColNames>
+      <RefTableName>training</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <foreign-key id="101" parent="17">
+      <ColNames>skill_id</ColNames>
+      <RefTableName>skill</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
+    <column id="102" parent="18" name="id">
+      <Position>1</Position>
+      <DataType>INTEGER|0s</DataType>
+      <NotNull>1</NotNull>
+    </column>
+    <column id="103" parent="18" name="name">
+      <Position>2</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="104" parent="18" name="surname">
+      <Position>3</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="105" parent="18" name="email">
+      <Position>4</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="106" parent="18" name="password">
+      <Position>5</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="107" parent="18" name="admin">
+      <Position>6</Position>
+      <DataType>BOOLEAN|0s</DataType>
+    </column>
+    <key id="108" parent="18">
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <check id="109" parent="18">
+      <Predicate>admin IN (0, 1)</Predicate>
+    </check>
+  </database-model>
+</dataSource>
