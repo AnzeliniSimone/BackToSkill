@@ -21,6 +21,7 @@ class Role(db.Model):
     name = db.Column(db.String)
     description = db.Column(db.String)
     employee = db.relationship("Employee")
+    skill = db.relationship("Skill", secondary="role_skill")
 
 
 class Employee(db.Model):
@@ -52,6 +53,7 @@ class Skill(db.Model):
     employee = db.relationship("Employee", secondary="employee_skill")
     training = db.relationship("Training", secondary="training_skill")
     project = db.relationship('Project', secondary="project_skill")
+    role = db.relationship("Role", secondary="role_skill")
 
 
 class Project(db.Model):
@@ -138,6 +140,18 @@ class Project_Skill(db.Model):
     # skill = db.relationship("Skill", back_populates="project")
     project = db.relationship("Project", backref='project_skill')
     skill = db.relationship("Skill", backref='project_skill')
+
+
+# // NEW ADDITIONS \\
+class Role_Skill(db.Model):
+    __tablename__ = 'role_skill'
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), primary_key=True)
+    skill_id = db.Column(db.Integer, db.ForeignKey('skill.id'), primary_key=True)
+    grade_required = db.Column(db.Integer)
+    # project = db.relationship("Project", back_populates="skill")
+    # skill = db.relationship("Skill", back_populates="project")
+    role = db.relationship("Role", backref='role_skill')
+    skill = db.relationship("Skill", backref='role_skill')
 
 
 def fill_employee(db):
@@ -376,4 +390,12 @@ def set_grade_skill_required_by_project(grade_required, prj_id, skill_id):
     prj_skill = Project_Skill.query.filter(Project_Skill.prj_id == prj_id and Project_Skill.skill_id == skill_id).first()
     if prj_skill:
         prj_skill.grade_required = grade_required
+        db.session.commit()
+
+
+# // New things \\
+def set_role_of_employee_in_project(prj_id, emp_id, role_id):
+    prj_employee = Employee_Project.query.filter(Employee_Project.prj_id == prj_id and Employee_Project.emp_id == emp_id).first()
+    if prj_employee:
+        prj_employee.role_id = role_id
         db.session.commit()
