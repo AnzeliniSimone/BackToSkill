@@ -3,11 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import datetime
 from database import *
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1234'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database_per_prove.db'
+bcrypt=Bcrypt(app)
 db.init_app(app)
+
 
 # /// ROUTES \\\
 # Here we define the routes used to get to the html pages and the functions performing the actions needed to retrieve
@@ -15,23 +18,10 @@ db.init_app(app)
 
 # I will subdivide the routes based on their "macro page"
 
-# @app.before_first_request
-# def create_all():
-#     db.drop_all()
-#     db.create_all()
-#     fillEmployee(db)
-#     # emp=Employee(name="Simone", surname="Anzelini", email="anze@yeah.com", date_of_birth=datetime.date(1997,4,5), driving_licence=True)
-#     #prj = Project(information...)
-#     # db.session.add(emp)
-#     # db.session.add(Employee_Project(0,0,employee=simone,project=prj))
-#     db.session.commit()
-
-
 # //MAIN PAGES (first dropdown menu)\\
 @app.route('/')
 @app.route('/home')
 def index():
-    trials()
     return render_template('index.html')
 
 
@@ -127,10 +117,6 @@ def login():
     return render_template('login.html')
 
 # Should think about adding a user page and also the functionality to add more users with different permissionss
-
-
-def trials():
-    print(get_employees_having_a_skill(3))
 
 if __name__ == '__main__':
     app.run(debug=True)

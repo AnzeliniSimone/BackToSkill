@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 from random import randint
+
 db = SQLAlchemy()
 
 
@@ -9,10 +10,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     surname = db.Column(db.String)
-    email = db.Column(db.String)
-    password = db.Column(db.String)
+    email = db.Column(db.String, nullable=False, unique=True)
+    password = db.Column(db.String, nullable=False)
     admin = db.Column(db.Boolean)
-    # TODO: AGGIUNGERE ENCRYPTION
 
 
 class Role(db.Model):
@@ -38,10 +38,9 @@ class Employee(db.Model):
     living_place = db.Column(db.String)
     driving_licence = db.Column(db.Boolean) #I would say we only specify whether he/she has it or not, so true or false
     role = db.Column(db.Integer, db.ForeignKey('role.id'))
-    # project = db.relationship("Employee_Project", back_populates="employee")
-    project = db.relationship("Project", secondary="employee_project")
     skill = db.relationship("Skill", secondary="employee_skill")
     training = db.relationship("Training", secondary="employee_training")
+    project_role = db.relationship("Project_Role")
 
 
 class Skill(db.Model):
@@ -52,7 +51,7 @@ class Skill(db.Model):
     type = db.Column(db.String) #HAS TO BE "Soft" OR "Hard", no other options
     employee = db.relationship("Employee", secondary="employee_skill")
     training = db.relationship("Training", secondary="training_skill")
-    project = db.relationship('Project', secondary="project_skill")
+    role_in_project = db.relationship('Role_in_project', secondary="role_in_project_skill")
     role = db.relationship("Role", secondary="role_skill")
 
 
@@ -63,8 +62,7 @@ class Project(db.Model):
     description = db.Column(db.String)
     starting_date = db.Column(db.String)
     ending_date = db.Column(db.String)
-    employee = db.relationship("Employee", secondary="employee_project")
-    skill = db.relationship("Skill", secondary="project_skill")
+    role_in_project = db.relationship("Role_in_project", secondary="project_role")
     supervisor = db.Column(db.Integer, db.ForeignKey('employee.id'))
 
 
@@ -73,7 +71,8 @@ class Role_in_project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     description = db.Column(db.String)
-    project_employee = db.relationship("Employee_Project")
+    project = db.relationship("Project", secondary="project_role")
+    skill = db.relationship("Skill", secondary="role_in_project_skill")
 
 
 class Training(db.Model):
@@ -92,22 +91,18 @@ class Employee_Skill(db.Model):
     emp_id = db.Column(db.Integer, db.ForeignKey('employee.id'), primary_key=True)
     skill_id = db.Column(db.Integer, db.ForeignKey('skill.id'), primary_key=True)
     grade = db.Column(db.Integer)
-    # employee = db.relationship("Employee", back_populates="skill")
-    # skill = db.relationship("Skill", back_populates="employee")
     employee = db.relationship("Employee", backref='employee_skill')
     skill = db.relationship("Skill", backref='employee_skill')
 
 
-class Employee_Project(db.Model):
-    __tablename__ = 'employee_project'
-    emp_id = db.Column(db.Integer, db.ForeignKey('employee.id'), primary_key=True)
+class Project_Role(db.Model):
+    __tablename__ = 'project_role'
+    role_id = db.Column(db.Integer, db.ForeignKey('role_in_project.id'), primary_key=True)
     prj_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('role_in_project.id'))
+    emp_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
     evaluation = db.Column(db.String)
-    # employee = db.relationship("Employee", back_populates="project")
-    # project = db.relationship("Project", back_populates="employee")
-    employee = db.relationship("Employee", backref='employee_project')
-    project = db.relationship("Project", backref='employee_project')
+    role_in_project = db.relationship("Role_in_project", backref='project_role')
+    project = db.relationship("Project", backref='project_role')
 
 
 class Training_Skill(db.Model):
@@ -115,8 +110,6 @@ class Training_Skill(db.Model):
     train_id = db.Column(db.Integer, db.ForeignKey('training.id'), primary_key=True)
     skill_id = db.Column(db.Integer, db.ForeignKey('skill.id'), primary_key=True)
     points = db.Column(db.Integer)
-    # training = db.relationship("Training", back_populates="skill")
-    # skill = db.relationship("Skill", back_populates="training")
     training = db.relationship("Training", backref='training_skill')
     skill = db.relationship("Skill", backref='training_skill')
 
@@ -125,21 +118,17 @@ class Employee_Training(db.Model):
     __tablename__ = 'employee_training'
     emp_id = db.Column(db.Integer, db.ForeignKey('employee.id'), primary_key=True)
     train_id = db.Column(db.Integer, db.ForeignKey('training.id'), primary_key=True)
-    # employee = db.relationship("Employee", back_populates="training")
-    # training = db.relationship("Training", back_populates="employee")
     employee = db.relationship("Employee", backref='employee_training')
     training = db.relationship("Training", backref='employee_training')
 
 
-class Project_Skill(db.Model):
-    __tablename__ = 'project_skill'
-    prj_id = db.Column(db.Integer, db.ForeignKey('project.id'), primary_key=True)
+class Role_in_project_Skill(db.Model):
+    __tablename__ = 'role_in_project_skill'
+    role_id = db.Column(db.Integer, db.ForeignKey('role_in_project.id'), primary_key=True)
     skill_id = db.Column(db.Integer, db.ForeignKey('skill.id'), primary_key=True)
     grade_required = db.Column(db.Integer)
-    # project = db.relationship("Project", back_populates="skill")
-    # skill = db.relationship("Skill", back_populates="project")
-    project = db.relationship("Project", backref='project_skill')
-    skill = db.relationship("Skill", backref='project_skill')
+    role_in_project = db.relationship("Role_in_project", backref='role_in_project_skill')
+    skill = db.relationship("Skill", backref='role_in_project_skill')
 
 
 # // NEW ADDITIONS \\
@@ -148,13 +137,11 @@ class Role_Skill(db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), primary_key=True)
     skill_id = db.Column(db.Integer, db.ForeignKey('skill.id'), primary_key=True)
     grade_required = db.Column(db.Integer)
-    # project = db.relationship("Project", back_populates="skill")
-    # skill = db.relationship("Skill", back_populates="project")
     role = db.relationship("Role", backref='role_skill')
     skill = db.relationship("Skill", backref='role_skill')
 
 
-def fill_employee(db):
+def fill_users(db):
     emp = Employee()
     for i in range(10):
         emp = Employee(name="Emp "+str(i+1), surname="loyee", email="emp"+str(i)+"@b2s.com", date_of_birth=datetime.date(randint(1965,1998),randint(1,12),randint(1,28)), driving_licence=True)
@@ -320,7 +307,7 @@ def get_hardskills_of_employee(emp_id):
 
 # Returns a list of all the employees having a given skill (identified by the id passed)
 def get_employees_having_a_skill(skill_id):
-    skill=Skill.query.filter(Skill.id == int(skill_id)).first()
+    skill=Skill.query.filter(Skill.id == skill_id).first()
     employees=skill.employee
     return employees
 
@@ -333,11 +320,17 @@ def get_gradeofskill_by_emp_skill(emp_id, skill_id):
     return grade
 
 
-def get_gradeofskillrequired_by_proj_skill(prj_id, skill_id):
-    link=Project_Skill.query.filter(Project_Skill.prj_id==prj_id and Project_Skill.skill_id==skill_id).first()
+def get_skills_required_by_role_in_project(role_id):
+    role = Role_in_project.query.filter(Role_in_project.id == role_id)
+    skills=role.skill
+    return skills
+
+
+def get_grade_of_skill_required_by_role_in_project(role_id, skill_id):
+    link=Role_in_project_Skill.query.filter(Role_in_project_Skill.role_id==role_id and Role_in_project_Skill.skill_id==skill_id).first()
     grade=0
     if link:
-        grade=link[0].grade_required
+        grade=link.grade_required
     return grade
 
 
@@ -349,11 +342,11 @@ def get_pointsassigned_by_training_to_skill(training_id, skill_id):
     return points
 
 
-def get_evaluation_by_proj_emp(prj_id, emp_id):
-    link=Employee_Project.query.filter(Employee_Project.prj_id==prj_id and Employee_Project.emp_id==emp_id).first()
+def get_evaluation_by_proj_emp_role(prj_id, emp_id, role_id):
+    project = Project_Role.query.filter(Project_Role.prj_id==prj_id and Project_Role.emp_id==emp_id and Project_Role.role_id==role_id)
     evaluation=''
-    if link:
-        evaluation=link[0].evaluation
+    if project:
+        evaluation = project.evaluation
     return evaluation
 
 
@@ -365,15 +358,15 @@ def set_grade_of_skill_of_employee(grade, emp_id, skill_id):
         db.session.commit()
 
 
-def increase_grade_of_skill_of_employee(points, emp_id, skill_id):
+def increase_grade_of_skill_of_employee(points_to_add, emp_id, skill_id):
     emp_skill = Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id and Employee_Skill.skill_id == skill_id).first()
     if emp_skill:
-        emp_skill.grade += points
+        emp_skill.grade += points_to_add
         db.session.commit()
 
 
-def set_evaluation_project_employee(evaluation, emp_id, prj_id):
-    emp_prj = Employee_Project.query.filter(Employee_Project.emp_id == emp_id and Employee_Project.prj_id == prj_id).first()
+def set_evaluation_project_employee_role(evaluation, emp_id, prj_id, role_id):
+    emp_prj = Project_Role.query.filter(Project_Role.emp_id == emp_id and Project_Role.prj_id == prj_id and Project_Role.role_id==role_id).first()
     if emp_prj:
         emp_prj.evaluation = evaluation
         db.session.commit()
@@ -386,16 +379,15 @@ def set_pointsassigned_by_training_to_skill(points, training_id, skill_id):
         db.session.commit()
 
 
-def set_grade_skill_required_by_project(grade_required, prj_id, skill_id):
-    prj_skill = Project_Skill.query.filter(Project_Skill.prj_id == prj_id and Project_Skill.skill_id == skill_id).first()
+def set_grade_skill_required_by_role_in_project(grade_required, role_id, skill_id):
+    prj_skill = Role_in_project_Skill.query.filter(Role_in_project_Skill.role_id == role_id and Role_in_project_Skill.skill_id == skill_id).first()
     if prj_skill:
         prj_skill.grade_required = grade_required
         db.session.commit()
 
 
-# // New things \\
 def set_role_of_employee_in_project(prj_id, emp_id, role_id):
-    prj_employee = Employee_Project.query.filter(Employee_Project.prj_id == prj_id and Employee_Project.emp_id == emp_id).first()
-    if prj_employee:
-        prj_employee.role_id = role_id
+    prj_role = Project_Role.query.filter(Project_Role.prj_id == prj_id and Project_Role.role_id == role_id).first()
+    if prj_role:
+        prj_role.emp_id = emp_id
         db.session.commit()
