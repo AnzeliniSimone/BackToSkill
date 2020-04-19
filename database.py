@@ -321,7 +321,7 @@ def get_gradeofskill_by_emp_skill(emp_id, skill_id):
 
 
 def get_skills_required_by_role_in_project(role_id):
-    role = Role_in_project.query.filter(Role_in_project.id == role_id)
+    role = Role_in_project.query.filter(Role_in_project.id == role_id).first()
     skills=role.skill
     return skills
 
