@@ -343,7 +343,7 @@ def get_pointsassigned_by_training_to_skill(training_id, skill_id):
 
 
 def get_evaluation_by_proj_emp_role(prj_id, emp_id, role_id):
-    project = Project_Role.query.filter(Project_Role.prj_id==prj_id and Project_Role.emp_id==emp_id and Project_Role.role_id==role_id)
+    project = Project_Role.query.filter(Project_Role.prj_id==prj_id and Project_Role.emp_id==emp_id and Project_Role.role_id==role_id).first()
     evaluation=''
     if project:
         evaluation = project.evaluation
