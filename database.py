@@ -313,7 +313,7 @@ def get_employees_having_a_skill(skill_id):
 
 
 def get_gradeofskill_by_emp_skill(emp_id, skill_id):
-    link=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id and Employee_Skill.skill_id==skill_id).first()
+    link=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id, Employee_Skill.skill_id==skill_id).first()
     grade=0
     if link:
         grade=link.grade
@@ -327,7 +327,7 @@ def get_skills_required_by_role_in_project(role_id):
 
 
 def get_grade_of_skill_required_by_role_in_project(role_id, skill_id):
-    link=Role_in_project_Skill.query.filter(Role_in_project_Skill.role_id==role_id and Role_in_project_Skill.skill_id==skill_id).first()
+    link=Role_in_project_Skill.query.filter(Role_in_project_Skill.role_id==role_id, Role_in_project_Skill.skill_id==skill_id).first()
     grade=0
     if link:
         grade=link.grade_required
@@ -335,7 +335,7 @@ def get_grade_of_skill_required_by_role_in_project(role_id, skill_id):
 
 
 def get_pointsassigned_by_training_to_skill(training_id, skill_id):
-    link=Training_Skill.query.filter(Training_Skill.train_id==training_id and Training_Skill.skill_id==skill_id).first()
+    link=Training_Skill.query.filter(Training_Skill.train_id==training_id, Training_Skill.skill_id==skill_id).first()
     points=0
     if link:
         points=link.points
@@ -343,7 +343,7 @@ def get_pointsassigned_by_training_to_skill(training_id, skill_id):
 
 
 def get_evaluation_by_proj_emp_role(prj_id, emp_id, role_id):
-    project = Project_Role.query.filter(Project_Role.prj_id==prj_id and Project_Role.emp_id==emp_id and Project_Role.role_id==role_id).first()
+    project = Project_Role.query.filter(Project_Role.prj_id==prj_id, Project_Role.emp_id==emp_id, Project_Role.role_id==role_id).first()
     evaluation=''
     if project:
         evaluation = project.evaluation
@@ -352,42 +352,42 @@ def get_evaluation_by_proj_emp_role(prj_id, emp_id, role_id):
 
 # // SETTERS \\
 def set_grade_of_skill_of_employee(grade, emp_id, skill_id):
-    emp_skill=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id and Employee_Skill.skill_id==skill_id).first()
+    emp_skill=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id, Employee_Skill.skill_id==skill_id).first()
     if emp_skill:
         emp_skill.grade = grade
         db.session.commit()
 
 
 def increase_grade_of_skill_of_employee(points_to_add, emp_id, skill_id):
-    emp_skill = Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id and Employee_Skill.skill_id == skill_id).first()
+    emp_skill = Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id, Employee_Skill.skill_id == skill_id).first()
     if emp_skill:
         emp_skill.grade += points_to_add
         db.session.commit()
 
 
 def set_evaluation_project_employee_role(evaluation, emp_id, prj_id, role_id):
-    emp_prj = Project_Role.query.filter(Project_Role.emp_id == emp_id and Project_Role.prj_id == prj_id and Project_Role.role_id==role_id).first()
+    emp_prj = Project_Role.query.filter(Project_Role.emp_id == emp_id, Project_Role.prj_id == prj_id, Project_Role.role_id==role_id).first()
     if emp_prj:
         emp_prj.evaluation = evaluation
         db.session.commit()
 
 
 def set_pointsassigned_by_training_to_skill(points, training_id, skill_id):
-    training_skill = Training_Skill.query.filter(Training_Skill.train_id == training_id and Training_Skill.skill_id == skill_id).first()
+    training_skill = Training_Skill.query.filter(Training_Skill.train_id == training_id, Training_Skill.skill_id == skill_id).first()
     if training_skill:
         training_skill.points = points
         db.session.commit()
 
 
 def set_grade_skill_required_by_role_in_project(grade_required, role_id, skill_id):
-    prj_skill = Role_in_project_Skill.query.filter(Role_in_project_Skill.role_id == role_id and Role_in_project_Skill.skill_id == skill_id).first()
+    prj_skill = Role_in_project_Skill.query.filter(Role_in_project_Skill.role_id == role_id, Role_in_project_Skill.skill_id == skill_id).first()
     if prj_skill:
         prj_skill.grade_required = grade_required
         db.session.commit()
 
 
 def set_role_of_employee_in_project(prj_id, emp_id, role_id):
-    prj_role = Project_Role.query.filter(Project_Role.prj_id == prj_id and Project_Role.role_id == role_id).first()
+    prj_role = Project_Role.query.filter(Project_Role.prj_id == prj_id, Project_Role.role_id == role_id).first()
     if prj_role:
         prj_role.emp_id = emp_id
         db.session.commit()
