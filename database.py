@@ -316,7 +316,7 @@ def get_gradeofskill_by_emp_skill(emp_id, skill_id):
     link=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id and Employee_Skill.skill_id==skill_id).first()
     grade=0
     if link:
-        grade=link[0].grade
+        grade=link.grade
     return grade
 
 
@@ -338,7 +338,7 @@ def get_pointsassigned_by_training_to_skill(training_id, skill_id):
     link=Training_Skill.query.filter(Training_Skill.train_id==training_id and Training_Skill.skill_id==skill_id).first()
     points=0
     if link:
-        points=link[0].points
+        points=link.points
     return points
 
 
