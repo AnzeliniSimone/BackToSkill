@@ -2,6 +2,9 @@ from flask import Flask, request, session, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import datetime
+
+from sqlalchemy import true, false
+
 from database import *
 from flask_bcrypt import Bcrypt
 
@@ -22,6 +25,11 @@ db.init_app(app)
 @app.route('/')
 @app.route('/home')
 def index():
+    #print(get_skills_required_by_role_in_project(1))
+    #print(get_employee_skill_by_id(1))
+    #print(get_gradeofskill_by_emp_skill(1,1))
+    prova()
+    #matchingAlgorithm(2)
     return render_template('index.html')
 
 
@@ -32,6 +40,7 @@ def guide():
 
 @app.route('/about')
 def about():
+    prova()
     return render_template('about.html')
 
 
@@ -120,3 +129,47 @@ def login():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+person1 = ["ss1", 8, "ts1", 6, "ss2", 7, "ts2", 9]
+person2 = ["ss1", 7, "ts1", 8, "ss2", 5, "ts2", 10]
+target = ["ss1", 7, 0.3, "ss2", 6, 0.6, "ts1", 6, 0.9, "ts2", 8, 0.7]
+candidate = []
+
+#def match():
+#    for x in range((len(target))//3):
+#        for y in range(2): #here will be number of real employees on database
+#            if (target[x*3] in person1) and (target[x*3]+1<=person1[x*]):
+#                candidate = person1[(person1.index(target[x*3]))+1] * target[(x*3)+2]
+#            if target[x*3] in person2:
+#                p2 = person2[(person2.index(target[x*3]))+1] * target[(x*3)+2]
+#    print(candidate)
+
+def matchingAlgorithm(role):
+    skilled_employees = []
+    skill_ids = get_skills_required_by_role_in_project(role)
+    employee_list = get_employees()
+    for employeeeees in employee_list:
+        y = employeeeees.id
+        employee_skills = get_employee_skill_by_id(y)
+        x = true
+        for skills in skill_ids:
+            z = false
+            for emp_skill in employee_skills:
+                if emp_skill == skills:
+                    z = true
+            if z == false:
+                x = false
+        if x == true:
+            tot = 0
+            for skills in skill_ids:
+                tot += get_gradeofskill_by_emp_skill(y, skills.id)
+                print(get_gradeofskill_by_emp_skill(y, skills.id))
+            skilled_employees.append(employeeeees)
+    print(skilled_employees)
+
+def prova():
+    skill_ids = get_skills_required_by_role_in_project(1)
+    for skills in skill_ids:
+        print(get_gradeofskill_by_emp_skill(1, skills.id))
+
+#grade = get_grade_of_skill_required_by_role_in_project(role, 1)

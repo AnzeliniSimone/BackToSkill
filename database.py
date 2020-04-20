@@ -157,6 +157,10 @@ def get_employees():
     employees.sort(key=lambda x: x.name)
     return employees
 
+def get_employee_skill_by_id(emp_id):
+    employee = Employee.query.filter(Employee.id == emp_id).first()
+    skills = employee.skill
+    return skills
 
 def get_employee_by_id(emp_id):
     return Employee.query.filter(Employee.id==emp_id).first()
@@ -316,19 +320,19 @@ def get_gradeofskill_by_emp_skill(emp_id, skill_id):
     link=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id and Employee_Skill.skill_id==skill_id).first()
     grade=0
     if link:
-        grade=link[0].grade
+        grade=link.grade
     return grade
 
 
 def get_skills_required_by_role_in_project(role_id):
-    role = Role_in_project.query.filter(Role_in_project.id == role_id)
-    skills=role.skill
+    role = Role_in_project.query.filter(Role_in_project.id == role_id).first()
+    skills = role.skill
     return skills
 
 
 def get_grade_of_skill_required_by_role_in_project(role_id, skill_id):
     link=Role_in_project_Skill.query.filter(Role_in_project_Skill.role_id==role_id and Role_in_project_Skill.skill_id==skill_id).first()
-    grade=0
+    grade = 0
     if link:
         grade=link.grade_required
     return grade
