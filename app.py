@@ -25,11 +25,7 @@ db.init_app(app)
 @app.route('/')
 @app.route('/home')
 def index():
-    #print(get_skills_required_by_role_in_project(1))
-    #print(get_employee_skill_by_id(1))
-    #print(get_gradeofskill_by_emp_skill(1,1))
-    prova()
-    #matchingAlgorithm(2)
+    matchingAlgorithm(1)
     return render_template('index.html')
 
 
@@ -40,7 +36,6 @@ def guide():
 
 @app.route('/about')
 def about():
-    prova()
     return render_template('about.html')
 
 
@@ -130,22 +125,11 @@ def login():
 if __name__ == '__main__':
     app.run(debug=True)
 
-person1 = ["ss1", 8, "ts1", 6, "ss2", 7, "ts2", 9]
-person2 = ["ss1", 7, "ts1", 8, "ss2", 5, "ts2", 10]
-target = ["ss1", 7, 0.3, "ss2", 6, 0.6, "ts1", 6, 0.9, "ts2", 8, 0.7]
-candidate = []
 
-#def match():
-#    for x in range((len(target))//3):
-#        for y in range(2): #here will be number of real employees on database
-#            if (target[x*3] in person1) and (target[x*3]+1<=person1[x*]):
-#                candidate = person1[(person1.index(target[x*3]))+1] * target[(x*3)+2]
-#            if target[x*3] in person2:
-#                p2 = person2[(person2.index(target[x*3]))+1] * target[(x*3)+2]
-#    print(candidate)
-
+skilled_employees = []
+unskilled_employees = []
+noskill_employees = []
 def matchingAlgorithm(role):
-    skilled_employees = []
     skill_ids = get_skills_required_by_role_in_project(role)
     employee_list = get_employees()
     for employeeeees in employee_list:
@@ -161,15 +145,40 @@ def matchingAlgorithm(role):
                 x = false
         if x == true:
             tot = 0
+            check = true
+            for skills in skill_ids:
+                eg = get_gradeofskill_by_emp_skill(y, skills.id)
+                rg = get_grade_of_skill_required_by_role_in_project(y, skills.id)
+                tot += eg
+                if eg<rg:
+                    check = false
+            if check == true:
+                skilled_employees.append(tuple([employeeeees, tot]))
+            else:
+                unskilled_employees.append(tuple([employeeeees, tot]))
+        else:
+            tot = 0
             for skills in skill_ids:
                 tot += get_gradeofskill_by_emp_skill(y, skills.id)
-                print(get_gradeofskill_by_emp_skill(y, skills.id))
-            skilled_employees.append(employeeeees)
-    print(skilled_employees)
-
-def prova():
-    skill_ids = get_skills_required_by_role_in_project(1)
-    for skills in skill_ids:
-        print(get_gradeofskill_by_emp_skill(1, skills.id))
-
-#grade = get_grade_of_skill_required_by_role_in_project(role, 1)
+            noskill_employees.append(tuple([employeeeees, tot]))
+    skilled_employees.sort(key=lambda tup: -tup[1])
+    unskilled_employees.sort(key=lambda tup: -tup[1])
+    noskill_employees.sort(key=lambda tup: -tup[1])
+    length = len(skilled_employees)
+    length2 = len(skilled_employees) + len(unskilled_employees)
+    if length >= 5:
+        print("First 5 employees who have every  grade of skill required:")
+        print("\n", skilled_employees)
+    elif length2 < 5 and length > 0:
+        print(length, "employees have every grade of skill required:")
+        print("\n", skilled_employees)
+        print("Other options:")
+        if len(unskilled_employees) > 0:
+            print("\nEmployees who do not have every grade of skill required:")
+            print("\n", unskilled_employees)
+        print("Employees who do not have every skill required:")
+        n = 0
+        while length2 < 5 and noskill_employees[n][1] > 0:
+            print("\n", noskill_employees[n])
+            n = n+1
+            length2 = length2 + 1
