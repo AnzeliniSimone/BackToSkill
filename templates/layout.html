@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 {#This is the main skeleton for the website, it is the page that most of the other pages will use (by 'extend' feature) to provide the
 user with the navbar and the main buttons like login and logout. Plus, it gives basic style to the website, so that if we want to make some
-changes in the layout of main components we just have to do it once in this file#}
+changes in the layout of main components we just have to do it once in this file
+
+things to do:
+x slide down mode
+x nice layout
+x guide page
+x all the texts
+
+#}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,9 +25,15 @@ changes in the layout of main components we just have to do it once in this file
 </head>
 
 <body>
+
+    <div class="view" style="background-image: url('https://www.touchsupport.com/wp-content/uploads/2015/06/picjumbo.com_HNCK3562.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center center;">
+
+</body>
+
+<body>
     <header>
         <!-- navbar with login button, probably to change into a dropdown with options: my profile, logout-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light" id="loginNavbar">
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark" id="loginNavbar">
 {#        logo#}
             <a class="navbar-brand" href="/home"><img src="/static/images/Logosmall.png" alt=""></a>
 {#        check on authentication, if user logged in it shows logout button and link to user profile#}
@@ -33,7 +47,7 @@ changes in the layout of main components we just have to do it once in this file
         </nav>
 
         <!-- navbar with dropdown buttons to navigate the site-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light" id="menuNavbar">
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark" id="menuNavbar">
 {#            button for responsive purposes, makes the navbar collapse when screen is too little#}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -45,22 +59,25 @@ changes in the layout of main components we just have to do it once in this file
 
               <ul class="navbar-nav mr-auto">
 
+
+
                  <!-- Main page dropdown button -->
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="homepageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Home
+                      <p class="text-white">Home</p>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="homepageDropdown">
                         <a class="dropdown-item" href="/home">Welcome</a>
                         <a class="dropdown-item" href="/guide">Guide</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/about">About BackToSkill</a>
+                        <a class="dropdown-item" href="/team">Meet our team</a>
                     </div>
                   </li>
 
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="/skills" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Skills
+                      <p class="text-white">Skills</p>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="skillsDropdown">
                       <a class="dropdown-item" href="/skills/soft">Soft skills list</a>
@@ -69,20 +86,20 @@ changes in the layout of main components we just have to do it once in this file
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link" href="/employees" id="employeesButton" role="button" aria-haspopup="true" aria-expanded="false">
-                      Employees
+                    <a class="nav-link" href="/employees" id="employeesButton" role="button" aria-haspopup="true" aria-expanded="false" >
+                      <p class="text-white">Employees</p>
                     </a>
                   </li>
 
                   <li class="nav-item">
                     <a class="nav-link" href="/jobs" id="jobsButton" role="button" aria-haspopup="true" aria-expanded="false">
-                      Job Openings
+                      <p class="text-white">Job Openings</p>
                     </a>
                   </li>
 
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="trainingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Trainings
+                      <p class="text-white">Trainings</p>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="trainingsDropdown">
                       <a class="dropdown-item" href="/trainings">Courses list</a>
@@ -93,7 +110,7 @@ changes in the layout of main components we just have to do it once in this file
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Projects
+                          <p class="text-white">Projects</p>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="projectsDropdown">
                           <a class="dropdown-item" href="/projects/all">Projects list</a>
@@ -113,12 +130,18 @@ changes in the layout of main components we just have to do it once in this file
         </nav>
     </header>
 
+
+
 {#    container for the "dynamic" content, will be overwritten in every different page#}
     <main role="main" id="main-container">
+
         {% block pageContent %}
         {% endblock %}
+
     </main>
+
 </body>
+
 
 <footer class="page-footer font-small blue pt-4">
 
