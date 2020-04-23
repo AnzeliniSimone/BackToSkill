@@ -1,0 +1,88 @@
+{% extends "index.html" %}
+
+{% block sectionContent %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+    <!-- Header -->
+    <header class="text-center py-2 mb-1">
+        <div class="container">
+            <h1 class="font-weight-light text-white">Meet our Team</h1>
+        </div>
+    </header>
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <!-- Team Member 1 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="https://source.unsplash.com/TMgQMXoglsM/500x350" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Simone Anzelini</h5>
+                        <div class="card-text text-black-50">Management Engineer</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 2 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="https://source.unsplash.com/9UVmlIb0wJU/500x350" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Francesco De Zorzi</h5>
+                        <div class="card-text text-black-50">Management Engineer</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 3 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="https://source.unsplash.com/sNut2MqSmds/500x350" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Francesco Del Fabbro</h5>
+                        <div class="card-text text-black-50">Management Engineer</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 4 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="https://source.unsplash.com/ZI6p3i9SbVU/500x350" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Giulia Ioannone</h5>
+                        <div class="card-text text-black-50">Management Engineer</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 5 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="https://source.unsplash.com/ZI6p3i9SbVU/500x350" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Bek</h5>
+                        <div class="card-text text-black-50">Management Engineer</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 6 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="https://source.unsplash.com/ZI6p3i9SbVU/500x350" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Matteo Piovesan</h5>
+                        <div class="card-text text-black-50">Management Engineer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+
+
+{% endblock %}
