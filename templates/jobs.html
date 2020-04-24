@@ -4,8 +4,130 @@
 <head>
     <meta charset="UTF-8">
     <title>Jobs</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
+ {% block pageContent %}
+     <div class="row">
+        <div class="col-md-2">
+          <div class="content-section">
+              <div class="list-group">
+                     <!--inizia la creazione del modal-->
+                                  <div class="container">
+                                      <div class="row">
+                                          <div class="col-md-12">
+                                              <div class="modal fade" id="myModal">
+                                                  <div class="modal-dialog modal-lg" >
+                                                      <div class="modal-content">
+                                                          <div class="modal-header ">
+                                                              <h1>Add Job</h1>
+                                                          </div>
+                                                          <div class="modal-body ">
+                                                               <label for="Title">Title</label>
+                                                               <input type="text" class="form-control" id="Title">
+                                                              <label for="Role">Role</label>
+                                                               <input type="text" class="form-control" id="Role">
+                                                              <label for="Deadline">Deadline</label>
+                                                               <input type="text" class="form-control" id="Deadline" placeholder="xx-xx-xxxx">
+                                                              <label for="exampleFormControlSelect2">Softskill required</label>
+                                                              <select multiple class="form-control" id="exampleFormControlSelect2" >
+                                                                 {% for skill in softskill %}
+                                                                  <option>{{ skill.name}}</option>
+                                                                 {% endfor %}
+                                                              </select>
+                                                                <label for="exampleFormControlSelect2">Hardskill required</label>
+                                                              <select multiple class="form-control" id="exampleFormControlSelect2" >
+                                                                 {% for skill in hardskill %}
+                                                                  <option>{{ skill.name}}</option>
+                                                                 {% endfor %}
+                                                              </select>
+                                                          </div>
+                                                          <div class="modal-footer ">
+                                                              <input class="btn btn-primary" data-dismiss="modal" value="add"> <!--data dismiss sarà da modificare-->
+                                                          </div>
+                                                      </div>
+
+                                                  </div>
+                                              </div>
+                                              <a href="#" data-toggle="modal" data-target="#myModal">ADD JOB</a>
+                                          </div>
+                                      </div>
+                                  </div>
+                        <!--fine modal -->
+              </div>
+          </div>
+        </div>
+
+           <div class="col-md-10">
+{#          Table for the jobs that will be taken out from the db#}
+              {% block sectionContent %}
+                  <h1>List of jobs </h1>
+                  <div class="table-responsive" style="text-align:center">
+                      <table style="width:100%"  class="table table-hover">
+                          <thead>
+                            <tr>
+                              <th>Jobs open</th>
+                            </tr>
+                          </thead>
+                              <tbody>
+                                <tr>
+                                    <td>
+                                      <table style="width: 100% ">
+                                        <thead>
+                                         <tr>
+                                             <th>#</th>
+                                             <th>job</th>
+                                             <th>description</th>
+                                         </tr>
+                                       </thead>
+                                       <tbody>
+                                         {% for role in role %}
+                                            <tr>
+                                              <th scope="row">{{ loop.index }}</th>
+                                                <td><a href="/EmployeeJob/{{ role.id }}"> {{ role.name }} </a></td>
+                                                <td>{{ role.description}}</td>
+                                            </tr>
+                                         {% endfor %}
+                                       </tbody>
+                                     </table>
+                                    </td>
+                                   </tr>
+                                 <script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+                                 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+                                 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+                              </tbody>
+                      </table>
+                      <table style="width:100%" class="table table-hover">
+                          <thead>
+                            <tr>
+                                <th>Jobs closed</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                             <tr>
+                                <td>
+                                  <table style="width:100%">
+                                     <thead>
+                                       <tr>
+                                           <th>#</th>
+                                           <th>job</th>
+                                           <th>employee assignated</th>
+                                         </tr>
+                                       </thead>
+                                       <tbody>
+
+                                       </tbody>
+                                       </table>
+                                     </td>
+                            </tr>
+                          </tbody>
+                      </table>
+                  </div>
+                  </div>
+   {% endblock %}
+
+{% endblock %}
+
 
 </body>
 </html>
