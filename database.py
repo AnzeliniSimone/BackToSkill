@@ -169,6 +169,15 @@ def get_projects():
     return projects
 
 
+def get_role_by_id(role_id):
+    return Role.query.filter(Role.id==role_id).first()
+
+def get_skills_required_by_role(role_id):
+    role = Role.query.filter(Role.id == role_id).first()
+    skill_list=role.skill
+    return skill_list
+
+
 def get_project_by_id(prj_id):
     return Project.query.filter(Project.id==prj_id).first()
 

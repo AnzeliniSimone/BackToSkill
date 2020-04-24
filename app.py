@@ -69,7 +69,17 @@ def employee(id):
 # //JOBS PAGES\\
 @app.route('/jobs')
 def jobs():
-    return render_template('jobs.html')
+    soft_skill=get_soft_skills()
+    hard_skill=get_hard_skills()
+    roles=get_roles()
+    return render_template('jobs.html',softskill=soft_skill,hardskill=hard_skill,role=roles)
+
+@app.route('/EmployeeJob/<int:id>')
+def EmployeeJob(id):
+    role=get_role_by_id(id)
+    skill=get_skills_required_by_role(id)
+    return render_template('EmployeeJob.html', role=role,skill=skill)
+
 
 # //TRAININGS PAGES (trainings dropdown)\\
 @app.route('/trainings/<period>')
