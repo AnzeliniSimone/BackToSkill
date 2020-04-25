@@ -157,6 +157,10 @@ def get_employees():
     employees.sort(key=lambda x: x.name)
     return employees
 
+def get_employee_skill_by_id(emp_id):
+    employee = Employee.query.filter(Employee.id == emp_id).first()
+    skills = employee.skill
+    return skills
 
 def get_employee_by_id(emp_id):
     return Employee.query.filter(Employee.id==emp_id).first()

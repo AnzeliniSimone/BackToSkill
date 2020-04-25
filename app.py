@@ -2,6 +2,9 @@ from flask import Flask, request, session, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import datetime
+
+from sqlalchemy import true, false
+
 from database import *
 from flask_bcrypt import Bcrypt
 
@@ -22,6 +25,7 @@ db.init_app(app)
 @app.route('/')
 @app.route('/home')
 def index():
+    matchingAlgorithm(1)
     return render_template('index.html')
 
 
@@ -130,3 +134,61 @@ def login():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+skilled_employees = []
+unskilled_employees = []
+noskill_employees = []
+def matchingAlgorithm(role):
+    skill_ids = get_skills_required_by_role_in_project(role)
+    employee_list = get_employees()
+    for employeeeees in employee_list:
+        y = employeeeees.id
+        employee_skills = get_employee_skill_by_id(y)
+        x = true
+        for skills in skill_ids:
+            z = false
+            for emp_skill in employee_skills:
+                if emp_skill == skills:
+                    z = true
+            if z == false:
+                x = false
+        if x == true:
+            tot = 0
+            check = true
+            for skills in skill_ids:
+                eg = get_gradeofskill_by_emp_skill(y, skills.id)
+                rg = get_grade_of_skill_required_by_role_in_project(y, skills.id)
+                tot += eg
+                if eg<rg:
+                    check = false
+            if check == true:
+                skilled_employees.append(tuple([employeeeees, tot]))
+            else:
+                unskilled_employees.append(tuple([employeeeees, tot]))
+        else:
+            tot = 0
+            for skills in skill_ids:
+                tot += get_gradeofskill_by_emp_skill(y, skills.id)
+            noskill_employees.append(tuple([employeeeees, tot]))
+    skilled_employees.sort(key=lambda tup: -tup[1])
+    unskilled_employees.sort(key=lambda tup: -tup[1])
+    noskill_employees.sort(key=lambda tup: -tup[1])
+    length = len(skilled_employees)
+    length2 = len(skilled_employees) + len(unskilled_employees)
+    if length >= 5:
+        print("First 5 employees who have every  grade of skill required:")
+        print("\n", skilled_employees)
+    elif length2 < 5 and length > 0:
+        print(length, "employees have every grade of skill required:")
+        print("\n", skilled_employees)
+        print("Other options:")
+        if len(unskilled_employees) > 0:
+            print("\nEmployees who do not have every grade of skill required:")
+            print("\n", unskilled_employees)
+        print("Employees who do not have every skill required:")
+        n = 0
+        while length2 < 5 and noskill_employees[n][1] > 0:
+            print("\n", noskill_employees[n])
+            n = n+1
+            length2 = length2 + 1
