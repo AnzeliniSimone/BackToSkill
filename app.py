@@ -72,13 +72,21 @@ def jobs():
     soft_skill=get_soft_skills()
     hard_skill=get_hard_skills()
     roles=get_roles()
-    return render_template('jobs.html',softskill=soft_skill,hardskill=hard_skill,role=roles)
+    open=[]
+    closed=[]
+    for job in roles:
+        if job.employee:
+            closed.append(job)
+        else:
+            open.append(job)
+    return render_template('jobs.html',softskill=soft_skill,hardskill=hard_skill,role=roles,open=open,closed=closed)
 
 @app.route('/EmployeeJob/<int:id>')
 def EmployeeJob(id):
     role=get_role_by_id(id)
     skill=get_skills_required_by_role(id)
-    return render_template('EmployeeJob.html', role=role,skill=skill)
+    skill_id=get_skill_id_of_a_role(id)
+    return render_template('EmployeeJob.html', role=role,skill=skill,grade =skill_id)
 
 
 # //TRAININGS PAGES (trainings dropdown)\\

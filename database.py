@@ -178,6 +178,13 @@ def get_skills_required_by_role(role_id):
     return skill_list
 
 
+def get_skill_id_of_a_role(role_id):
+    role=Role_Skill.query.filter(Role_Skill.role_id==role_id).all()
+    return role
+
+
+
+
 def get_project_by_id(prj_id):
     return Project.query.filter(Project.id==prj_id).first()
 
@@ -231,7 +238,7 @@ def get_soft_skills():
 
 # Returns a list of all the hardskills
 def get_hard_skills():
-    hs=Skill.query.filter(Skill.type=="hard" or Skill.type=="Hoft").all()
+    hs=Skill.query.filter(Skill.type=="hard" or Skill.type=="Hard").all()
     hs.sort(key=lambda x: x.name)
     return hs
 

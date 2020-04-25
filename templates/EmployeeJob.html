@@ -1,4 +1,5 @@
 <!--manca extend layout-->
+{% extends 'layout.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +8,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
-    {% block PageContent %}
+    {% block pageContent %}
         <div class="col-md-10">
             {% block sectionContent %}
                 <h3>Job: {{ role.name }}</h3>
@@ -27,15 +28,24 @@
                     <table class="table table-hover">
                         <thead>
                          <tr>
-                             <th>Skills required</th>
+                             <th>Skills required</th> <th>Grade required</th>
                          </tr>
                         </thead>
                         <tbody>
-                               {% for skill in skill %}
-                                   <tr>
-                                   <td> {{ skill.name }} </td>
-                                   <tr>
-                               {% endfor %}
+
+                        {% for skill in skill %}
+                             <tr>
+                               <td>{{ skill.name }}</td>
+                               <td>
+                                {% for grade in grade %}
+                                 {% if grade.skill_id == skill.id%}
+                                       {{ grade.grade_required }}
+                                   {% endif %}
+                                {% endfor %}
+                               </td>
+                             </tr>
+                        {% endfor %}
+
                         </tbody>
                     </table>
                 </div>

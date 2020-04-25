@@ -12,7 +12,7 @@
         <div class="col-md-2">
           <div class="content-section">
               <div class="list-group">
-                     <!--inizia la creazione del modal-->
+                     <!--modal creation-->
                                   <div class="container">
                                       <div class="row">
                                           <div class="col-md-12">
@@ -35,12 +35,18 @@
                                                                   <option>{{ skill.name}}</option>
                                                                  {% endfor %}
                                                               </select>
+
+                                                              <label for="grade">Grade Required</label>
+                                                                <input type="int" class="form-control" id="grade" placeholder="grade">
+
                                                                 <label for="exampleFormControlSelect2">Hardskill required</label>
                                                               <select multiple class="form-control" id="exampleFormControlSelect2" >
                                                                  {% for skill in hardskill %}
                                                                   <option>{{ skill.name}}</option>
                                                                  {% endfor %}
                                                               </select>
+                                                              <label for="grade">Grade Required</label>
+                                                                <input type="int" class="form-control" id="grade" placeholder="grade">
                                                           </div>
                                                           <div class="modal-footer ">
                                                               <input class="btn btn-primary" data-dismiss="modal" value="add"> <!--data dismiss sarà da modificare-->
@@ -53,7 +59,7 @@
                                           </div>
                                       </div>
                                   </div>
-                        <!--fine modal -->
+                        <!--end modal -->
               </div>
           </div>
         </div>
@@ -81,7 +87,7 @@
                                          </tr>
                                        </thead>
                                        <tbody>
-                                         {% for role in role %}
+                                         {% for role in open %}
                                             <tr>
                                               <th scope="row">{{ loop.index }}</th>
                                                 <td><a href="/EmployeeJob/{{ role.id }}"> {{ role.name }} </a></td>
@@ -115,7 +121,13 @@
                                          </tr>
                                        </thead>
                                        <tbody>
-
+                                       {% for role in closed %}
+                                            <tr>
+                                              <th scope="row">{{ loop.index }}</th>
+                                                <td><a href="/EmployeeJob/{{ role.id }}"> {{ role.name }} </a></td>
+                                                <td>{{ role.employee}}</td>
+                                            </tr>
+                                         {% endfor %}
                                        </tbody>
                                        </table>
                                      </td>
@@ -129,5 +141,5 @@
 {% endblock %}
 
 
-</body>
+ </body>
 </html>
