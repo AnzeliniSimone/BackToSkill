@@ -33,14 +33,18 @@ class Employee(db.Model):
     surname = db.Column(db.String)
     email = db.Column(db.String)
     telephone = db.Column(db.String)
-    date_of_birth = db.Column(db.String)
-    date_of_assumption = db.Column(db.String)
+    date_of_birth = db.Column(db.Date)
+    date_of_assumption = db.Column(db.Date)
     living_place = db.Column(db.String)
     driving_licence = db.Column(db.Boolean) #I would say we only specify whether he/she has it or not, so true or false
     role = db.Column(db.Integer, db.ForeignKey('role.id'))
     skill = db.relationship("Skill", secondary="employee_skill")
     training = db.relationship("Training", secondary="employee_training")
     project_role = db.relationship("Project_Role")
+#   To ADD
+# state_in_company = db.Column(db.String)
+# education_level = db.Column(db.String)
+# AGGIUNGERE CLASSE LANGUAGE CERTIFICATE
 
 
 class Skill(db.Model):
@@ -60,8 +64,8 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     description = db.Column(db.String)
-    starting_date = db.Column(db.String)
-    ending_date = db.Column(db.String)
+    starting_date = db.Column(db.Date)
+    ending_date = db.Column(db.Date)
     role_in_project = db.relationship("Role_in_project", secondary="project_role")
     supervisor = db.Column(db.Integer, db.ForeignKey('employee.id'))
 
@@ -79,8 +83,8 @@ class Training(db.Model):
     __tablename__ = 'training'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    starting_Date = db.Column(db.String)
-    ending_Date = db.Column(db.String)
+    starting_Date = db.Column(db.Date)
+    ending_Date = db.Column(db.Date)
     hours = db.Column(db.Integer)
     skill = db.relationship("Skill", secondary="training_skill")
     employee = db.relationship("Employee", secondary="employee_training")
@@ -157,6 +161,10 @@ def get_employees():
     employees.sort(key=lambda x: x.name)
     return employees
 
+def get_employee_skill_by_id(emp_id):
+    employee = Employee.query.filter(Employee.id == emp_id).first()
+    skills = employee.skill
+    return skills
 
 def get_employee_by_id(emp_id):
     return Employee.query.filter(Employee.id==emp_id).first()
@@ -169,8 +177,20 @@ def get_projects():
     return projects
 
 
+def get_projects_and_supervisors():
+    projects=Project.query.all()
+    projects.sort(key=lambda x: x.name)
+    supervisors = []
+    for prj in projects:
+        if prj.supervisor:
+            supervisors.append(get_employee_by_id(prj.supervisor))
+    supervisors = list(dict.fromkeys(supervisors))
+    return projects, supervisors
+
+
 def get_role_by_id(role_id):
     return Role.query.filter(Role.id==role_id).first()
+
 
 def get_skills_required_by_role(role_id):
     role = Role.query.filter(Role.id == role_id).first()
@@ -192,15 +212,23 @@ def get_project_by_id(prj_id):
 # Returns a list of all the past projects
 def get_past_projects():
     past_prj=Project.query.filter(Project.ending_date < datetime.date.today()).all()
-    past_prj.sort(key=lambda x: x.name)
-    return past_prj
+    supervisors = []
+    for prj in past_prj:
+        if prj.supervisor:
+            supervisors.append(get_employee_by_id(prj.supervisor))
+    supervisors = list(dict.fromkeys(supervisors))
+    return past_prj, supervisors
 
 
 # Returns a list of all the current projects
 def get_current_projects():
     curr_prj=Project.query.filter(Project.ending_date >= datetime.date.today()).all()
-    curr_prj.sort(key=lambda x: x.name)
-    return curr_prj
+    supervisors = []
+    for prj in curr_prj:
+        if prj.supervisor:
+            supervisors.append(get_employee_by_id(prj.supervisor))
+    supervisors = list(dict.fromkeys(supervisors))
+    return curr_prj, supervisors
 
 
 # Returns a list of all the users
@@ -407,3 +435,17 @@ def set_role_of_employee_in_project(prj_id, emp_id, role_id):
     if prj_role:
         prj_role.emp_id = emp_id
         db.session.commit()
+
+
+def add_project_todb(name, description=None, start=None, end=None, supervisor=None):
+    prj = Project(name=name, description=description,starting_date=start,ending_date=end,supervisor=supervisor)
+    db.session.add(prj)
+    db.session.commit()
+    just_added = Project.query.order_by(Project.id.desc()).first()
+    return just_added.id
+
+
+def add_role_to_project(prj_id, role_id):
+    prj_role = Project_Role(role_id=role_id, prj_id=prj_id)
+    db.session.add(prj_role)
+    db.session.commit()
