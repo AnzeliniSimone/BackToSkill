@@ -25,7 +25,6 @@ db.init_app(app)
 @app.route('/')
 @app.route('/home')
 def index():
-    matchingAlgorithm(1)
     return render_template('index.html')
 
 
