@@ -161,6 +161,10 @@ def get_employees():
     employees.sort(key=lambda x: x.name)
     return employees
 
+def get_employee_skill_by_id(emp_id):
+    employee = Employee.query.filter(Employee.id == emp_id).first()
+    skills = employee.skill
+    return skills
 
 def get_employee_by_id(emp_id):
     return Employee.query.filter(Employee.id==emp_id).first()
@@ -182,6 +186,16 @@ def get_projects_and_supervisors():
             supervisors.append(get_employee_by_id(prj.supervisor))
     supervisors = list(dict.fromkeys(supervisors))
     return projects, supervisors
+
+
+def get_role_by_id(role_id):
+    return Role.query.filter(Role.id==role_id).first()
+
+
+def get_skills_required_by_role(role_id):
+    role = Role.query.filter(Role.id == role_id).first()
+    skill_list=role.skill
+    return skill_list
 
 
 def get_project_by_id(prj_id):
