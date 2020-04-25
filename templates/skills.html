@@ -45,6 +45,44 @@
               {% endblock %}
           </div>
       </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="modal fade" id="myModal">
+                        <div class="modal-dialog modal-lg" >
+                            <div class="modal-content">
+                                <div class="modal-header ">
+                                    <h1>Add Skill</h1>
+                                </div>
+                                <div class="modal-body ">
+                                    <label for="Name">Name</label>
+                                    <input type="text" class="form-control" id="Name">
+                                    <label for="skill_type">Skill type</label>
+                                    <div></div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="hard_skill" value="hard_skill">
+                                        <label class="form-check-label" for="hard_skill">Technical skill</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="soft_skill" value="soft_skill">
+                                        <label class="form-check-label" for="soft_skill">Hard_skill</label>
+                                    </div>
+                                    <div></div>
+                                    <label for="Description">Description</label>
+                                    <textarea class="form-control" id="Description" rows="5"></textarea>
+                                </div>
+                                <div class="modal-footer ">
+                                    <input class="btn btn-primary" data-dismiss="modal" value="add"> <!--data dismiss sarà da modificare-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" data-toggle="modal" data-target="#myModal" class="btn btn-danger rounded-circle position-fixed" style="bottom:5px;right:5px;margin:5px;">+</a>
+                </div>
+            </div>
+        </div>
+
     {% endblock %}
 </body>
 </html>
