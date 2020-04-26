@@ -39,8 +39,20 @@ def about():
 
 
 # //SKILLS PAGES (second dropdown menu)\\
+
+@app.route('/skills', methods=['GET', 'POST'])
 @app.route('/skills/<kind>')
-def skill(kind):
+def skills(kind="soft"):
+    if request.method == 'POST':
+        name = str(request.form.get('skill_name'))
+        kind = request.form.get('skill_type')
+
+        #TODO: rinominare tutte le variabili in "Soft" e "Hard"
+
+        desc = str(request.form.get('desc'))
+        add_skill(name, kind, desc)
+
+
     skills_list=[]
     if kind == "soft":
         skills_list = get_soft_skills()

@@ -23,10 +23,12 @@
                   <div class="table-responsive">
                       <table class="table table-hover">
                           <thead>
+                          <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
                             <tr>
                               <th scope="col">#</th>
                               <th scope="col">Name</th>
                               <th scope="col">Description</th>
+                              <th scope="col">Actions</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -36,53 +38,60 @@
                                       <th scope="row">{{ loop.index }}</th>
                                       <td>{{skill.name}}</td>
                                       <td>{{ skill.description }}</td>
+                                      <td>
+                                        <button type="button" class="btn btn-primary><i class="material-icons" style="color: goldenrod">&#xE254;</i></button>
+                                        <a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons" style="color: firebrick">&#xE872;</i></a>
+                                      </td>
                                   </tr>
                               {% endfor %}
                           </tbody>
                       </table>
                   </div>
 
-              {% endblock %}
-          </div>
-      </div>
+                  <button type="button" class="btn btn-primary rounded-circle position-fixed" style="bottom:15px;right:15px;margin:5px;" data-toggle="modal" data-target="#newProjectModal">
+                      +
+                  </button>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="modal fade" id="myModal">
-                        <div class="modal-dialog modal-lg" >
-                            <div class="modal-content">
-                                <div class="modal-header ">
-                                    <h1>Add Skill</h1>
-                                </div>
+                  <!-- Modal -->
+                  <div class="modal fade bd-example-modal-lg" id="newProjectModal" tabindex="-1" role="dialog" aria-labelledby="newProjectModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header ">
+                                <h1>Add Skill</h1>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                            </div>
+                            <form action="{{ url_for('skills') }}" method="POST">
                                 <div class="modal-body ">
                                     <label for="Name">Name</label>
-                                    <input type="text" class="form-control" id="Name">
-                                    <label for="skill_type">Skill type</label>
+                                    <input type="text" class="form-control" id="Name" name="skill_name" placeholder="Name of the skill" required>
+                                    <label for="skill">Skill type</label>
                                     <div></div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="hard_skill" value="hard_skill">
-                                        <label class="form-check-label" for="hard_skill">Technical skill</label>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" id="hardSkill" name="skill_type" value="Hard" required>
+                                        <label class="custom-control-label" for="hardSkill">Technical</label>
                                     </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="soft_skill" value="soft_skill">
-                                        <label class="form-check-label" for="soft_skill">Hard_skill</label>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" id="softSkill" name="skill_type" value="Soft" required>
+                                        <label class="custom-control-label" for="softSkill"> Soft </label>
                                     </div>
                                     <div></div>
                                     <label for="Description">Description</label>
-                                    <textarea class="form-control" id="Description" rows="5"></textarea>
+                                    <textarea class="form-control" id="Description" rows="5" name="desc" placeholder="Description of the skill" required></textarea>
                                 </div>
                                 <div class="modal-footer ">
-                                    <input class="btn btn-primary" data-dismiss="modal" value="add"> <!--data dismiss sarà da modificare-->
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
-                    <a href="#" data-toggle="modal" data-target="#myModal" class="btn btn-danger rounded-circle position-fixed" style="bottom:5px;right:5px;margin:5px;">+</a>
-                </div>
-            </div>
+                  </div>
+              {% endblock %}
+          </div>
         </div>
-
     {% endblock %}
+
 </body>
 </html>
