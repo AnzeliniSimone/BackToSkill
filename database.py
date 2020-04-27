@@ -395,7 +395,18 @@ def get_evaluation_by_proj_emp_role(prj_id, emp_id, role_id):
     return evaluation
 
 
+def get_number_of_skills():
+    descending = Skill.query.order_by(Skill.id.desc())
+    return descending.first().id
+
 # // SETTERS \\
+
+def add_skill(name, skill_type, desc):
+    skill = Skill(id=get_number_of_skills()+1, name=name, description=desc, type=skill_type)
+    db.session.add(skill)
+    db.session.commit()
+
+
 def set_grade_of_skill_of_employee(grade, emp_id, skill_id):
     emp_skill=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id, Employee_Skill.skill_id==skill_id).first()
     if emp_skill:

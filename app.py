@@ -39,17 +39,26 @@ def about():
 
 
 # //SKILLS PAGES (second dropdown menu)\\
+
+@app.route('/skills', methods=['GET', 'POST'])
 @app.route('/skills/<kind>')
-def skill(kind):
-    # skills_list=[]
-    #
-    # if kind == "soft":
-    #     skills_list = [SoftSkill("ss1", "una skill"), SoftSkill("ss2","due skill")]
-    # elif kind == "technical":
-    #     skills_list = [HardSkill("hs1","una hard skill"), HardSkill("hs2", "due hard skill")]
-    #
-    # return render_template('skills.html', skills=skills_list, skill_type=kind)
-    return render_template('skills.html', skill_type=kind)
+def skills(kind="soft"):
+    if request.method == 'POST':
+        name = str(request.form.get('skill_name'))
+        kind = request.form.get('skill_type')
+
+        #TODO: rinominare tutte le variabili in "Soft" e "Hard"
+
+        desc = str(request.form.get('desc'))
+        add_skill(name, kind, desc)
+
+
+    skills_list=[]
+    if kind == "soft":
+        skills_list = get_soft_skills()
+    elif kind == "technical":
+        skills_list = get_hard_skills()
+    return render_template('skills.html', skills=skills_list, skill_type=kind)
 
 
 # //EMPLOYEES PAGES (third button of navbar)\\
