@@ -202,11 +202,12 @@ def get_skill_id_of_a_role(role_id):
     role=Role_Skill.query.filter(Role_Skill.role_id==role_id).all()
     return role
 
-
-
-
 def get_project_by_id(prj_id):
     return Project.query.filter(Project.id==prj_id).first()
+
+def get_employee_by_role(role_id):
+    empl=Employee.query.filter(Employee.role==role_id).first()
+    return empl
 
 
 # Returns a list of all the past projects
@@ -448,4 +449,17 @@ def add_project_todb(name, description=None, start=None, end=None, supervisor=No
 def add_role_to_project(prj_id, role_id):
     prj_role = Project_Role(role_id=role_id, prj_id=prj_id)
     db.session.add(prj_role)
+    db.session.commit()
+
+def add_role_todb(name, description=None,):
+    role=Role(name=name,description=description)
+    db.session.add(role)
+    db.session.commit()
+    just_added=Role.query.order_by(Role.id.desc()).first()
+    return just_added.id
+
+
+def add_skill_to_role(role_id,skill_id):
+    skill_role=Role_Skill(role_id=role_id,skill_id=skill_id)
+    db.session.add(skill_role)
     db.session.commit()
