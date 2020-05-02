@@ -40,8 +40,11 @@
                                       <td class="align-middle">{{ skill.description }}</td>
                                       <td>
                                           <div class="btn-group" role="group" aria-label="Basic example">
-                                              <button type="button" class="btn d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#editSkill"><i class="material-icons" style="color: goldenrod">&#xE254;</i></button>
-                                              <button type="button" class="btn d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#deleteSkill"><i class="material-icons" style="color: firebrick">&#xE872;</i></a></button>
+                                              <button type="button" class="btn d-flex justify-content-center align-content-between"
+                                                      data-toggle="modal" data-target="#editSkill" ><i class="material-icons" style="color: goldenrod">&#xE254;</i></button>
+                                              <form action="{{ url_for('skills', s=skill) }}" method="POST"><button type="submit" class="btn d-flex justify-content-center align-content-between"
+                                                      data-toggle="modal" data-target="#deleteSkill">
+                                                  <i class="material-icons" style="color: #b22222">&#xE872;</i></button></form>
                                           </div>
                                       </td>
                                   </tr>
@@ -127,7 +130,7 @@
                     </div>
                   </div>
                   <!-- Modal delete skill-->
-                  <div class="modal fade bd-example-modal-lg" id="deleteSkill" tabindex="-1" role="dialog" aria-labelledby="deleteSkillLabel" aria-hidden="true">
+                  <!--<div class="modal fade bd-example-modal-lg" id="deleteSkill" tabindex="-1" role="dialog" aria-labelledby="deleteSkillLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg" style="display: table" role="document">
                         <div class="modal-content">
                             <form action="{{ url_for('skills') }}">
@@ -141,7 +144,7 @@
                             </form>
                         </div>
                     </div>
-                  </div>
+                  </div>-->
               {% endblock %}
           </div>
         </div>

@@ -406,6 +406,11 @@ def add_skill(name, skill_type, desc):
     db.session.commit()
 
 
+def delete_skill(skill):
+    db.session.delete(skill)
+    db.session.commit()
+
+
 def set_grade_of_skill_of_employee(grade, emp_id, skill_id):
     emp_skill=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id, Employee_Skill.skill_id==skill_id).first()
     if emp_skill:
