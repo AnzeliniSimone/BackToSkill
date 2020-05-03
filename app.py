@@ -39,11 +39,34 @@ def about():
 
 
 # //SKILLS PAGES (second dropdown menu)\\
+@app.route("/<e>", methods=['POST'])
+def edit_skill(e):
+    e = e[7:9]
+    skill = get_skill_by_id(e)
+    if request.form.get('type') == 'Yes':
+        if skill.type == "Soft":
+            kind = "Hard"
+        else:
+            kind = "Soft"
+    else:
+        kind = skill.type
+    change_skill(e, request.form.get('name'), kind, request.form.get('description'))
+    skills_list = []
+    if kind == "Soft":
+        kind = "soft"
+        skills_list = get_soft_skills()
+        return render_template('skills.html', skills=skills_list, skill_type=kind) and redirect('/skills/soft')
+    elif kind == "Hard":
+        kind = "technical"
+        skills_list = get_hard_skills()
+        return render_template('skills.html', skills=skills_list, skill_type=kind) and redirect('/skills/technical')
 
-@app.route('/skills', methods=['GET', 'POST'])
+
+@app.route("/<s>", methods=['POST'])
+@app.route("/", methods=['POST'])
 @app.route('/skills/<kind>')
-def skills(kind="soft"):
-    if request.method == 'POST':
+def skills(kind="soft", s=None):
+    if request.method == 'POST' and s is None:
         name = str(request.form.get('skill_name'))
         kind = request.form.get('skill_type')
 
@@ -51,6 +74,26 @@ def skills(kind="soft"):
 
         desc = str(request.form.get('desc'))
         add_skill(name, kind, desc)
+        if kind == 'Soft':
+            return redirect('/skills/soft')
+        else:
+            return redirect('/skills/technical')
+
+
+    if s is not None:
+        s = s[7:9]
+        skill = get_skill_by_id(s)
+        delete_skill(skill)
+        kind = skill.type
+        skills_list = []
+        if kind == "Soft":
+            kind = "soft"
+            skills_list = get_soft_skills()
+            return render_template('skills.html', skills=skills_list, skill_type=kind) and redirect('/skills/soft')
+        elif kind == "Hard":
+            kind = "technical"
+            skills_list = get_hard_skills()
+            return render_template('skills.html', skills=skills_list, skill_type=kind) and redirect('/skills/technical')
 
 
     skills_list=[]

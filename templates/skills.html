@@ -40,11 +40,58 @@
                                       <td class="align-middle">{{ skill.description }}</td>
                                       <td>
                                           <div class="btn-group" role="group" aria-label="Basic example">
-                                              <button type="button" class="btn d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#editSkill"><i class="material-icons" style="color: goldenrod">&#xE254;</i></button>
-                                              <button type="button" class="btn d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#deleteSkill"><i class="material-icons" style="color: firebrick">&#xE872;</i></a></button>
+                                                  <button type="button" class="btn d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#editSkill{{ skill.id }}" >
+                                                      <i class="material-icons" style="color: goldenrod">&#xE254; </i>
+                                                  </button>
+
+                                              <form action="{{ url_for('skills', s=skill) }}" method="POST">
+                                                  <button type="submit" class="btn d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#deleteSkill">
+                                                      <i class="material-icons" style="color: #b22222">&#xE872; </i>
+                                                  </button>
+                                              </form>
                                           </div>
                                       </td>
                                   </tr>
+                                  <!-- Modal edit skill-->
+                                  <div class="modal fade bd-example-modal-lg" id="editSkill{{ skill.id }}" tabindex="-1" role="dialog" aria-labelledby="editSkillLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5>Add Skill</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                            </div>
+                                            <form action="{{ url_for('edit_skill', e=skill)}}" method="POST">
+                                                <div class="modal-body text-left">
+                                                    <label for="Name">Name</label>
+                                                    <textarea class="form-control" id="Name" rows="1" name="name" placeholder="Name of the skill" required>{{ skill.name }}</textarea>
+                                                    <label for="skill">Skill type</label>
+                                                    <div></div>
+                                                    <label for="skill_type">The type of the skill is set to {{ skill.type }} . Do you want to change it?</label>
+                                                    <div></div>
+                                                    <div class="form-horizontal">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <select class="user-form selectpicker show-tick form-control" data-live-search="true" name="type">
+                                                                    <option>No</option>
+                                                                    <option>Yes</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div></div>
+                                                    <label for="Description">Description</label>
+                                                    <textarea class="form-control" id="Description" rows="5" name="description" placeholder="Description of the skill" required>{{ skill.description }}</textarea>
+                                                </div>
+                                                <div class="modal-footer ">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Edit</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                  </div>
                               {% endfor %}
                           </tbody>
                       </table>
@@ -90,44 +137,9 @@
                         </div>
                     </div>
                   </div>
-                  <!-- Modal edit skill-->
-                  <div class="modal fade bd-example-modal-lg" id="editSkill" tabindex="-1" role="dialog" aria-labelledby="editSkillLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header ">
-                                <h5>Edit skill</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                            </div>
-                            <form action="{{ url_for('skills') }}">
-                                <div class="modal-body ">
-                                    <label for="Name">Name of the skill</label>
-                                    <input type="text" class="form-control" id="Name" name="skill_name" placeholder="Name of the skill" required>
-                                    <label for="skill">Skill type</label>
-                                    <div></div>
-                                    <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" class="custom-control-input" id="hardSkill" name="skill_type" value="Hard" required>
-                                        <label class="custom-control-label" for="hardSkill">Technical</label>
-                                    </div>
-                                    <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" class="custom-control-input" id="softSkill" name="skill_type" value="Soft" required>
-                                        <label class="custom-control-label" for="softSkill"> Soft </label>
-                                    </div>
-                                    <div></div>
-                                    <label for="Description">Description</label>
-                                    <textarea class="form-control" id="Description" rows="5" name="desc" placeholder="Description of the skill" required></textarea>
-                                </div>
-                                <div class="modal-footer ">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Edit</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                  </div>
+
                   <!-- Modal delete skill-->
-                  <div class="modal fade bd-example-modal-lg" id="deleteSkill" tabindex="-1" role="dialog" aria-labelledby="deleteSkillLabel" aria-hidden="true">
+                  <!--<div class="modal fade bd-example-modal-lg" id="deleteSkill" tabindex="-1" role="dialog" aria-labelledby="deleteSkillLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg" style="display: table" role="document">
                         <div class="modal-content">
                             <form action="{{ url_for('skills') }}">
@@ -141,7 +153,7 @@
                             </form>
                         </div>
                     </div>
-                  </div>
+                  </div>-->
               {% endblock %}
           </div>
         </div>

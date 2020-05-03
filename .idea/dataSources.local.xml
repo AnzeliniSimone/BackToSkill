@@ -16,12 +16,12 @@
     </data-source>
     <data-source name="database [2]" uuid="7d6f3bf9-86e7-49af-8c5f-148ce0642403">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="SQLITE" exact-version="0" />
-      <auth-required>false</auth-required>
+      <auth-provider>no-auth</auth-provider>
       <schema-mapping />
     </data-source>
     <data-source name="database_per_prove [2]" uuid="e9aff6d3-4fb9-4fd5-be44-57b186b9d86e">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="SQLITE" exact-version="0" />
-      <auth-required>false</auth-required>
+      <auth-provider>no-auth</auth-provider>
       <schema-mapping />
     </data-source>
   </component>
