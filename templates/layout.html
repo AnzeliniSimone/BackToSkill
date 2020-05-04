@@ -3,11 +3,6 @@
 user with the navbar and the main buttons like login and logout. Plus, it gives basic style to the website, so that if we want to make some
 changes in the layout of main components we just have to do it once in this file
 
-things to do:
-x slide down mode
-x nice layout
-x guide page
-x all the texts
 
 #}
 <html lang="en">
@@ -47,13 +42,13 @@ x all the texts
         </nav>
 
         <!-- navbar with dropdown buttons to navigate the site-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-dark" id="menuNavbar">
+        <nav class="navbar navbar-expand-lg navbar-light text-white bg-dark" id="menuNavbar">
 {#            button for responsive purposes, makes the navbar collapse when screen is too little#}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
 
-{#            Container for all the buttons linkin to the different pages and for the search bar#}
+{#            Container for all the buttons linking to the different pages and for the search bar#}
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
@@ -62,9 +57,9 @@ x all the texts
 
 
                  <!-- Main page dropdown button -->
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="homepageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <p class="text-white">Home</p>
+                  <li class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="homepageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Home
                     </a>
                     <div class="dropdown-menu" aria-labelledby="homepageDropdown">
                         <a class="dropdown-item" href="/home">Welcome</a>
@@ -76,30 +71,31 @@ x all the texts
                   </li>
 
                   <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="/skills" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <p class="text-white">Skills</p>
+                    <a class="nav-link dropdown-toggle text-white" href="/skills" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Skills
                     </a>
                     <div class="dropdown-menu" aria-labelledby="skillsDropdown">
                       <a class="dropdown-item" href="/skills/soft">Soft skills list</a>
                       <a class="dropdown-item" href="/skills/technical">Technical skills list</a>
                     </div>
+
                   </li>
 
                   <li class="nav-item">
                     <a class="nav-link" href="/employees" id="employeesButton" role="button" aria-haspopup="true" aria-expanded="false" >
-                      <p class="text-white">Employees</p>
+                      <p class="text-light"> Employees</p>
                     </a>
                   </li>
 
                   <li class="nav-item">
                     <a class="nav-link" href="/jobs" id="jobsButton" role="button" aria-haspopup="true" aria-expanded="false">
-                      <p class="text-white">Job Openings</p>
+                      <p class="text-light">Job Openings</p>
                     </a>
                   </li>
 
                   <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="trainingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <p class="text-white">Trainings</p>
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="trainingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Trainings
                     </a>
                     <div class="dropdown-menu" aria-labelledby="trainingsDropdown">
                       <a class="dropdown-item" href="/trainings">Courses list</a>
@@ -109,8 +105,8 @@ x all the texts
                   </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <p class="text-white">Projects</p>
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Projects
                         </a>
                         <div class="dropdown-menu" aria-labelledby="projectsDropdown">
                           <a class="dropdown-item" href="/projects/all">Projects list</a>
@@ -123,7 +119,7 @@ x all the texts
 {#              Search bar (not working right now)#}
             <form class="form-inline my-2 my-lg-0">
               <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+              <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
             </form>
 
           </div>
@@ -137,13 +133,12 @@ x all the texts
 
         {% block pageContent %}
         {% endblock %}
-
     </main>
 
 </body>
 
 
-<footer class="page-footer font-small blue pt-4">
+<footer class="page-footer font-small bg-dark pt-4">
 
   <!-- Footer Links -->
   <div class="container-fluid text-center text-md-left">
@@ -165,19 +160,57 @@ x all the texts
           <li>
             <a href="#!">Privacy & Terms of use</a>
           </li>
+
+        </ul>
+
+      </div>
+      <!-- Grid column -->
+
+       <hr class="clearfix w-100 d-md-none pb-3">
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
           <li>
-            <a href="#!">FAQ</a>
+
+            <a href="/faq" role="button">FAQ</a>
+
           </li>
+
           <li>
             <a href="#!">Our Partners</a>
           </li>
           <li>
             <a href="#!">Work with us</a>
           </li>
+        </div>
+      <!-- Grid column -->
+
+
+
+        <hr class="clearfix w-100 d-md-none">
+
+      <!-- Grid column -->
+      <div class="col-md-3 mx-auto">
+
+        <!-- Links -->
+
+        <ul class="list-unstyled">
+          <li>
+            <a href="#!">Duca Degli Abruzzi 1, Torino, Italy</a>
+          </li>
+          <li>
+            <a href="#!">+39 01 12345678</a>
+          </li>
+          <li>
+            <a href="#!">xxx@studenti.polito.it</a>
+          </li>
+
         </ul>
 
       </div>
       <!-- Grid column -->
+
+      </div>
 
     <!-- Grid row -->
 
@@ -186,40 +219,75 @@ x all the texts
 
     <!-- Footer Elements -->
   <div class="container">
-
+      <div class="mx-auto" style="width: 400px;">
     <!-- Social buttons -->
-    <ul class="list-unstyled list-inline text-center">
-      
-      <li class="list-inline-item">
-        <a class="btn-floating btn-tw mx-1">
-          <i class="fab fa-twitter"> </i>
-        </a>
-      </li>
-      <li class="list-inline-item">
-        <a class="btn-floating btn-gplus mx-1">
-          <i class="fab fa-google-plus-g"> </i>
-        </a>
-      </li>
-      <li class="list-inline-item">
-        <a class="btn-floating btn-li mx-1">
-          <i class="fab fa-linkedin-in"> </i>
-        </a>
-      </li>
-      <li class="list-inline-item">
-        <a class="btn-floating btn-dribbble mx-1">
-          <i class="fab fa-dribbble"> </i>
-        </a>
-      </li>
-    </ul>
+
+      <!-- Add icon library -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+          <div class=" text-center">
+<!-- Add font awesome icons -->
+      <a href="#" class="fa fa-facebook"></a>
+      <a href="#" class="fa fa-twitter"></a>
+      <a href="#" class="fa fa-linkedin"></a>
+      <a href="#" class="fa fa-google"></a>
+          </div>
+          </div>
+</div>
+
+<style>
+/* Style all font awesome icons */
+.fa {
+  padding: 20px;
+  font-size: 30px;
+  width: 65px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 25%;
+}
+
+/* Add a hover effect if you want */
+.fa:hover {
+  opacity: 0.7;
+}
+
+/* Set a specific color for each brand */
+
+/* Facebook */
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+
+/* Twitter */
+.fa-twitter {
+  background: #55ACEE;
+  color: white;
+}
+
+.fa-linkedin {
+  background: #007BB6;
+  color: white;
+}
+
+
+.fa-google {
+  background: #DD4B39;
+  color: white;
+}
+</style>
+
     <!-- Social buttons -->
 
   </div>
   <!-- Footer Elements -->
 
   <!-- Copyright -->
-  <div class="footer-copyright text-center py-3">© 2020 Copyright:
+  <div class="footer-copyright text-white text-center py-3">© 2020 Copyright:
     <a href=""> Back2Skills</a>
   </div>
 
 </footer>
+
+
 </html>
