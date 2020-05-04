@@ -41,7 +41,6 @@ def about():
 # //SKILLS PAGES (second dropdown menu)\\
 @app.route("/<e>", methods=['POST'])
 def edit_skill(e):
-    e = e[7:9]
     skill = get_skill_by_id(e)
     if request.form.get('type') == 'Yes':
         if skill.type == "Soft":
@@ -81,7 +80,6 @@ def skills(kind="soft", s=None):
 
 
     if s is not None:
-        s = s[7:9]
         skill = get_skill_by_id(s)
         delete_skill(skill)
         kind = skill.type
