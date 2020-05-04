@@ -1,7 +1,5 @@
 {% extends "layout.html" %}
 <!DOCTYPE html>
-{#Welcome page with basic information, all subsections of the "home" button will inherit from this page their layout,
-so they'll get the sidebar too#}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,26 +9,28 @@ so they'll get the sidebar too#}
     {% block pageContent %}
 
 {#        container for the content part, the container stays the same in every subpage#}
-        <div class="col-md-10">
+        <div>
+
 {#        variable content, will be overwritten in every subpage#}
             {% block sectionContent %}
                 <div class="p-5 "> </div>
                 <div class="p-5 "> </div>
                 <div class="p-5 "> </div>
-                <div class="p-5 "> </div>
+                <div class="p-3 "> </div>
 
                 <header class=" text-center py-2 mb-1 text-white">
                 <h1 class="display-2">Welcome to BackToSkill</h1>
 
                 <h3><p class="text-white">The dynamic and interactive HR assistant you never knew you needed</h3>
                 </header>
+                </p>
 
                 <div class="p-5 "> </div>
                 <div class="p-5 "> </div>
                 <div class="p-5 "> </div>
                 <div class="p-5 "> </div>
-                <div class="p-5 "> </div>
-                <div class="p-5 "> </div>
+
+
             {% endblock %}
         </div>
       </div>
