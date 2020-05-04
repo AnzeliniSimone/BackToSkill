@@ -11,7 +11,7 @@
         <div class="col-md-2">
           <div class="content-section">
               <div class="list-group">
-                     <!--inizia la creazione del modal-->
+                     <!--modal creation-->
                                   <div class="container">
                                       <div class="row">
                                           <div class="col-md-12">
@@ -21,29 +21,51 @@
                                                           <div class="modal-header ">
                                                               <h1>Add Job</h1>
                                                           </div>
+                                                     <form action="{{ url_for('jobs') }}" method="POST">
                                                           <div class="modal-body ">
-                                                               <label for="Title">Title</label>
-                                                               <input type="text" class="form-control" id="Title">
-                                                              <label for="Role">Role</label>
-                                                               <input type="text" class="form-control" id="Role">
-                                                              <label for="Deadline">Deadline</label>
-                                                               <input type="text" class="form-control" id="Deadline" placeholder="xx-xx-xxxx">
+                                                             <div class="form-group">
+                                                                 <label for="Title">Role</label>
+                                                                 <input type="text" class="form-control" id="title" name="role">
+                                                             </div>
+                                                             <div class="form-group">
+                                                              <label for="Role">Description</label>
+                                                               <input type="text" class="form-control" id="role"  name="Jdescription">
+                                                             </div>
+                                                              <div class="form-group">
+                                                              <label for="Deadline">employee</label>
+                                                               <input type="text" class="form-control" id="deadline" placeholder="xx-xx-xxxx" name="deadline">
+                                                              </div>
+                                                              <div class="form-group">
                                                               <label for="exampleFormControlSelect2">Softskill required</label>
-                                                              <select multiple class="form-control" id="exampleFormControlSelect2" >
+                                                              <select multiple class="form-control" id="softskillselection" name="skselection" >
                                                                  {% for skill in softskill %}
-                                                                  <option>{{ skill.name}}</option>
+                                                                  <option value="{{ skill.id }}">{{ skill.name}}</option>
                                                                  {% endfor %}
                                                               </select>
-                                                                <label for="exampleFormControlSelect2">Hardskill required</label>
-                                                              <select multiple class="form-control" id="exampleFormControlSelect2" >
+                                                              </div>
+                                                              <div class="form-group">
+                                                                  <label for="grade">Grade Required</label>
+                                                                  <input type="int" class="form-control" id="grade" placeholder="grade" name="grade">
+                                                              </div>
+                                                              <div class="form-group">
+                                                                  <label for="exampleFormControlSelect2">Hardskill required</label>
+                                                                  <select multiple class="form-control" id="hkselection" name="hkselection" >
                                                                  {% for skill in hardskill %}
-                                                                  <option>{{ skill.name}}</option>
+                                                                  <option value="{{ skill.id }}">{{ skill.name}}</option>
                                                                  {% endfor %}
-                                                              </select>
+                                                                     </select>
+                                                              </div>
+                                                              <div class="form-group">
+                                                              <label for="grade">Grade Required</label>
+                                                                <input type="int" class="form-control" id="grade" placeholder="grade" name="grade1">
+                                                              </div>
                                                           </div>
                                                           <div class="modal-footer ">
-                                                              <input class="btn btn-primary" data-dismiss="modal" value="add"> <!--data dismiss sarà da modificare-->
+                                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                              <button class="btn btn-primary"  type="submit"> Submit </button>
                                                           </div>
+                                                     </form>
+
                                                       </div>
 
                                                   </div>
@@ -52,7 +74,7 @@
                                           </div>
                                       </div>
                                   </div>
-                        <!--fine modal -->
+                        <!--end modal -->
               </div>
           </div>
         </div>
@@ -80,7 +102,7 @@
                                          </tr>
                                        </thead>
                                        <tbody>
-                                         {% for role in role %}
+                                         {% for role in open %}
                                             <tr>
                                               <th scope="row">{{ loop.index }}</th>
                                                 <td><a href="/EmployeeJob/{{ role.id }}"> {{ role.name }} </a></td>
@@ -92,6 +114,7 @@
                                     </td>
                                    </tr>
                               </tbody>
+                                 </tbody>
                       </table>
                       <table style="width:100%" class="table table-hover">
                           <thead>
@@ -111,7 +134,21 @@
                                          </tr>
                                        </thead>
                                        <tbody>
+                                       {% for role in closed %}
+                                            <tr>
+                                              <th scope="row">{{ loop.index }}</th>
+                                                <td><a href="/EmployeeJob/{{ role.id }}"> {{ role.name }} </a></td>
+                                                <td>
+                                                    {% for empl in employee %}
+                                                        {% if empl.role==role.id %}
+                                                            {{empl.name}}
+                                                        {% endif %}
+                                                    {% endfor %}
 
+                                                </td>
+
+                                            </tr>
+                                         {% endfor %}
                                        </tbody>
                                        </table>
                                      </td>
@@ -124,6 +161,6 @@
 
 {% endblock %}
 
-
-</body>
+ </div>
+ </body>
 </html>

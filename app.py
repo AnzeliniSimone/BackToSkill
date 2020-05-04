@@ -41,17 +41,26 @@ def about():
 
 
 # //SKILLS PAGES (second dropdown menu)\\
+
+@app.route('/skills', methods=['GET', 'POST'])
 @app.route('/skills/<kind>')
-def skill(kind):
-    # skills_list=[]
-    #
-    # if kind == "soft":
-    #     skills_list = [SoftSkill("ss1", "una skill"), SoftSkill("ss2","due skill")]
-    # elif kind == "technical":
-    #     skills_list = [HardSkill("hs1","una hard skill"), HardSkill("hs2", "due hard skill")]
-    #
-    # return render_template('skills.html', skills=skills_list, skill_type=kind)
-    return render_template('skills.html', skill_type=kind)
+def skills(kind="soft"):
+    if request.method == 'POST':
+        name = str(request.form.get('skill_name'))
+        kind = request.form.get('skill_type')
+
+        #TODO: rinominare tutte le variabili in "Soft" e "Hard"
+
+        desc = str(request.form.get('desc'))
+        add_skill(name, kind, desc)
+
+
+    skills_list=[]
+    if kind == "soft":
+        skills_list = get_soft_skills()
+    elif kind == "technical":
+        skills_list = get_hard_skills()
+    return render_template('skills.html', skills=skills_list, skill_type=kind)
 
 
 # //EMPLOYEES PAGES (third button of navbar)\\
@@ -72,18 +81,50 @@ def employee(id):
 
 
 # //JOBS PAGES\\
+@app.route('/jobs',methods=['POST'])
 @app.route('/jobs')
 def jobs():
+    if request.method == 'POST':
+        # create a new job
+
+        # get values from the inputs of the form in job.html
+        job_name = str(request.form.get('role'))
+        job_description = str(request.form.get('Jdescription'))
+        job_softskill_id_list = request.form.getlist('skselection')
+        job_hardskill_id_list = request.form.getlist('hkselection')
+        job_skill_id_list=job_hardskill_id_list+job_softskill_id_list
+        id_job = add_role_todb(job_name, job_description)
+    # the job is connected to the skills required for it
+        for skill_id in job_skill_id_list :
+           add_skill_to_role(id_job, skill_id)
+        # redirecting to the page of the project created
+        return redirect(url_for('EmployeeJob', id=id_job))
+
     soft_skill=get_soft_skills()
     hard_skill=get_hard_skills()
     roles=get_roles()
-    return render_template('jobs.html',softskill=soft_skill,hardskill=hard_skill,role=roles)
+    employee_list=[]
+    for role in roles:
+        employee_list.append(get_employee_by_role(role.id))
+
+    open=[]
+    closed=[]
+    for job in roles:
+        if job.employee:
+            closed.append(job)
+        else:
+             open.append(job)
+
+
+
+    return render_template('jobs.html',softskill=soft_skill,hardskill=hard_skill,role=roles,open=open,closed=closed,employee=employee_list)
 
 @app.route('/EmployeeJob/<int:id>')
 def EmployeeJob(id):
     role=get_role_by_id(id)
     skill=get_skills_required_by_role(id)
-    return render_template('EmployeeJob.html', role=role,skill=skill)
+    skill_id=get_skill_id_of_a_role(id)
+    return render_template('EmployeeJob.html', role=role,skill=skill,grade =skill_id)
 
 
 # //TRAININGS PAGES (trainings dropdown)\\

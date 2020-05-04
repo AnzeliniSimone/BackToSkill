@@ -1,13 +1,14 @@
 <!--manca extend layout-->
+{% extends 'layout.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Job Page</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
 </head>
 <body>
-    {% block PageContent %}
+    {% block pageContent %}
         <div class="col-md-10">
             {% block sectionContent %}
                 <h3>Job: {{ role.name }}</h3>
@@ -27,15 +28,24 @@
                     <table class="table table-hover">
                         <thead>
                          <tr>
-                             <th>Skills required</th>
+                             <th>Skills required</th> <th>Grade required</th>
                          </tr>
                         </thead>
                         <tbody>
-                               {% for skill in skill %}
-                                   <tr>
-                                   <td> {{ skill.name }} </td>
-                                   <tr>
-                               {% endfor %}
+
+                        {% for skill in skill %}
+                             <tr>
+                               <td>{{ skill.name }}</td>
+                               <td>
+                                {% for grade in grade %}
+                                 {% if grade.skill_id == skill.id%}
+                                       {{ grade.grade_required }}
+                                   {% endif %}
+                                {% endfor %}
+                               </td>
+                             </tr>
+                        {% endfor %}
+
                         </tbody>
                     </table>
                 </div>
@@ -43,9 +53,7 @@
                 <button type="button" class="btn btn-primary btn-icon">
                 Add Employee
                 </button>
-                <script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
             {% endblock %}
         </div>
     {% endblock %}

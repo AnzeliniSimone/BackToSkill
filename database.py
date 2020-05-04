@@ -205,8 +205,16 @@ def get_skills_required_by_role(role_id):
     return skill_list
 
 
+def get_skill_id_of_a_role(role_id):
+    role=Role_Skill.query.filter(Role_Skill.role_id==role_id).all()
+    return role
+
 def get_project_by_id(prj_id):
     return Project.query.filter(Project.id==prj_id).first()
+
+def get_employee_by_role(role_id):
+    empl=Employee.query.filter(Employee.role==role_id).first()
+    return empl
 
 
 # Returns a list of all the past projects
@@ -266,7 +274,7 @@ def get_soft_skills():
 
 # Returns a list of all the hardskills
 def get_hard_skills():
-    hs=Skill.query.filter(Skill.type=="hard" or Skill.type=="Hoft").all()
+    hs=Skill.query.filter(Skill.type=="hard" or Skill.type=="Hard").all()
     hs.sort(key=lambda x: x.name)
     return hs
 
@@ -471,7 +479,20 @@ def get_employees_with_evaluation(prj_id):
     return emp_eva
 
 
+# TODO: RISCRIVERE
+def get_number_of_skills():
+    descending = Skill.query.order_by(Skill.id.desc())
+    return descending.first().id
+
+
 # // SETTERS \\
+
+def add_skill(name, skill_type, desc):
+    skill = Skill(id=get_number_of_skills()+1, name=name, description=desc, type=skill_type)
+    db.session.add(skill)
+    db.session.commit()
+
+
 def set_grade_of_skill_of_employee(grade, emp_id, skill_id):
     emp_skill=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id, Employee_Skill.skill_id==skill_id).first()
     if emp_skill:
@@ -650,3 +671,19 @@ def matching_algorithm(role_id, employee_list, job_or_role):
     # Returns the three lists, with a total max number of employees of MAX_EMPLOYEES. Note that some of the lists may
     # be empty, depending on the number of skilled and unskilled employees found
     return skilled_employees, unskilled_employees, noskill_employees
+
+
+def add_role_todb(name, description=None):
+    role=Role(name=name,description=description)
+    db.session.add(role)
+    db.session.commit()
+    just_added=Role.query.order_by(Role.id.desc()).first()
+    return just_added.id
+
+
+# TODO: RIVEDERE
+def add_skill_to_role(role_id,skill_id):
+    skill_role=Role_Skill(role_id=role_id,skill_id=skill_id)
+    db.session.add(skill_role)
+    db.session.commit()
+    return "skill added"
