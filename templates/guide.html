@@ -3,35 +3,85 @@
 {% block sectionContent %}
     <!-- title -->
 
-  <header class=" text-center py-2 mb-1 text-white">
+  <header class=" text-center py-2 mb-1 text-light">
 
           <h1 class="display-3">Website Guide</h1>
           <div class="p-5 "> </div>
-          <h2><p class="text-light">Follow this brief guide to learn about all the functions of the website!</h2>
+          <h2>Follow this brief guide to learn everything about this website!</h2>
           <div class="p-3 "> </div>
           <h4>
-              <p class="text-light">
+              For more information feel free to contact us directly!
 
-                  EMPLOYEES PAGE - Our employees page allows you to input all the information from each worker of your firm, which will be registered in the database. The ID will allow you to create a connection between each employee and the information from the other pages!
-                  <div class="p-3 "> </div>
-
-                  SKILLS PAGE - This page allows you to input both the hard and soft skills for each employee (use the ID to identify them).
-                  <div class="p-3 "> </div>
-
-                  TRAININGS PAGE - This page will contain the courses list and the upcoming courses, which can be allocated to the employees which need them due to a lack of a certain skill. An archive of the courses allows you to keep track of the courses been completed.
-                  <div class="p-3 "> </div>
-
-                  JOB OPENINGS PAGE - This page allows the input of the jobs available in the firm and the skills required for each of them. The system will then indicate you the right employees for the job based on the information you provided previously.
-                  <div class="p-3 "> </div>
-
-                  PROJECTS PAGE - Similarly to the Job Openings page, this page allows the input of the projects available in the firm and the skills required for each of them. The system will then indicate you the right employees for the job based on the information you provided previously. In addition it will show you the current projects and the archive.
-                  <div class="p-3 "> </div>
-                  For more information feel free to contact us directly!
-              </p>
           </h4>
 
     </header>
-  <>
+
+
+    <div class="timeline">
+  <div class="container">
+    <div class="content">
+      <h2>EMPLOYEES PAGE</h2>
+      <p>This page page allows you to input the information from each worker in your firm, which will automatically be registered in the database. Assign an ID to each employee and then use it to create connections with the information from the other pages!</p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="content">
+      <h2>SKILLS PAGE</h2>
+      <p>This page allows you to input both the hard and soft skills for each employee (use the personal ID to assign them to the right employee).</p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="content">
+      <h2>JOB OPENINGS PAGE</h2>
+      <p>This page allows you to input the jobs available in the firm and the skills required for each. The system will then indicate you the right employees for the job based on the information you previously provided. </p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="content">
+      <h2>PROJECTS PAGE</h2>
+      <p>Similarly to the Job Openings page, this page allows you to input the projects available in the firm and the skills required for each. The system will then indicate you the right employees for the project based on the information you provided previously. In addition it will show you the current projects and the archive. </p>
+    </div>
+  </div>
+    <div class="container">
+    <div class="content">
+      <h2>TRAININGS PAGE</h2>
+      <p>This page will contain the courses list and the upcoming courses, which can be allocated to the employees which need them due to a lack of a certain skill. An archive of the courses allows you to keep track of the courses been completed. </p>
+    </div>
+  </div>
+</div>
+
+    <style>
+        * {
+    box-sizing: border-box;
+}
+
+/* Container around content */
+.container {
+  padding: 10px 40px;
+  position: relative;
+  background-color: inherit;
+  width: 50%;
+}
+
+/* The actual content */
+.content {
+  padding: 20px 30px;
+  background-color: white;
+  position: relative;
+  border-radius: 6px;
+}
+
+/* Full-width containers */
+  .container {
+    width: 100%;
+    padding-left: 70px;
+    padding-right: 25px;
+  }
+
+</style>
+
+<div class="p-5 "> </div>
+
 
 
 {% endblock %}
