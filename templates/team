@@ -17,7 +17,7 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-0 shadow">
                     <!-- Add the right picture -->
-                    <img src="https://source.unsplash.com/TMgQMXoglsM/500x350" class="card-img-top" alt="...">
+                    <img src="static/img/simo.jpg" class="card-img-top" alt="...">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Simone Anzelini</h5>
                         <div class="card-text text-black-50">Management Engineer</div>
@@ -28,7 +28,7 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-0 shadow">
                     <!-- Add the right picture -->
-                    <img src="https://source.unsplash.com/9UVmlIb0wJU/500x350" class="card-img-top" alt="...">
+                    <img src="static/img/fraDZ.jpg" class="card-img-top" alt="...">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Francesco De Zorzi</h5>
                         <div class="card-text text-black-50">Management Engineer</div>
@@ -50,7 +50,7 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-0 shadow">
                     <!-- Add the right picture -->
-                    <img src="https://source.unsplash.com/ZI6p3i9SbVU/500x350" class="card-img-top" alt="...">
+                    <img src="static/img/giulia.jpg" class="card-img-top" alt="...">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Giulia Ioannone</h5>
                         <div class="card-text text-black-50">Management Engineer</div>
