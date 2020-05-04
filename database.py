@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import not_, or_, and_
 import datetime
 from random import randint
 
@@ -41,10 +42,9 @@ class Employee(db.Model):
     skill = db.relationship("Skill", secondary="employee_skill")
     training = db.relationship("Training", secondary="employee_training")
     project_role = db.relationship("Project_Role")
-#   To ADD
-# state_in_company = db.Column(db.String)
-# education_level = db.Column(db.String)
-# AGGIUNGERE CLASSE LANGUAGE CERTIFICATE
+    state_in_company = db.Column(db.String)
+    education_level = db.Column(db.String)
+    language_certificate = db.Column(db.String)
 
 
 class Skill(db.Model):
@@ -77,6 +77,13 @@ class Role_in_project(db.Model):
     description = db.Column(db.String)
     project = db.relationship("Project", secondary="project_role")
     skill = db.relationship("Skill", secondary="role_in_project_skill")
+
+    def get_skills_required(self):
+        skills = get_skills_required_by_role_in_project(self.id)
+        grades=[]
+        for s in skills:
+            grades.append(get_grade_of_skill_required_by_role_in_project(self.id, s.id))
+        return skills,grades
 
 
 class Training(db.Model):
@@ -274,7 +281,7 @@ def get_roles():
 # Returns a list of all the possible roles in a project
 def get_roles_in_projects():
     roles=Role_in_project.query.all()
-    roles.sort(key=lambda x: x.name)
+    roles.sort(key=lambda x: x.id)
     return roles
 
 
@@ -287,9 +294,44 @@ def get_trainings():
 
 # Returns a list of all the employees involved in a given project (identified by the id passed)
 def get_employees_in_project(prj_id):
-    project=Project.query.filter(Project.id==prj_id).first()
-    employees=project.employee
+    links=Project_Role.query.filter(Project_Role.prj_id == prj_id).all()
+    emp_ids=[]
+    for l in links:
+        if l.emp_id:
+            emp_ids.append(l.emp_id)
+    employees = Employee.query.filter(Employee.id.in_(emp_ids)).all()
     return employees
+
+
+def get_roles_in_projects_by_id(role_id):
+    return Role_in_project.query.filter(Role_in_project.id == role_id).first()
+
+
+def get_employees_in_project_with_roles(prj_id):
+    emps = get_employees_in_project(prj_id)
+    tortn = []
+    for emp in emps:
+        link = Project_Role.query.filter(Project_Role.prj_id==prj_id, Project_Role.emp_id==emp.id).first()
+        role = get_roles_in_projects_by_id(link.role_id)
+        tortn.append(tuple([emp,role]))
+    return tortn
+
+
+def get_not_used_roles_in_proj(prj_id):
+    roles_used = get_project_by_id(prj_id).role_in_project
+    ids=[]
+    for r in roles_used:
+        ids.append(r.id)
+    not_used_roles = Role_in_project.query.filter(Role_in_project.id.notin_(ids)).all()
+    return not_used_roles
+
+
+def get_free_roles_in_project(prj_id):
+    links=Project_Role.query.filter(Project_Role.prj_id==prj_id, Project_Role.emp_id==None).all()
+    roles=[]
+    for l in links:
+        roles.append(l.role_in_project)
+    return roles
 
 
 # Returns a list of all the employees involved in a given training (identified by the id passed)
@@ -302,7 +344,10 @@ def get_employees_in_training(train_id):
 # Returns a list of all the projects in which is involved a given employee (identified by the id passed)
 def get_projects_of_employee(emp_id):
     employee = Employee.query.filter(Employee.id == emp_id).first()
-    projects = employee.project
+    link = employee.project_role
+    projects=[]
+    for prj in link:
+        projects.append(get_project_by_id(prj.prj_id))
     return projects
 
 
@@ -381,10 +426,49 @@ def get_pointsassigned_by_training_to_skill(training_id, skill_id):
 
 def get_evaluation_by_proj_emp_role(prj_id, emp_id, role_id):
     project = Project_Role.query.filter(Project_Role.prj_id==prj_id, Project_Role.emp_id==emp_id, Project_Role.role_id==role_id).first()
-    evaluation=''
+    evaluation=None
     if project:
         evaluation = project.evaluation
     return evaluation
+
+
+def get_available_employees_in_period(start, end):
+    # gets the list of the projects active in the period beginning with date 'start' and ending with date 'end'
+    projects_in_period = Project.query.filter(or_(and_(Project.starting_date < start, start < Project.ending_date), and_(Project.starting_date < end, end < Project.ending_date), and_((start <= Project.starting_date), (end >= Project.ending_date)))).all()
+    # takes out the ids of the projects
+    prj_ids=[]
+    for prj in projects_in_period:
+        prj_ids.append(prj.id)
+    # and gets the instances of the association class between project and role, which contains info about the employees working on those projects
+    links = Project_Role.query.filter(Project_Role.prj_id.in_(prj_ids)).all()
+    # cycling on the list got, it takes the ids of the employees working on one of the projects held in the period selected
+    # they will be considered as nonavailable, as they are working on something else in the time span considered
+    nonavailable_emp_ids = []
+    for link in links:
+        if link.emp_id:
+            nonavailable_emp_ids.append(link.emp_id)
+    # gets the employees which are not in the list of nonavailables and returns the list of them
+    availables = Employee.query.filter(Employee.id.notin_(nonavailable_emp_ids)).all()
+    return availables
+
+
+def get_suitable_emp_for_role(role_id, employee_list):
+    return matching_algorithm(role_id, employee_list, False)
+
+
+def get_suitable_emp_for_job(role_id):
+    return matching_algorithm(role_id, get_employees(), True)
+
+
+def get_employees_with_evaluation(prj_id):
+    links = Project_Role.query.filter(Project_Role.prj_id==prj_id).all()
+    emp_eva=[]
+    for l in links:
+        tup = []
+        tup.append(get_employee_by_id(l.emp_id))
+        tup.append(str(get_evaluation_by_proj_emp_role(prj_id,l.emp_id,l.role_in_project.id)))
+        emp_eva.append(tuple(tup))
+    return emp_eva
 
 
 # // SETTERS \\
@@ -442,3 +526,127 @@ def add_role_to_project(prj_id, role_id):
     prj_role = Project_Role(role_id=role_id, prj_id=prj_id)
     db.session.add(prj_role)
     db.session.commit()
+    return prj_role
+
+
+def remove_role_from_project(prj_id, role_id):
+    prj_role = Project_Role.query.filter(Project_Role.role_id==role_id, Project_Role.prj_id==prj_id).delete(synchronize_session='fetch')
+    db.session.commit()
+    return "done"
+
+
+def remove_employee_from_project(prj_id, role_id):
+    prj_role = Project_Role.query.filter(Project_Role.role_id == role_id, Project_Role.prj_id == prj_id).first()
+    prj_role.emp_id = None
+    db.session.commit()
+    return prj_role
+
+
+def edit_project_basic_info(prj_id, name, description, start, end):
+    project = get_project_by_id(prj_id)
+    project.name = name
+    project.description = description
+    project.starting_date = start
+    project.ending_date = end
+    db.session.commit()
+    return project
+
+
+def add_employee_to_project(prj_id, role_id, emp_id):
+    prj_role = Project_Role.query.filter(Project_Role.prj_id==prj_id, Project_Role.role_id==role_id).first()
+    prj_role.emp_id = emp_id
+    db.session.commit()
+    return prj_role
+
+
+def add_evaluation_to_employee_in_project(prj_id, emp_id, ev):
+    prj_role = Project_Role.query.filter(Project_Role.prj_id==prj_id, Project_Role.emp_id==emp_id).first()
+    if prj_role:
+        prj_role.evaluation = ev
+    db.session.commit()
+    return prj_role
+
+
+def delete_project(prj_id):
+    links = Project_Role.query.filter(Project_Role.prj_id==prj_id).delete(synchronize_session='fetch')
+    prj = Project.query.filter(Project.id == prj_id).delete(synchronize_session='fetch')
+    db.session.commit()
+    return "Project deleted"
+
+
+# returns the most suited employees (among a list passed) for a certain job (job_or_role = True) or a role in a project (job_or_role = False)
+def matching_algorithm(role_id, employee_list, job_or_role):
+    skilled_employees = []
+    unskilled_employees = []
+    noskill_employees = []
+
+    skills_required = []
+    if job_or_role:
+        skills_required = get_skills_required_by_role(role_id)
+    else:
+        skills_required = get_skills_required_by_role_in_project(role_id)
+
+    for emp in employee_list:
+        employee_skills = get_employee_skill_by_id(emp.id)
+        # if has_all_skills = true then the employee possesses all the skills requested
+        has_all_skills = True
+        for skill in skills_required:
+            has_single_skill = False
+
+            # if the skill considered at the moment is in the list of the employee's skills
+            has_single_skill = skill in employee_skills
+            # for emp_skill in employee_skills:
+            #     if emp_skill == s:
+            #         has_single_skill = True
+
+            if has_single_skill == False:
+                has_all_skills = False
+
+        # if the employee has every skill requested
+        if has_all_skills:
+            tot = 0
+            check = True
+            for s in skills_required:
+                eg = get_gradeofskill_by_emp_skill(emp.id, s.id)
+                rg = get_grade_of_skill_required_by_role_in_project(role_id, s.id)
+                tot += eg
+                if eg<rg:
+                    check = False
+            # after the loop, check will be false if one (or more) of the skills possessed by the employee have a lower grade than the one requested
+            if check:
+                # if all the skills have the right grade or higher then the employee is considered "skilled"
+                skilled_employees.append(tuple([emp, tot]))
+            else:
+                # otherwise he is considered unskilled (but still he has all the skills required
+                unskilled_employees.append(tuple([emp, tot]))
+        else:
+            # if the employee doesn't have all the skills required
+            tot = 0
+            for s in skills_required:
+                tot += get_gradeofskill_by_emp_skill(emp.id, s.id)
+            # appends every other employee with the total score of his skills, but only if they have at least one of the skills required
+            if(tot>0):
+                noskill_employees.append(tuple([emp, tot]))
+
+    #sorts the three lists by the scores of the employees (in descending order, from the one with highest value to the lowest
+    skilled_employees.sort(key=lambda tup: -tup[1])
+    unskilled_employees.sort(key=lambda tup: -tup[1])
+    noskill_employees.sort(key=lambda tup: -tup[1])
+
+    MAX_EMPLOYEES = 15
+    if len(skilled_employees) >= MAX_EMPLOYEES:
+        skilled_employees=skilled_employees[:MAX_EMPLOYEES]
+    if len(skilled_employees) < MAX_EMPLOYEES:
+        n_unskilled = MAX_EMPLOYEES-len(skilled_employees)
+        unskilled_employees=unskilled_employees[:n_unskilled]
+    else:
+        unskilled_employees=[]
+    if len(skilled_employees)+len(unskilled_employees)<MAX_EMPLOYEES:
+        n_noskill = MAX_EMPLOYEES - (len(skilled_employees)+len(unskilled_employees))
+        noskill_employees=noskill_employees[:n_noskill]
+    else:
+        noskill_employees=[]
+
+    # Returns the three lists, with a total max number of employees of MAX_EMPLOYEES. Note that some of the lists may
+    # be empty, depending on the number of skilled and unskilled employees found
+    return skilled_employees, unskilled_employees, noskill_employees

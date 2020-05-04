@@ -21,9 +21,11 @@
 {#          Table for the projects that will be taken out from the db#}
               {% block sectionContent %}
                   <!-- Button trigger modal for new project -->
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newProjectModal">
+                  <br/>
+                    <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#newProjectModal">
                       New project
                     </button>
+                  <br/>
 
                     <!-- Modal -->
                     <div class="modal fade bd-example-modal-lg" id="newProjectModal" tabindex="-1" role="dialog" aria-labelledby="newProjectModalLabel" aria-hidden="true">
@@ -86,7 +88,7 @@
 
                   <h4>List of {{ period }} projects</h4>
                   <div class="table-responsive">
-                      <table class="table table-hover">
+                      <table class="table table-hover table-bordered table-striped text-center">
                           <thead>
                             <tr>
                               <th scope="col">#</th>

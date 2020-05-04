@@ -1,7 +1,9 @@
 from flask import Flask, request, session, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import not_, or_, and_
 from flask_login import LoginManager
 import datetime
+from datetime import datetime as dt
 
 from sqlalchemy import true, false
 
@@ -104,7 +106,7 @@ def training(id):
 
 
 # //PROJECTS PAGES\\
-@app.route('/projects', methods=['POST'])
+@app.route('/projects', methods=['GET', 'POST'])
 @app.route('/projects/<period>')
 def projects(period="all"):
     if request.method == 'POST':
@@ -137,7 +139,7 @@ def projects(period="all"):
         projects_list, supervisors = get_past_projects()
     elif period == "current":
         projects_list, supervisors = get_current_projects()
-    else:
+    elif period == "all":
         projects_list, supervisors = get_projects_and_supervisors()
 
     projects_list.sort(key=lambda x: x.starting_date, reverse=True)
@@ -148,10 +150,87 @@ def projects(period="all"):
     return render_template('projects.html', projects=projects_list, period=period, supervisors=supervisors, roles=possible_roles, employees=emp)
 
 
-@app.route('/project/<int:id>')
+@app.route('/project/<int:id>', methods=['GET', 'POST'])
 def project(id):
+    if request.method == 'POST':
+        action = str(request.form.get('actionToPerform'))
+        # Edit project basic information
+        if action == "editProjectInfo":
+            prj_name = str(request.form.get('prjName'))
+            prj_description = str(request.form.get('prjDesc'))
+            # starting date is a required value, so there's no check on its content (it is needed to sort the list of projects when retrieved from the db
+            prj_start_date = request.form.get('prjStart')
+            prj_start_date = datetime.datetime.strptime(str(prj_start_date), '%Y-%m-%d').date()
+            # if there's a value inside the prjEndingDate it is converted into datetime, otherwise is set to none
+            prj_end_date = request.form.get('prjEnd')
+            if prj_end_date:
+                prj_end_date = datetime.datetime.strptime(str(prj_end_date), '%Y-%m-%d').date()
+            else:
+                prj_end_date = None
+            edited_proj = edit_project_basic_info(id, prj_name, prj_description, prj_start_date, prj_end_date)
+
+        # Assign a role to an employee
+        elif action == "assignEmployees":
+            free_roles = get_free_roles_in_project(id)
+            for role in free_roles:
+                emp_id = request.form.get("addEmployeeRole"+str(role.id))
+                if emp_id:
+                    emp = get_employee_by_id(emp_id)
+                    if emp not in get_employees_in_project(id):
+                        new_prj_role=add_employee_to_project(id, role.id, emp_id)
+                    else:
+                        error = "An employee can't have more than one role in a project"
+                else:
+                    print "No employee selected"
+
+        # Add roles to the project
+        elif action == "addRoles":
+            roles = request.form.getlist("new_roles")
+            for role_id in roles:
+                added= add_role_to_project(id, role_id)
+
+        # Remove roles from the project
+        elif action == "deleteRole":
+            role = request.form.get("roleToDelete")
+            check_delete = remove_role_from_project(id, role)
+
+        # Remove employee from a role
+        elif action == "deassignRole":
+            role = request.form.get("roleToDeassign")
+            prj_role = remove_employee_from_project(id, role)
+
+        elif action == "addEvaluations":
+            emps = get_employees_in_project(id)
+            for emp in emps:
+                ev = request.form.get("evaluationEmp"+str(emp.id))
+                if ev != "":
+                    prj_role = add_evaluation_to_employee_in_project(id, emp.id, ev)
+
+        elif action == "deleteProject":
+            proj = request.form.get("projectToDelete")
+            delProj = delete_project(id)
+            return redirect(url_for('projects'))
+
+        return redirect(url_for('project', id=id))
+
     prj = get_project_by_id(id)
-    return render_template('project.html', project=prj)
+    closable = dt.today().date() > prj.ending_date
+    emp_roles = get_employees_in_project_with_roles(id)
+    free_roles = get_free_roles_in_project(id)
+    free_employees = get_available_employees_in_period(prj.starting_date, prj.ending_date)
+    empty_roles_best_employees = []
+    for fr in free_roles:
+        se, ue, ne = get_suitable_emp_for_role(fr.id, free_employees)
+        erbe =[fr,se,ue,ne]
+        empty_roles_best_employees.append(tuple(erbe))
+    # empty_roles_best_employees will be a list of tuples which contain, in order, the role entity and the 3 lists of
+    # available suitable employees for that specific role
+    employee_evaluations = get_employees_with_evaluation(id)
+    other_roles = get_not_used_roles_in_proj(id)
+    return render_template('project.html', project=prj, employees_roles=emp_roles,\
+                           free_roles_and_employees=empty_roles_best_employees,\
+                           employee_evaluations=employee_evaluations, available_employees=free_employees,\
+                           other_roles=other_roles, closable=closable)
 
 
 # //LOGIN AND USER MANAGEMENT\\
@@ -162,63 +241,12 @@ def login():
 
 # Should think about adding a user page and also the functionality to add more users with different permissionss
 
+
+@app.route('/roles')
+def roles():
+    roles = get_roles_in_projects()
+    return render_template('roles.html', roles=roles)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-skilled_employees = []
-unskilled_employees = []
-noskill_employees = []
-def matchingAlgorithm(role):
-    skill_ids = get_skills_required_by_role_in_project(role)
-    employee_list = get_employees()
-    for employeeeees in employee_list:
-        y = employeeeees.id
-        employee_skills = get_employee_skill_by_id(y)
-        x = true
-        for skills in skill_ids:
-            z = false
-            for emp_skill in employee_skills:
-                if emp_skill == skills:
-                    z = true
-            if z == false:
-                x = false
-        if x == true:
-            tot = 0
-            check = true
-            for skills in skill_ids:
-                eg = get_gradeofskill_by_emp_skill(y, skills.id)
-                rg = get_grade_of_skill_required_by_role_in_project(y, skills.id)
-                tot += eg
-                if eg<rg:
-                    check = false
-            if check == true:
-                skilled_employees.append(tuple([employeeeees, tot]))
-            else:
-                unskilled_employees.append(tuple([employeeeees, tot]))
-        else:
-            tot = 0
-            for skills in skill_ids:
-                tot += get_gradeofskill_by_emp_skill(y, skills.id)
-            noskill_employees.append(tuple([employeeeees, tot]))
-    skilled_employees.sort(key=lambda tup: -tup[1])
-    unskilled_employees.sort(key=lambda tup: -tup[1])
-    noskill_employees.sort(key=lambda tup: -tup[1])
-    length = len(skilled_employees)
-    length2 = len(skilled_employees) + len(unskilled_employees)
-    if length >= 5:
-        print("First 5 employees who have every  grade of skill required:")
-        print("\n", skilled_employees)
-    elif length2 < 5 and length > 0:
-        print(length, "employees have every grade of skill required:")
-        print("\n", skilled_employees)
-        print("Other options:")
-        if len(unskilled_employees) > 0:
-            print("\nEmployees who do not have every grade of skill required:")
-            print("\n", unskilled_employees)
-        print("Employees who do not have every skill required:")
-        n = 0
-        while length2 < 5 and noskill_employees[n][1] > 0:
-            print("\n", noskill_employees[n])
-            n = n+1
-            length2 = length2 + 1

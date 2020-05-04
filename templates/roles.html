@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Roles in projects</title>
+</head>
+<body>
+{% block pageContent %}
+    <h3>List of all the roles available in projects</h3>
+    <br/>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newRoleModal">
+      Add role
+    </button>
+    <br/>
+
+    <!-- Modal -->
+    <div class="modal fade bd-example-modal-lg" id="newRoleModal" tabindex="-1" role="dialog" aria-labelledby="newRoleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newRoleModalLabel">Define a new role</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+            <form action="{{ url_for('roles') }}" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="inputName">Role name</label>
+                        <input type="text" class="form-control" id="inputName" name="roleName" placeholder="Name of the role" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputDescription">Description</label>
+                        <input type="text" class="form-control" id="inputDescription" name="roleDescription" placeholder="Description of the role">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputSupervisor">Select the supervisor for the project</label>
+                        <select class="form-control" id="inputSupervisor" name="roleSupervisor">
+                            {% for emp in employees %}
+                                <option value="{{ emp.id }}">{{ emp.name }} {{ emp.surname }}</option>
+                            {% endfor %}
+                        </select>
+                        <small id="selectHelp" class="form-text text-muted">To select multiple roles hold CTRL while clicking on them.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputSelectRole">Select the roles required for the project</label>
+                        <select multiple class="form-control" id="inputSelectRole" name="roleRoles" aria-describedby="selectHelp">
+                            {% for role in roles %}
+                                <option value="{{ role.id }}">{{ role.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small id="selectHelp" class="form-text text-muted">To select multiple roles hold CTRL while clicking on them.</small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class="table-responsive">
+        {% for role in roles %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 style="display: inline-block">{{ role.name }}</h5>
+                    <button type="button" class="btn btn-default btn-sm float-right" id="editRole">
+                      <span class="material-icons">edit</span>
+                  </button>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title">{{ role.description }}</h6>
+                    {% set skills, grades = role.get_skills_required() %}
+                    <p class="card-text">Skills required for a {{ role.name }}</p>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Skill name</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Type of skill</th>
+                                <th scope="col">Grade required</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in skills %}
+                                <tr>
+                                    <td><a href="/skill/{{ s.id }}"> {{ s.name }} </a></td>
+                                    <td>{{ s.description }}</td>
+                                    <td>{{ s.type }}</td>
+                                    <td>{{ grades[loop.index - 1] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br/>
+        {% endfor %}
+    </div>
+{% endblock %}
+</body>
+</html>
