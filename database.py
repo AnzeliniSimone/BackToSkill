@@ -267,14 +267,14 @@ def get_skill_by_id(skill_id):
 
 # Returns a list of all the softskills
 def get_soft_skills():
-    ss=Skill.query.filter(Skill.type=="soft" or Skill.type=="Soft").all()
+    ss=Skill.query.filter(or_(Skill.type=="soft",Skill.type=="Soft")).all()
     ss.sort(key=lambda x: x.name)
     return ss
 
-
+# CHANGED!!!!
 # Returns a list of all the hardskills
 def get_hard_skills():
-    hs=Skill.query.filter(Skill.type=="hard" or Skill.type=="Hard").all()
+    hs=Skill.query.filter(or_(Skill.type=="hard", Skill.type=="Hard")).all()
     hs.sort(key=lambda x: x.name)
     return hs
 
@@ -488,9 +488,28 @@ def get_number_of_skills():
 # // SETTERS \\
 
 def add_skill(name, skill_type, desc):
-    skill = Skill(id=get_number_of_skills()+1, name=name, description=desc, type=skill_type)
+    skill = Skill(name=name, description=desc, type=skill_type)
     db.session.add(skill)
     db.session.commit()
+    return skill
+
+
+def edit_skill(id, type, desc):
+    skill = Skill.query.filter(Skill.id == id).first()
+    skill.type = type
+    skill.description = desc
+    db.session.commit()
+    return skill
+
+
+def delete_skill(skill):
+    links_employee = Employee_Skill.query.filter(Employee_Skill.skill_id==skill).delete()
+    links_job = Role_Skill.query.filter(Role_Skill.skill_id==skill).delete()
+    links_roles = Role_in_project_Skill.query.filter(Role_in_project_Skill.skill_id==skill).delete()
+    links_trainings = Training_Skill.query.filter(Training_Skill.skill_id==skill).delete()
+    skill = Skill.query.filter(Skill.id==skill).delete()
+    db.session.commit()
+    return "Skill deleted"
 
 
 def set_grade_of_skill_of_employee(grade, emp_id, skill_id):

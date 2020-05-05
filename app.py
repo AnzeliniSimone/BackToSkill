@@ -42,23 +42,33 @@ def about():
 
 # //SKILLS PAGES (second dropdown menu)\\
 
-@app.route('/skills', methods=['GET', 'POST'])
+@app.route("/skills", methods=['GET','POST'])
 @app.route('/skills/<kind>')
-def skills(kind="soft"):
+def skills(kind="soft", s=None):
     if request.method == 'POST':
-        name = str(request.form.get('skill_name'))
-        kind = request.form.get('skill_type')
-
-        #TODO: rinominare tutte le variabili in "Soft" e "Hard"
-
-        desc = str(request.form.get('desc'))
-        add_skill(name, kind, desc)
-
+        action = request.form.get("actionToPerform")
+        kind="soft"
+        if action == "addSkill":
+            name = str(request.form.get('newSkillName'))
+            kind = str(request.form.get('newSkillType'))
+            desc = str(request.form.get('newSkillDescription'))
+            new_skill = add_skill(name, kind, desc)
+        elif action == "deleteSkill":
+            skill_id = request.form.get('skillToDelete')
+            kind = get_skill_by_id(skill_id).type.lower()
+            deleted = delete_skill(skill_id)
+        elif action == "editSkill":
+            skill_id = request.form.get('skillToEdit')
+            kind = request.form.get('editedSkillType')
+            desc = request.form.get('editedSkillDescription')
+            edited_skill = edit_skill(skill_id,kind,desc)
+         #TODO: rinominare tutte le variabili in "Soft" e "Hard"
+        return redirect("skills/"+kind)
 
     skills_list=[]
     if kind == "soft":
         skills_list = get_soft_skills()
-    elif kind == "technical":
+    elif kind == "hard":
         skills_list = get_hard_skills()
     return render_template('skills.html', skills=skills_list, skill_type=kind)
 
