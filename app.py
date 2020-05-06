@@ -175,7 +175,7 @@ def projects(period="all"):
             prj_end_date = datetime.datetime.strptime(str(prj_end_date), '%Y-%m-%d').date()
         else:
             prj_end_date = None
-        prj_supervisor = int(request.form.get('prjSupervisor'))
+        prj_supervisor = request.form.get('prjSupervisor')
         # list of the ids of the roles required for the project created
         prj_roles_id_list = request.form.getlist('prjRoles')
         id_prj = add_project_todb(prj_name,prj_description,prj_start_date,prj_end_date,prj_supervisor)
@@ -218,7 +218,8 @@ def project(id):
                 prj_end_date = datetime.datetime.strptime(str(prj_end_date), '%Y-%m-%d').date()
             else:
                 prj_end_date = None
-            edited_proj = edit_project_basic_info(id, prj_name, prj_description, prj_start_date, prj_end_date)
+            supervisor = request.form.get("prjSupervisor")
+            edited_proj = edit_project_basic_info(id, prj_name, prj_description, prj_start_date, prj_end_date, supervisor)
 
         # Assign a role to an employee
         elif action == "assignEmployees":
@@ -265,6 +266,10 @@ def project(id):
         return redirect(url_for('project', id=id))
 
     prj = get_project_by_id(id)
+    supervisor = None
+    if prj.supervisor:
+        supervisor = get_employee_by_id(prj.supervisor)
+    all_emps = get_employees()
     closable = dt.today().date() > prj.ending_date
     emp_roles = get_employees_in_project_with_roles(id)
     free_roles = get_free_roles_in_project(id)
@@ -281,7 +286,7 @@ def project(id):
     return render_template('project.html', project=prj, employees_roles=emp_roles,\
                            free_roles_and_employees=empty_roles_best_employees,\
                            employee_evaluations=employee_evaluations, available_employees=free_employees,\
-                           other_roles=other_roles, closable=closable)
+                           other_roles=other_roles, closable=closable, supervisor=supervisor, employees=all_emps)
 
 
 # //LOGIN AND USER MANAGEMENT\\

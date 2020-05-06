@@ -582,12 +582,13 @@ def remove_employee_from_project(prj_id, role_id):
     return prj_role
 
 
-def edit_project_basic_info(prj_id, name, description, start, end):
+def edit_project_basic_info(prj_id, name, description, start, end, supervisor):
     project = get_project_by_id(prj_id)
     project.name = name
     project.description = description
     project.starting_date = start
     project.ending_date = end
+    project.supervisor = supervisor
     db.session.commit()
     return project
 

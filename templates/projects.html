@@ -59,6 +59,7 @@
                                     <div class="form-group">
                                         <label for="inputSupervisor">Select the supervisor for the project</label>
                                         <select class="form-control" id="inputSupervisor" name="prjSupervisor">
+                                            <option value="" selected>No supervisor</option>
                                             {% for emp in employees %}
                                                 <option value="{{ emp.id }}">{{ emp.name }} {{ emp.surname }}</option>
                                             {% endfor %}
