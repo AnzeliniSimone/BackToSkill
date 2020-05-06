@@ -41,10 +41,10 @@ class Employee(db.Model):
     skill = db.relationship("Skill", secondary="employee_skill")
     training = db.relationship("Training", secondary="employee_training")
     project_role = db.relationship("Project_Role")
-#   To ADD
-# state_in_company = db.Column(db.String)
-# education_level = db.Column(db.String)
-# AGGIUNGERE CLASSE LANGUAGE CERTIFICATE
+    #   To ADD
+    # state_in_company = db.Column(db.String)
+    # education_level = db.Column(db.String)
+    # AGGIUNGERE CLASSE LANGUAGE CERTIFICATE
 
 
 class Skill(db.Model):
@@ -153,7 +153,7 @@ def fill_users(db):
     db.session.commit()
 
 
-# // GETTERS \\
+    # // GETTERS \\
 
 # Returns a list of all the employees
 def get_employees():
@@ -170,7 +170,7 @@ def get_employee_by_id(emp_id):
     return Employee.query.filter(Employee.id==emp_id).first()
 
 
-# Returns a list of all the projects
+    # Returns a list of all the projects
 def get_projects():
     projects=Project.query.all()
     projects.sort(key=lambda x: x.name)
@@ -292,6 +292,13 @@ def get_trainings():
     trainings.sort(key=lambda x: x.name)
     return trainings
 
+def get_past_trainings():
+    past_tra = Training.query.filter(Training.ending_Date < datetime.date.today()).all()
+    return past_tra
+def get_current_trainings():
+    current_tra= Training.query.filter(Training.ending_Date>=datetime.date.today()).all()
+    return current_tra
+
 
 # Returns a list of all the employees involved in a given project (identified by the id passed)
 def get_employees_in_project(prj_id):
@@ -399,6 +406,10 @@ def get_number_of_skills():
     descending = Skill.query.order_by(Skill.id.desc())
     return descending.first().id
 
+
+def get_suitable_emp_for_job(role_id):
+    return matching_algorithm(role_id, get_employees(), True)
+
 # // SETTERS \\
 
 def add_skill(name, skill_type, desc):
@@ -469,8 +480,110 @@ def add_role_todb(name, description=None,):
     just_added=Role.query.order_by(Role.id.desc()).first()
     return just_added.id
 
+def modify_role_todb(id,name, description=None,):
 
-def add_skill_to_role(role_id,skill_id):
-    skill_role=Role_Skill(role_id=role_id,skill_id=skill_id)
+    role=Role(id=id,name=name,description=description)
+    db.session.add(role)
+    db.session.commit()
+    just_added=Role.query.order_by(Role.id.desc()).first()
+    return just_added.id
+
+def add_skill_to_role(role_id,skill_id,grade):
+    skill_role=Role_Skill(role_id=role_id,skill_id=skill_id,grade_required=grade)
     db.session.add(skill_role)
     db.session.commit()
+
+def update_role(role_id,desc):
+   job=Role.query.filter(Role.id==role_id).first()
+   job.description=desc
+   db.session.commit()
+   return job
+
+def update_employee(role_id,empl_id):
+   employee=Employee.query.filter(Employee.id==empl_id).first()
+   employee.role == role_id
+   db.session.commit()
+
+
+
+
+
+def delete_all_grade_of_skill_of_job(job_id):
+    Role_Skill.query.filter(Role_Skill.role_id == job_id).delete()
+    db.session.commit()
+
+def matching_algorithm(role_id, employee_list, job_or_role):
+    skilled_employees = []
+    unskilled_employees = []
+    noskill_employees = []
+
+    skills_required = []
+    if job_or_role:
+        skills_required = get_skills_required_by_role(role_id)
+    else:
+        skills_required = get_skills_required_by_role_in_project(role_id)
+
+    for emp in employee_list:
+        employee_skills = get_employee_skill_by_id(emp.id)
+        # if has_all_skills = true then the employee possesses all the skills requested
+        has_all_skills = True
+        for skill in skills_required:
+            has_single_skill = False
+
+            # if the skill considered at the moment is in the list of the employee's skills
+            has_single_skill = skill in employee_skills
+            # for emp_skill in employee_skills:
+            #     if emp_skill == s:
+            #         has_single_skill = True
+
+            if has_single_skill == False:
+                has_all_skills = False
+
+        # if the employee has every skill requested
+        if has_all_skills:
+            tot = 0
+            check = True
+            for s in skills_required:
+                eg = get_gradeofskill_by_emp_skill(emp.id, s.id)
+                rg = get_grade_of_skill_required_by_role_in_project(role_id, s.id)
+                tot += eg
+                if eg<rg:
+                    check = False
+            # after the loop, check will be false if one (or more) of the skills possessed by the employee have a lower grade than the one requested
+            if check:
+                # if all the skills have the right grade or higher then the employee is considered "skilled"
+                skilled_employees.append(tuple([emp, tot]))
+            else:
+                # otherwise he is considered unskilled (but still he has all the skills required
+                unskilled_employees.append(tuple([emp, tot]))
+        else:
+            # if the employee doesn't have all the skills required
+            tot = 0
+            for s in skills_required:
+                tot += get_gradeofskill_by_emp_skill(emp.id, s.id)
+            # appends every other employee with the total score of his skills, but only if they have at least one of the skills required
+            if(tot>0):
+                noskill_employees.append(tuple([emp, tot]))
+
+    #sorts the three lists by the scores of the employees (in descending order, from the one with highest value to the lowest
+    skilled_employees.sort(key=lambda tup: -tup[1])
+    unskilled_employees.sort(key=lambda tup: -tup[1])
+    noskill_employees.sort(key=lambda tup: -tup[1])
+
+    MAX_EMPLOYEES = 15
+    if len(skilled_employees) >= MAX_EMPLOYEES:
+        skilled_employees=skilled_employees[:MAX_EMPLOYEES]
+    if len(skilled_employees) < MAX_EMPLOYEES:
+        n_unskilled = MAX_EMPLOYEES-len(skilled_employees)
+        unskilled_employees=unskilled_employees[:n_unskilled]
+    else:
+        unskilled_employees=[]
+    if len(skilled_employees)+len(unskilled_employees)<MAX_EMPLOYEES:
+        n_noskill = MAX_EMPLOYEES - (len(skilled_employees)+len(unskilled_employees))
+        noskill_employees=noskill_employees[:n_noskill]
+    else:
+        noskill_employees=[]
+
+    # Returns the three lists, with a total max number of employees of MAX_EMPLOYEES. Note that some of the lists may
+    # be empty, depending on the number of skilled and unskilled employees found
+    return skilled_employees, unskilled_employees, noskill_employees
