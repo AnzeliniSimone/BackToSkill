@@ -197,6 +197,11 @@ def get_skills_required_by_role(role_id):
     skill_list=role.skill
     return skill_list
 
+def get_gradeofskill_of_a_role(role_id,skill_id):
+    role_skill= Role_Skill.query.filter(Role_Skill.role_id==role_id,Role_Skill.skill_id==skill_id).first()
+    return role_skill.grade_required
+
+
 
 def get_skill_id_of_a_role(role_id):
     role=Role_Skill.query.filter(Role_Skill.role_id==role_id).all()
@@ -501,7 +506,7 @@ def update_role(role_id,desc):
 
 def update_employee(role_id,empl_id):
    employee=Employee.query.filter(Employee.id==empl_id).first()
-   employee.role == role_id
+   employee.role = role_id
    db.session.commit()
 
 

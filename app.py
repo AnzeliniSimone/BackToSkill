@@ -178,20 +178,26 @@ def EmployeeJob(id):
             empl_id = request.form.get('AssignEmployee')
             update_employee(id,empl_id)
             return redirect(url_for('jobs',message="Save"))
+    else:
+        skill = get_skills_required_by_role(id)
+        # get the grades of the skills of the employee in db
+        dic = []
+        for i in skill:
+            grade = get_gradeofskill_of_a_role(id, i.id)
+            dic.append((i.id,i.name, grade))
+        role=get_role_by_id(id)
+        all_skills=get_skills()
+        skill_id=get_skill_id_of_a_role(id)
+        var1,var2,var3=get_suitable_emp_for_job(id)
+        empl=True
+        if role.employee:
+            empl=False
 
-    role=get_role_by_id(id)
-    all_skills=get_skills()
-    skill=get_skills_required_by_role(id)
-    skill_id=get_skill_id_of_a_role(id)
-    var1,var2,var3=get_suitable_emp_for_job(id)
-    empl=True
-    if role.employee:
-        empl=False
-
-    return render_template('EmployeeJob.html', role=role,skill=skill,grade =skill_id,var1=var1,var2=var2,var3=var3,empl=empl,all_skill=all_skills)
+        return render_template('EmployeeJob.html', role=role,skill=skill,grade =skill_id,var1=var1,var2=var2,var3=var3,empl=empl,all_skill=all_skills,dic=dic)
 
 
 # //TRAININGS PAGES (trainings dropdown)\\
+@app.route('/trainings',methods=['POST'])
 @app.route('/trainings/<period>')
 def trainings(period="all"):
      skills=get_skills()
