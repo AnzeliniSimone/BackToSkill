@@ -9,6 +9,7 @@ app.config['SECRET_KEY'] = '1234'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database_per_prove.db'
 db.init_app(app)
 
+
 # /// ROUTES \\\
 # Here we define the routes used to get to the html pages and the functions performing the actions needed to retrieve
 # the correct data from the db
@@ -43,6 +44,11 @@ def guide():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+@app.route('/team')
+def team():
+    return render_template('team.html')
 
 
 # //SKILLS PAGES (second dropdown menu)\\
@@ -80,6 +86,7 @@ def employee(id):
 @app.route('/jobs')
 def jobs():
     return render_template('jobs.html')
+
 
 # //TRAININGS PAGES (trainings dropdown)\\
 @app.route('/trainings/<period>')
@@ -126,11 +133,19 @@ def login():
     # Here we'll have to manage the entire login procedure
     return render_template('login.html')
 
+
+# //FAQ\\
+@app.route('/faq')
+def faq():
+    return render_template('FAQ.html')
+
+
 # Should think about adding a user page and also the functionality to add more users with different permissionss
 
 
 def trials():
     print(get_employees_having_a_skill(3))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
