@@ -17,10 +17,10 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-0 shadow">
                     <!-- Add the right picture -->
-                    <img src="static/img/simo.jpg" class="card-img-top" alt="...">
+                    <img src="static/img/Simone.jpg" class="card-img-top" alt="...">
                     <div class="card-body text-center">
-                        <h5 class="card-title mb-0">Simone Anzelini</h5>
-                        <div class="card-text text-black-50">Management Engineer</div>
+                        <h5 class="card-title mb-0">Simone</h5>
+                        <div class="card-text text-black-50">Information and Business Organization Engineer</div>
                     </div>
                 </div>
             </div>
@@ -28,7 +28,7 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-0 shadow">
                     <!-- Add the right picture -->
-                    <img src="static/img/fraDZ.jpg" class="card-img-top" alt="...">
+                    <img src="static/img/fraDz.jpg" class="card-img-top" alt="...">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Francesco De Zorzi</h5>
                         <div class="card-text text-black-50">Management Engineer</div>
@@ -39,10 +39,10 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-0 shadow">
                     <!-- Add the right picture -->
-                    <img src="https://source.unsplash.com/sNut2MqSmds/500x350" class="card-img-top" alt="...">
+                    <img src="static/img/fraDf.jpg" class="card-img-top" alt="...">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Francesco Del Fabbro</h5>
-                        <div class="card-text text-black-50">Management Engineer</div>
+                        <div class="card-text text-black-50">Mechanical Engineer</div>
                     </div>
                 </div>
             </div>
@@ -50,10 +50,10 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-0 shadow">
                     <!-- Add the right picture -->
-                    <img src="static/img/giulia.jpg" class="card-img-top" alt="...">
+                    <img src="static/img/GIU.jpg" class="card-img-top" alt="...">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Giulia Ioannone</h5>
-                        <div class="card-text text-black-50">Management Engineer</div>
+                        <div class="card-text text-black-50">Industrial Engineer </div>
                     </div>
                 </div>
             </div>
@@ -61,10 +61,10 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-0 shadow">
                     <!-- Add the right picture -->
-                    <img src="https://source.unsplash.com/ZI6p3i9SbVU/500x350" class="card-img-top" alt="...">
+                    <img src="static/img/BEK.png" class="card-img-top" alt="...">
                     <div class="card-body text-center">
-                        <h5 class="card-title mb-0">Bek</h5>
-                        <div class="card-text text-black-50">Management Engineer</div>
+                        <h5 class="card-title mb-0">Otabek Razzakov</h5>
+                        <div class="card-text text-black-50">Mechanical Engineer</div>
                     </div>
                 </div>
             </div>
@@ -72,10 +72,10 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-0 shadow">
                     <!-- Add the right picture -->
-                    <img src="https://source.unsplash.com/ZI6p3i9SbVU/500x350" class="card-img-top" alt="...">
+                    <img src="static/img/matte.png" class="card-img-top" alt="...">
                     <div class="card-body text-center">
                         <h5 class="card-title mb-0">Matteo Piovesan</h5>
-                        <div class="card-text text-black-50">Management Engineer</div>
+                        <div class="card-text text-black-50">Information and Business Organization Engineer</div>
                     </div>
                 </div>
             </div>
