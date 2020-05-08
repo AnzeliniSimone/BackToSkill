@@ -4,6 +4,7 @@ from sqlalchemy import not_, or_, and_
 from flask_login import LoginManager
 import datetime
 from datetime import datetime as dt
+from flask_wtf import FlaskForm
 
 from sqlalchemy import true, false
 
@@ -104,16 +105,39 @@ def jobs():
         job_hardskill_id_list = request.form.getlist('hkselection')
         job_skill_id_list=job_hardskill_id_list+job_softskill_id_list
         id_job = add_role_todb(job_name, job_description)
-    # the job is connected to the skills required for it
+       # the job is connected to the skills required for it
         for skill_id in job_skill_id_list :
            add_skill_to_role(id_job, skill_id)
-        # redirecting to the page of the project created
+        # redirecting to the page of the job created
+        # Skills
+        number = request.form["number"]
+        number = int(number)
+        dic = []
+        for x in range(number):
+           skill_index = "skill" + str(x)
+           skill = request.form.get(skill_index)
+           if skill != None:
+               skill_id = request.form[skill_index]  # Parametro form (ex. skill0=adaptability)
+               score_index = "score" + str(x)
+               score = request.form[score_index]
+               dic.append((skill_id, score))
+
+
+
+
+
+        # Add the skills of the employee into db
+        for y in dic:
+           add_skill_to_role(id_job, y[0], y[1])
+
         return redirect(url_for('EmployeeJob', id=id_job))
 
     soft_skill=get_soft_skills()
     hard_skill=get_hard_skills()
+    job_skill=soft_skill+hard_skill
     roles=get_roles()
     employee_list=[]
+
     for role in roles:
         employee_list.append(get_employee_by_role(role.id))
 
@@ -127,22 +151,79 @@ def jobs():
 
 
 
-    return render_template('jobs.html',softskill=soft_skill,hardskill=hard_skill,role=roles,open=open,closed=closed,employee=employee_list)
+    return render_template('jobs.html',softskill=soft_skill,hardskill=hard_skill,role=roles,open=open,closed=closed,employee=employee_list,job_skill=job_skill)
 
+@app.route('/EmployeeJob/<int:id>',methods=['GET','POST'])
 @app.route('/EmployeeJob/<int:id>')
 def EmployeeJob(id):
-    role=get_role_by_id(id)
-    skill=get_skills_required_by_role(id)
-    skill_id=get_skill_id_of_a_role(id)
-    return render_template('EmployeeJob.html', role=role,skill=skill,grade =skill_id)
+    if request.method=='POST':
+        action=str(request.form.get('actionToPerform'))
+        if action=="editJob":
+            job_description = str(request.form.get('Jdescription'))
+            update_role(id,job_description)
+            number = request.form["number"]
+            number = int(number)
+            dic = []
+            job_skills = get_skills_required_by_role(id)
+            for x in range(number):
+                skill_index = "skill" + str(x)
+                skill = request.form.get(skill_index)
+                if skill != None:
+                    skill_id = request.form[skill_index]  # Parametro form (ex. skill0=adaptability)
+                    score_index = "score" + str(x)
+                    score = request.form[score_index]
+                    dic.append((skill_id, score))
+
+            delete_all_grade_of_skill_of_job(id)
+
+
+            # Delete all duplicate from the list dic
+            seen = set()
+            dic = [(a, b) for a, b in dic if not (a in seen or seen.add(a))]
+            # Add the skills of the employee into db
+            for skill in dic:
+                add_skill_to_role(id, skill[0], skill[1])  # insert all new skills
+            # Once saved employee information in db return the employee.html page
+            return redirect(url_for('EmployeeJob', id=id, message="Save"))  # Message neet to show popup save
+
+        elif action =="assignEmployees":
+            empl_id = request.form.get('AssignEmployee')
+            update_employee(id,empl_id)
+            return redirect(url_for('jobs',message="Save"))
+    else:
+        skill = get_skills_required_by_role(id)
+        # get the grades of the skills of the employee in db
+        dic = []
+        for i in skill:
+            grade = get_gradeofskill_of_a_role(id, i.id)
+            dic.append((i.id,i.name, grade))
+        role=get_role_by_id(id)
+        all_skills=get_skills()
+        skill_id=get_skill_id_of_a_role(id)
+        var1,var2,var3=get_suitable_emp_for_job(id)
+        empl=True
+        if role.employee:
+            empl=False
+
+        return render_template('EmployeeJob.html', role=role,skill=skill,grade =skill_id,var1=var1,var2=var2,var3=var3,empl=empl,all_skill=all_skills,dic=dic)
 
 
 # //TRAININGS PAGES (trainings dropdown)\\
+@app.route('/trainings',methods=['POST'])
 @app.route('/trainings/<period>')
-def trainings(period):
-    # This function has to do the exact same thing of the projects one (of course retrieving the list of trainings from
-    # the db, not creating it randomly
-    return render_template('trainings.html')
+def trainings(period="all"):
+     skills=get_skills()
+     if period == "past":
+         trainings_list = get_past_trainings()
+     elif period == "current":
+         trainings_list = get_current_trainings()
+     else:
+         trainings_list= get_trainings()
+
+     trainings_list.sort(key=lambda x: x.starting_Date, reverse=True)
+     range=[1,2,3,4,5,6,7,8,9,10]
+
+     return render_template('trainings.html',skills=skills,trainings_list=trainings_list,range=range)
 
 
 @app.route('/training/<int:id>')

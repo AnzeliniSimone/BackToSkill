@@ -31,53 +31,111 @@
                                                               <label for="Role">Description</label>
                                                                <input type="text" class="form-control" id="role"  name="Jdescription">
                                                              </div>
-                                                              <div class="form-group">
-                                                              <label for="Deadline">employee</label>
-                                                               <input type="text" class="form-control" id="deadline" placeholder="xx-xx-xxxx" name="deadline">
-                                                              </div>
-                                                              <div class="form-group">
-                                                              <label for="exampleFormControlSelect2">Softskill required</label>
-                                                              <select multiple class="form-control" id="softskillselection" name="skselection" >
-                                                                 {% for skill in softskill %}
-                                                                  <option value="{{ skill.id }}">{{ skill.name}}</option>
-                                                                 {% endfor %}
-                                                              </select>
-                                                              </div>
-                                                              <div class="form-group">
-                                                                  <label for="grade">Grade Required</label>
-                                                                  <input type="int" class="form-control" id="grade" placeholder="grade" name="grade">
-                                                              </div>
-                                                              <div class="form-group">
-                                                                  <label for="exampleFormControlSelect2">Hardskill required</label>
-                                                                  <select multiple class="form-control" id="hkselection" name="hkselection" >
-                                                                 {% for skill in hardskill %}
-                                                                  <option value="{{ skill.id }}">{{ skill.name}}</option>
-                                                                 {% endfor %}
-                                                                     </select>
-                                                              </div>
-                                                              <div class="form-group">
-                                                              <label for="grade">Grade Required</label>
-                                                                <input type="int" class="form-control" id="grade" placeholder="grade" name="grade1">
-                                                              </div>
+                                                                <div class="col-6"> <!--col 6-->
+                                                                     <div class="row mt-5">
+                                                                    <!--Title and Button add-->
+                                                                    <!--Title-->
+                                                                     <label for="skill">Skills required </label>
+                                                                     <div class="col align-self-end text-right">
+                                                                        <input type="button" value="Add" class="btn btn-primary" onclick="createRow()">
+                                                                    </div>
+                                                                </div> <!--Title and Button add-->
+                                                                <!--Skills and buttons-->
+                                                                <!--Skills-->
+                                                                <div class="row">
+                                                                    <!--Skills-->
+                                                                    <div id="container" class="col-6 mt-3">
+                                                                        <input hidden type="text" id="number" name="number" value="0">
+                                                                        <div hidden class="form-group" id="div_example"></div>
+                                                                        <label hidden id="label_example">Skill</label>
+                                                                        <select hidden class="custom-select mt-3" id="select_example">
+                                                                            {% for skill in job_skill %}
+                                                                                <option value="{{ skill.id }}">{{ skill.name }}</option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                    </div>
+                                                                    <!--Score-->
+                                                                    <div id="container1" class="col-3 mt-3">
+                                                                        <input hidden type="text" id="number1" value="0">
+                                                                        <div hidden class="form-group" id="div_example1"></div>
+                                                                        <label hidden id="label_example1">Score</label>
+                                                                        <select hidden class="custom-select mt-3" id="select_example1">
+                                                                            <option value="1">1</option>
+                                                                            <option value="2">2</option>
+                                                                            <option value="3">3</option>
+                                                                            <option value="4">4</option>
+                                                                            <option value="5">5</option>
+                                                                            <option value="6">6</option>
+                                                                            <option value="7">7</option>
+                                                                            <option value="8">8</option>
+                                                                            <option value="9">9</option>
+                                                                            <option value="10">10</option>
+                                                                        </select>
+                                                                    </div>
+                                                                     <!--Delete-->
+                                                                    <div id="container2" class="col-3 mt-3">
+                                                                        <!--Sostituire ad employee_skill project_skills o jobskills che vi passate dalla vostra funzione sull app.py-->
+                                                                        {% for job_skill in dic %}
+                                                                        <div>
+                                                                            <a class="btn btn-danger mt-3" style="color:white"
+                                                                                name="remove{{dic.index(job_skill)}}"
+                                                                                onclick="removeRow({{dic.index(job_skill)}})">Remove</a>
+                                                                        </div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                                {% if employee!=None %}  <!---al posto di employee???-->
+                                                                    <div class="row">
+                                                                        <div id="container" class="col-6">
+                                                                            <input hidden type="text" id="number" name="number" value="0">
+                                                                            <div hidden class="form-group" id="div_example"></div>
+                                                                            <label hidden id="label_example">Skill</label>
+                                                                            <select hidden class="custom-select" id="select_example">
+                                                                                {% for skill in job_skill %}
+                                                                                    <option value="{{ skill.id }}">{{ skill.name }}</option>
+                                                                                {% endfor %}
+                                                                            </select>
+                                                                        </div>
+                                                                        <div id="container1" class="col-6">
+                                                                            <input hidden type="text" id="number1" value="0">
+                                                                            <div hidden class="form-group" id="div_example1"></div>
+                                                                            <label hidden id="label_example1">Score</label>
+                                                                            <select hidden class="custom-select" id="select_example1">
+                                                                                <option value="1">1</option>
+                                                                                <option value="2">2</option>
+                                                                                <option value="3">3</option>
+                                                                                <option value="4">4</option>
+                                                                                <option value="5">5</option>
+                                                                                <option value="6">6</option>
+                                                                                <option value="7">7</option>
+                                                                                <option value="8">8</option>
+                                                                                <option value="9">9</option>
+                                                                                <option value="10">10</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div> <!--col 6-->
                                                           </div>
                                                           <div class="modal-footer ">
                                                               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                               <button class="btn btn-primary"  type="submit"> Submit </button>
                                                           </div>
+
                                                      </form>
 
                                                       </div>
 
                                                   </div>
                                               </div>
-                                              <a href="#" data-toggle="modal" data-target="#myModal">ADD JOB</a>
+                                              <button type="button" class="btn btn-outline-danger"><a href="#" data-toggle="modal" data-target="#myModal">ADD JOB</a></button>
                                           </div>
                                       </div>
                                   </div>
                         <!--end modal -->
-              </div>
-          </div>
-        </div>
+                             </div>
+                          </div>
+                      </div>
 
            <div class="col-md-10">
 {#          Table for the jobs that will be taken out from the db#}
@@ -141,7 +199,7 @@
                                                 <td>
                                                     {% for empl in employee %}
                                                         {% if empl.role==role.id %}
-                                                            {{empl.name}}
+                                                            {{empl.name}} {{ empl.surname }}
                                                         {% endif %}
                                                     {% endfor %}
 
@@ -157,7 +215,93 @@
                       </table>
                   </div>
                   </div>
-   {% endblock %}
+            {% endblock %}
+      <!--Script for Javascript Skills -->
+    <script type='text/javascript'>
+        function removeRow(index) {
+
+            let skill = "skill" + index
+            let score = "score" + index
+            let remove = "remove" + index
+
+            $("[name='" + skill + "']").remove();
+            $("[name='" + score + "']").remove();
+            $("[name='" + remove + "']").remove();
+
+
+            console.log("removed " + skill)
+        }
+
+        function createRow() {
+            let rowNumber = getRowNumber();
+
+            addSkill(rowNumber);
+            addScore(rowNumber);
+            addRemove(rowNumber)
+
+            updateRowNumber();
+        }
+
+        function getRowNumber() {
+            // Number of inputs to create
+            return number = parseInt(document.getElementById("number").value);
+        }
+
+        function updateRowNumber() {
+            // Number of inputs to update
+            document.getElementById("number").value = number + 1;
+        }
+
+        function addRemove(number) {
+
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container2");
+
+            let div = document.createElement("div");
+            let buttorRemove = document.createElement("a");
+
+            buttorRemove.setAttribute("class","btn btn-danger mt-3");
+            buttorRemove.setAttribute("name","remove"+number);
+            buttorRemove.setAttribute("onclick","removeRow("+number+")");
+            buttorRemove.setAttribute("style","color:'white'");
+            buttorRemove.style="color:white"
+            buttorRemove.innerHTML="Remove"
+
+
+            div.appendChild(buttorRemove);
+            container.appendChild(div);
+        }
+
+
+        function addSkill(number) {
+
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container");
+
+            //Get select hidden
+            var select_example = document.getElementById("select_example");
+
+            // Clone select
+            let cloneSelect = select_example.cloneNode(true);
+            cloneSelect.hidden = false;
+            cloneSelect.setAttribute('name', "skill" + number);
+            container.appendChild(cloneSelect);
+        }
+
+        function addScore(number) {
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container1");
+
+            //Select
+            var select_example = document.getElementById("select_example1");
+
+            // Clone
+            let cloneS = select_example.cloneNode(true);
+            cloneS.hidden = false;
+            cloneS.setAttribute('name', "score" + number);
+            container.appendChild(cloneS);
+        }
+    </script>
 
 {% endblock %}
 
