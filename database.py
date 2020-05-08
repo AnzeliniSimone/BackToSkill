@@ -615,6 +615,13 @@ def delete_project(prj_id):
     return "Project deleted"
 
 
+def create_role_in_project(name, description):
+    role = Role_in_project(name=name, description=description)
+    db.session.add(role)
+    db.session.commit()
+    return role
+
+
 # returns the most suited employees (among a list passed) for a certain job (job_or_role = True) or a role in a project (job_or_role = False)
 def matching_algorithm(role_id, employee_list, job_or_role):
     skilled_employees = []
@@ -701,9 +708,37 @@ def add_role_todb(name, description=None):
     return just_added.id
 
 
-# TODO: RIVEDERE
 def add_skill_to_role(role_id,skill_id):
-    skill_role=Role_Skill(role_id=role_id,skill_id=skill_id)
+    skill_role=Role_Skill(role_id=role_id, skill_id=skill_id)
     db.session.add(skill_role)
     db.session.commit()
-    return "skill added"
+    return skill_role
+
+
+def add_skill_to_role_in_project(role_id, skill_id, grade_required):
+    skill_role=Role_in_project_Skill(role_id=role_id, skill_id=skill_id, grade_required=grade_required)
+    db.session.add(skill_role)
+    db.session.commit()
+    return skill_role
+
+
+def delete_role_in_project(role_id):
+    links = Project_Role.query.filter(Project_Role.role_id==role_id).delete(synchronize_session='fetch')
+    links = Role_in_project_Skill.query.filter(Role_in_project_Skill.role_id==role_id).delete(synchronize_session='fetch')
+    links = Role_in_project.query.filter(Role_in_project.id==role_id).delete(synchronize_session='fetch')
+    db.session.commit()
+    return "Deleted"
+
+
+def edit_role_description(role_id, desc):
+    role = get_roles_in_projects_by_id(role_id)
+    role.description=desc
+    db.session.commit()
+    return role
+
+
+def remove_skills_required_from_role_in_project(role_id):
+    deleted = Role_in_project_Skill.query.filter(Role_in_project_Skill.role_id==role_id).delete(synchronize_session='fetch')
+    db.session.commit()
+    deleted = get_roles_in_projects_by_id(role_id)
+    return deleted

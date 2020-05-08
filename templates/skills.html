@@ -41,7 +41,7 @@
                                       <td>
                                           <div class="btn-group" role="group" aria-label="Basic example">
                                                   <button type="button" class="btn d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#editSkillModal" data-skillid="{{ skill.id }}" data-name="{{ skill.name }}" data-description="{{ skill.description }}" data-kind="{{ skill.type }}" >
-                                                      <i class="material-icons" style="color: goldenrod">&#xE254; </i>
+                                                      <i class="material-icons" style="color: goldenrod">edit </i>
                                                   </button>
 
                                               <form action="{{ url_for('skills') }}" method="POST" onsubmit="return confirm('Do you really want to delete this skill?');">

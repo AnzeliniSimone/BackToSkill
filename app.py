@@ -298,10 +298,82 @@ def login():
 # Should think about adding a user page and also the functionality to add more users with different permissionss
 
 
-@app.route('/roles')
+@app.route('/edit_role/<int:id>', methods=['GET', 'POST'])
+def edit_role(id):
+    role_in_project = get_roles_in_projects_by_id(id)
+    all_skills=get_skills()
+    skills, grades = role_in_project.get_skills_required()
+    dic=[]
+    for s, g in map(None, skills, grades):
+        dic.append((s.id, s.name, g))
+
+    if request.method=='POST':
+        description = request.form.get("newDescription")
+        role_updated = edit_role_description(id, description)
+        # Skills
+        number = request.form["number"]
+        number = int(number)
+        dic = []
+        for x in range(number):
+            skill_index = "skill" + str(x)
+            skill = request.form.get(skill_index)
+            if skill != None:
+                skill_id = request.form[skill_index]  # Parametro form (ex. skill0=adaptability)
+                score_index = "score" + str(x)
+                score = request.form[score_index]
+                dic.append((skill_id, score))
+
+        # Delete all duplicate from the list dic
+        seen = set()
+        dic = [(a, b) for a, b in dic if not (a in seen or seen.add(a))]
+        # Delete previous requirements
+        role_updated = remove_skills_required_from_role_in_project(id)
+        # Update skill requirements
+        for skill in dic:
+            add_skill_to_role_in_project(role_updated.id, skill[0], skill[1])  # insert all new skills requirements
+        return redirect(url_for('roles'))
+
+    return render_template('edit_role.html', role=role_in_project, all_skills=all_skills, dic=dic)
+
+
+@app.route('/roles', methods=['GET', 'POST'])
 def roles():
+    if request.method=='POST':
+        action = request.form.get("actionToPerform")
+
+        if action == "deleteRole":
+            role_id = request.form.get("roleToDelete")
+            deleted = delete_role_in_project(role_id)
+
+        elif action == "newRole":
+            name = request.form.get("roleName")
+            description = request.form.get("roleDescription")
+            new_role = create_role_in_project(name,description)
+            # Skills
+            number = request.form["number"]
+            number = int(number)
+            dic = []
+            for x in range(number):
+                skill_index = "skill" + str(x)
+                skill = request.form.get(skill_index)
+                if skill != None:
+                    skill_id = request.form[skill_index]  # Parametro form (ex. skill0=adaptability)
+                    score_index = "score" + str(x)
+                    score = request.form[score_index]
+                    dic.append((skill_id, score))
+
+            # Delete all duplicate from the list dic
+            seen = set()
+            dic = [(a, b) for a, b in dic if not (a in seen or seen.add(a))]
+            # Add skill requirements to the role created
+            for skill in dic:
+                add_skill_to_role_in_project(new_role.id, skill[0], skill[1])  # insert all new skills requirements
+            return redirect(url_for('roles'))
+
     roles = get_roles_in_projects()
-    return render_template('roles.html', roles=roles)
+    skills = get_skills()
+    print skills
+    return render_template('roles.html', roles=roles, all_skills=skills)
 
 
 if __name__ == '__main__':

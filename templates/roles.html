@@ -26,6 +26,7 @@
           </div>
 
             <form action="{{ url_for('roles') }}" method="POST">
+                <input type="hidden" value="newRole" name="actionToPerform">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="inputName">Role name</label>
@@ -35,24 +36,76 @@
                         <label for="inputDescription">Description</label>
                         <input type="text" class="form-control" id="inputDescription" name="roleDescription" placeholder="Description of the role">
                     </div>
-                    <div class="form-group">
-                        <label for="inputSupervisor">Select the supervisor for the project</label>
-                        <select class="form-control" id="inputSupervisor" name="roleSupervisor">
-                            {% for emp in employees %}
-                                <option value="{{ emp.id }}">{{ emp.name }} {{ emp.surname }}</option>
-                            {% endfor %}
-                        </select>
-                        <small id="selectHelp" class="form-text text-muted">To select multiple roles hold CTRL while clicking on them.</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputSelectRole">Select the roles required for the project</label>
-                        <select multiple class="form-control" id="inputSelectRole" name="roleRoles" aria-describedby="selectHelp">
-                            {% for role in roles %}
-                                <option value="{{ role.id }}">{{ role.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <small id="selectHelp" class="form-text text-muted">To select multiple roles hold CTRL while clicking on them.</small>
-                    </div>
+                    
+                    <p>Select the skills required</p>
+                    <input type="button" value="Add skill" class="btn btn-primary" onclick="createRow()">
+                    <div class="row justify-content-center">
+                        <!--col 6-->
+                        <div class="col-6">
+                            <!--Skills and buttons-->
+                            <!--Skills-->
+                            <div class="row">
+                                <!--Skills-->
+                                <div id="container" class="col-6">
+                                    <input hidden type="text" id="number" name="number" value="{{dic|length}}">
+                                    <div hidden class="form-group" id="div_example"></div>
+                                    <label hidden id="label_example">Skill</label>
+                                    {% for role_skill in dic %}
+                                    <select class="custom-select mt-3"
+                                        name="skill{{dic.index(role_skill)}}">
+                                        {% for skill in all_skills %}
+                                        <option {% if role_skill[1] == skill.name %}selected{% endif %}
+                                            value="{{skill.id}}">{{ skill.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% endfor %}
+                                </div>
+                                <!--Score-->
+                                <div id="container1" class="col-3">
+                                    {% for role_skill in dic %}
+                                    <select class="custom-select mt-3"
+                                        name="score{{dic.index(role_skill)}}">
+                                        {% for i in range(1,11) %}
+                                        <option {% if  role_skill[2] == i %}selected{% endif %}
+                                            value="{{i}}">{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% endfor %}
+                                </div>
+                                <!--Delete-->
+                                <div id="container2" class="col-3">
+                                    {% for role_skill in dic %}
+                                    <div>
+                                        <a class="btn btn-danger mt-3" style="color:white"
+                                            name="remove{{dic.index(role_skill)}}"
+                                            onclick="removeRow({{dic.index(role_skill)}})">Remove</a>
+                                    </div>
+
+                                    {% endfor %}
+                                </div>
+                                <!--Select Skills Format-->
+                                    <select hidden class="custom-select mt-3" id="select_example">
+                                        {% for skill in all_skills %}
+                                        <option value="{{ skill.id }}">{{ skill.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                <!--New Score Format-->
+                                    <select hidden class="custom-select mt-3" id="select_example1" mt-3>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
+                            </div>
+                        </div><!--col 6-->
+                    </div> <!--row-->
+                    <br/>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -68,9 +121,18 @@
             <div class="card">
                 <div class="card-header">
                     <h5 style="display: inline-block">{{ role.name }}</h5>
-                    <button type="button" class="btn btn-default btn-sm float-right" id="editRole">
-                      <span class="material-icons">edit</span>
-                  </button>
+                    <div class="btn-group float-right">
+                        <a class="btn btn-default btn-sm" href="/edit_role/{{ role.id }}">
+                          <i class="material-icons" style="color: goldenrod">edit</i>
+                        </a>
+                        <form action="{{ url_for('roles') }}" method="POST" onsubmit="return confirm('Do you really want to delete this role? Mind that deleting it you will also delete the associations inside the projects involving this role');">
+                            <input type="hidden" value="{{ role.id }}" name="roleToDelete">
+                            <input type="hidden" value="deleteRole" name="actionToPerform">
+                            <button type="submit" class="btn btn-default btn-sm" >
+                              <i class="material-icons" style="color: #b22222">delete</i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
                 <div class="card-body">
                     <h6 class="card-title">{{ role.description }}</h6>
@@ -101,6 +163,93 @@
             <br/>
         {% endfor %}
     </div>
+
+    <!-- Javascript for skills selection -->
+    <script type='text/javascript'>
+        function removeRow(index) {
+
+            let skill = "skill" + index;
+            let score = "score" + index;
+            let remove = "remove" + index;
+
+            $("[name='" + skill + "']").remove();
+            $("[name='" + score + "']").remove();
+            $("[name='" + remove + "']").remove();
+
+
+            console.log("removed " + skill)
+        }
+
+        function createRow() {
+            let rowNumber = getRowNumber();
+
+            addSkill(rowNumber);
+            addScore(rowNumber);
+            addRemove(rowNumber);
+
+            updateRowNumber();
+        }
+
+        function getRowNumber() {
+            // Number of inputs to create
+            return number = parseInt(document.getElementById("number").value);
+        }
+
+        function updateRowNumber() {
+            // Number of inputs to update
+            document.getElementById("number").value = number + 1;
+        }
+
+        function addRemove(number) {
+
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container2");
+
+            let div = document.createElement("div");
+            let buttorRemove = document.createElement("a");
+
+            buttorRemove.setAttribute("class","btn btn-danger mt-3");
+            buttorRemove.setAttribute("name","remove"+number);
+            buttorRemove.setAttribute("onclick","removeRow("+number+")");
+            buttorRemove.setAttribute("style","color:'white'");
+            buttorRemove.style="color:white";
+            buttorRemove.innerHTML="Remove";
+
+
+            div.appendChild(buttorRemove);
+            container.appendChild(div);
+        }
+
+
+        function addSkill(number) {
+
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container");
+
+            //Get select hidden
+            var select_example = document.getElementById("select_example");
+
+            // Clone select
+            let cloneSelect = select_example.cloneNode(true);
+            cloneSelect.hidden = false;
+            cloneSelect.setAttribute('name', "skill" + number);
+            container.appendChild(cloneSelect);
+        }
+
+        function addScore(number) {
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container1");
+
+            //Select
+            var select_example = document.getElementById("select_example1");
+
+            // Clone
+            let cloneS = select_example.cloneNode(true);
+            cloneS.hidden = false;
+            cloneS.setAttribute('name', "score" + number);
+            container.appendChild(cloneS);
+        }
+    </script>
 {% endblock %}
 </body>
 </html>
