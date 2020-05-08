@@ -1,0 +1,88 @@
+{% extends "index.html" %}
+
+{% block sectionContent %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+    <!-- Header -->
+    <header class="text-center py-2 mb-1">
+        <div class="container">
+            <h1 class="font-weight-light text-white">Meet our Team</h1>
+        </div>
+    </header>
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <!-- Team Member 1 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="static/img/Simone.jpg" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Simone</h5>
+                        <div class="card-text text-black-50">Information and Business Organization Engineer</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 2 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="static/img/fraDz.jpg" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Francesco De Zorzi</h5>
+                        <div class="card-text text-black-50">Management Engineer</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 3 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="static/img/fraDf.jpg" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Francesco Del Fabbro</h5>
+                        <div class="card-text text-black-50">Mechanical Engineer</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 4 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="static/img/GIU.jpg" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Giulia Ioannone</h5>
+                        <div class="card-text text-black-50">Industrial Engineer </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 5 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="static/img/BEK.png" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Otabek Razzakov</h5>
+                        <div class="card-text text-black-50">Mechanical Engineer</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 6 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-0 shadow">
+                    <!-- Add the right picture -->
+                    <img src="static/img/matte.png" class="card-img-top" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-0">Matteo Piovesan</h5>
+                        <div class="card-text text-black-50">Information and Business Organization Engineer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+
+
+{% endblock %}
