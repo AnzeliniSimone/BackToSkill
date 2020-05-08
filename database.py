@@ -636,7 +636,8 @@ def create_role_in_project(name, description):
     return role
 
 
-# returns the most suited employees (among a list passed) for a certain job (job_or_role = True) or a role in a project (job_or_role = False)
+# returns the most suited employees (among a list passed) for a certain job (job_or_role = True) or a role in a project
+# (job_or_role = False)
 def matching_algorithm(role_id, employee_list, job_or_role):
     skilled_employees = []
     unskilled_employees = []
@@ -674,7 +675,8 @@ def matching_algorithm(role_id, employee_list, job_or_role):
                 tot += eg
                 if eg<rg:
                     check = False
-            # after the loop, check will be false if one (or more) of the skills possessed by the employee have a lower grade than the one requested
+            # after the loop, check will be false if one (or more) of the skills possessed by the employee have a lower
+            # grade than the one requested
             if check:
                 # if all the skills have the right grade or higher then the employee is considered "skilled"
                 skilled_employees.append(tuple([emp, tot]))
@@ -686,11 +688,13 @@ def matching_algorithm(role_id, employee_list, job_or_role):
             tot = 0
             for s in skills_required:
                 tot += get_gradeofskill_by_emp_skill(emp.id, s.id)
-            # appends every other employee with the total score of his skills, but only if they have at least one of the skills required
+            # appends every other employee with the total score of his skills, but only if they have at least one of the
+            # skills required
             if(tot>0):
                 noskill_employees.append(tuple([emp, tot]))
 
-    #sorts the three lists by the scores of the employees (in descending order, from the one with highest value to the lowest
+    #sorts the three lists by the scores of the employees (in descending order, from the one with highest value to the
+    # lowest
     skilled_employees.sort(key=lambda tup: -tup[1])
     unskilled_employees.sort(key=lambda tup: -tup[1])
     noskill_employees.sort(key=lambda tup: -tup[1])
@@ -722,7 +726,6 @@ def add_role_todb(name, description=None):
     return just_added.id
 
 def modify_role_todb(id,name, description=None,):
-
     role=Role(id=id,name=name,description=description)
     db.session.add(role)
     db.session.commit()
@@ -788,80 +791,3 @@ def update_employee(role_id,empl_id):
 def delete_all_grade_of_skill_of_job(job_id):
     Role_Skill.query.filter(Role_Skill.role_id == job_id).delete()
     db.session.commit()
-
-
-def matching_algorithm(role_id, employee_list, job_or_role):
-    skilled_employees = []
-    unskilled_employees = []
-    noskill_employees = []
-
-    skills_required = []
-    if job_or_role:
-        skills_required = get_skills_required_by_role(role_id)
-    else:
-        skills_required = get_skills_required_by_role_in_project(role_id)
-
-    for emp in employee_list:
-        employee_skills = get_employee_skill_by_id(emp.id)
-        # if has_all_skills = true then the employee possesses all the skills requested
-        has_all_skills = True
-        for skill in skills_required:
-            has_single_skill = False
-
-            # if the skill considered at the moment is in the list of the employee's skills
-            has_single_skill = skill in employee_skills
-            # for emp_skill in employee_skills:
-            #     if emp_skill == s:
-            #         has_single_skill = True
-
-            if has_single_skill == False:
-                has_all_skills = False
-
-        # if the employee has every skill requested
-        if has_all_skills:
-            tot = 0
-            check = True
-            for s in skills_required:
-                eg = get_gradeofskill_by_emp_skill(emp.id, s.id)
-                rg = get_grade_of_skill_required_by_role_in_project(role_id, s.id)
-                tot += eg
-                if eg<rg:
-                    check = False
-            # after the loop, check will be false if one (or more) of the skills possessed by the employee have a lower grade than the one requested
-            if check:
-                # if all the skills have the right grade or higher then the employee is considered "skilled"
-                skilled_employees.append(tuple([emp, tot]))
-            else:
-                # otherwise he is considered unskilled (but still he has all the skills required
-                unskilled_employees.append(tuple([emp, tot]))
-        else:
-            # if the employee doesn't have all the skills required
-            tot = 0
-            for s in skills_required:
-                tot += get_gradeofskill_by_emp_skill(emp.id, s.id)
-            # appends every other employee with the total score of his skills, but only if they have at least one of the skills required
-            if(tot>0):
-                noskill_employees.append(tuple([emp, tot]))
-
-    #sorts the three lists by the scores of the employees (in descending order, from the one with highest value to the lowest
-    skilled_employees.sort(key=lambda tup: -tup[1])
-    unskilled_employees.sort(key=lambda tup: -tup[1])
-    noskill_employees.sort(key=lambda tup: -tup[1])
-
-    MAX_EMPLOYEES = 15
-    if len(skilled_employees) >= MAX_EMPLOYEES:
-        skilled_employees=skilled_employees[:MAX_EMPLOYEES]
-    if len(skilled_employees) < MAX_EMPLOYEES:
-        n_unskilled = MAX_EMPLOYEES-len(skilled_employees)
-        unskilled_employees=unskilled_employees[:n_unskilled]
-    else:
-        unskilled_employees=[]
-    if len(skilled_employees)+len(unskilled_employees)<MAX_EMPLOYEES:
-        n_noskill = MAX_EMPLOYEES - (len(skilled_employees)+len(unskilled_employees))
-        noskill_employees=noskill_employees[:n_noskill]
-    else:
-        noskill_employees=[]
-
-    # Returns the three lists, with a total max number of employees of MAX_EMPLOYEES. Note that some of the lists may
-    # be empty, depending on the number of skilled and unskilled employees found
-    return skilled_employees, unskilled_employees, noskill_employees
