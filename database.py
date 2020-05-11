@@ -552,8 +552,12 @@ def edit_training_info(id,name,start,end,hours):
 
 def add_employee_to_training(id,emp_id):
     link=Employee_Training.query.filter(Employee_Training.train_id==id).all()
-    link.add(emp_id)
-    #da rivedere per forza
+    new_link =Employee_Training(train_id=id,emp_id=emp_id)
+    db.session.add(new_link)
+    db.session.commit()
+
+
+
 
 def delete_training(tra_id):
     links =Training_Skill.query.filter(Training_Skill.train_id==tra_id).delete(synchronize_session='fetch')

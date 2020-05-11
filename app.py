@@ -257,14 +257,16 @@ def training(id):
                 tra_end_date = None
             edited_Tra=edit_training_info(id,tra_name,tra_start_date,tra_end_date,tra_hours)
 
-        elif action=="assignEmployee":
-            #devo fare un for ?????
-            emp_id = request.form.get("addEmployeeTraining")
-            add_employee_to_training(id,emp_id)
+        elif action=="assignEmployees":
+            training=get_trainings()
+            for tra in training:
+                emp_id = request.form.get("addEmployeeTraining"+str(tra.id))
+                if emp_id:
+                    add_employee_to_training(id,emp_id)
 
         elif action=="deleteTraining":
             delete_training(id)
-            return redirect(url_for('trainings/all'))
+            return redirect('/trainings/all')
 
         elif action=="deleteSkill":
             skill=request.form.get('skillToDelete')
@@ -294,30 +296,34 @@ def training(id):
             dic = [(a, b) for a, b in dic if not (a in seen or seen.add(a))]
             # Add the skills of the employee into db
             for skill in dic:
-                add_skill_to_role(id, skill[0], skill[1])  # insert all new skills
-    else:
-        link = Training_Skill.query.filter(Training_Skill.train_id == id).all()
-        skill_ids = []
-        skills=[]
-        for l in link:
-            if l.skill_id:
-                skill_ids.append(l.skill_id)
-        for k in skill_ids:
-            skill=get_skill_by_id(k)
-            skills.append(skill)
+                add_skill_to_training(id, skill[0], skill[1])  # insert all new skills
+
+        return redirect(url_for('training',id=id))
+
+    link = Training_Skill.query.filter(Training_Skill.train_id == id).all()
+    skill_ids = []
+    skills=[]
+    for l in link:
+        if l.skill_id:
+            skill_ids.append(l.skill_id)
+    for k in skill_ids:
+        skill=get_skill_by_id(k)
+        skills.append(skill)
 
 
-        # get the grades of the skills of the employee in db
-        dic = []
-        for i in skills:
-            point = get_pointsassigned_by_training_to_skill(id, i.id)
-            dic.append((i.id, i.name, point))
+    # get the grades of the skills of the employee in db
+    dic = []
+    for i in skills:
+        point = get_pointsassigned_by_training_to_skill(id, i.id)
+        dic.append((i.id, i.name, point))
 
-        training=get_trainings_by_id(id)
-        skill_point=get_skill_in_training_with_points(id)
-        emp=get_employees_in_training(id)
+    all_skill=get_skills()
+    training=get_trainings_by_id(id)
+    skill_point=get_skill_in_training_with_points(id)
+    emp=get_employees_in_training(id)
+    employees1=get_employees()
 
-        return render_template('training.html',training=training,skill_point=skill_point,employees=emp,dic=dic,skills=skills)
+    return render_template('training.html',training=training,skill_point=skill_point,employees=emp,dic=dic,skills=skills,all_skill=all_skill,employees1=employees1)
 
 
 # //PROJECTS PAGES\\

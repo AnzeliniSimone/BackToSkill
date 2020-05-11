@@ -6,8 +6,8 @@
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database_per_prove.db" beforeDir="false" afterPath="$PROJECT_DIR$/database_per_prove.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/training.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/training.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/trainings.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/trainings.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -180,6 +180,8 @@
       <workItem from="1588946114464" duration="9904000" />
       <workItem from="1589015189580" duration="2762000" />
       <workItem from="1589100793836" duration="3173000" />
+      <workItem from="1589114320866" duration="1722000" />
+      <workItem from="1589205278067" duration="2845000" />
     </task>
     <servers />
   </component>
@@ -201,6 +203,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BackToSkill$database.coverage" NAME="database Coverage Results" MODIFIED="1589103176781" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/BackToSkill$BackToSkill.coverage" NAME="BackToSkill Coverage Results" MODIFIED="1589103838013" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/BackToSkill$BackToSkill.coverage" NAME="BackToSkill Coverage Results" MODIFIED="1589208112168" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

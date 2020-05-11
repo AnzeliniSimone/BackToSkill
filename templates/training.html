@@ -59,7 +59,7 @@
               <br/>
               <h5>Hours</h5>
               <p>
-                  <span id="currhours">{{ training.hours }}</span>
+                  <span id="currHours">{{ training.hours }}</span>
                   <input value="{{ training.hours }}" name="traHours" id="newHoursField" style="display:none" required>
                  <button type="button" class="btn btn-default btn-sm" id="editHours">
                   <span class="material-icons">edit</span>
@@ -138,7 +138,7 @@
                         <select class="addEmp" id="addEmployeeTraining{{ training.id }}" name="addEmployeeTraining{{ training.id }}" style="display: none">
                             <option value="" selected disabled hidden>Choose an employee</option>
                              <optgroup label="Available employee">
-                                    {% for emp in employees %}
+                                    {% for emp in employees1 %}
                                     <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}</option>
                                     {% endfor %}
                             </optgroup>
@@ -427,10 +427,10 @@
         $("#currName").toggle();
         $("#editName").hide();
       });
-      $("#editDesc").click(function() {
-        $("#newDescField").toggle();
-        $("#currDesc").toggle();
-        $("#editDesc").hide();
+      $("#editHours").click(function() {
+        $("#newHoursField").toggle();
+        $("#currHours").toggle();
+        $("#editHours").hide();
       });
       $("#editStart").click(function() {
         $("#newStartField").toggle();
@@ -449,10 +449,10 @@
     })
 
     function toggleSelect(index) {
-            $("#addEmployeeRole"+index).toggle();
+            $("#addEmployeeTraining"+index).toggle();
             $("#addEmployee"+index).toggle();
             $("#undoAdd"+index).toggle();
-            $("#addEmployeeRole"+index).val("");
+            $("#addEmployeeTraining"+index).val("");
     }
 
     function toggleEvaluations() {
@@ -481,24 +481,24 @@
       return 'Leaving without saving changes will delete them, are you sure?';
     });
 
-    $('#deleteRoleModal').on('show.bs.modal', function (event) {
+    $('#deleteTrainingModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) // Button that triggered the modal
       var recipient = button.data('whatever') // Extract info from data-* attributes
       var modal = $(this)
-      modal.find('#roleToDelete').val(recipient)
+      modal.find('#trainingToDelete').val(recipient)
     });
-    $('#deleteProjectModal').on('show.bs.modal', function (event) {
+    $('#deleteSkillModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) // Button that triggered the modal
       var recipient = button.data('whatever') // Extract info from data-* attributes
       var modal = $(this)
-      modal.find('#projectToDelete').val(recipient)
+      modal.find('#skillToDelete').val(recipient)
     });
-    $('#deassignRoleModal').on('show.bs.modal', function (event) {
+    $('#deassignEmployeeModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) // Button that triggered the modal
       var recipient = button.data('whatever') // Extract info from data-* attributes
       var nameEmployee = button.data('name')
       var modal = $(this)
-      modal.find('#roleToDeassign').val(recipient)
+      modal.find('#employeeToDeassign').val(recipient)
       modal.find('#nameEmployee').text(nameEmployee)
     });
 
