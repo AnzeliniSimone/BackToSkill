@@ -20,15 +20,21 @@
 {#          Table for the skills that will be taken out from the db#}
               {% block sectionContent %}
                   <h4>List of {{ skill_type }} skills</h4>
+                  {% if current_user.is_authenticated and current_user.admin %}
+                      <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#newSkillModal">
+                          New skill
+                      </button>
+                  <br/>
+                  {% endif %}
+                  <br/>
                   <div class="table-responsive">
-                      <table class="table table-bordered table-striped text-center">
+                      <table class="table table-bordered table-light table-striped text-center">
                           <thead>
                           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
                             <tr>
                               <th scope="col">#</th>
                               <th scope="col">Name</th>
                               <th scope="col">Description</th>
-                              <th scope="col">Actions</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -38,108 +44,108 @@
                                       <th class="align-middle" scope="row">{{ loop.index }}</th>
                                       <td class="align-middle">{{skill.name}}</td>
                                       <td class="align-middle">{{ skill.description }}</td>
-                                      <td>
-                                          <div class="btn-group" role="group" aria-label="Basic example">
-                                                  <button type="button" class="btn d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#editSkillModal" data-skillid="{{ skill.id }}" data-name="{{ skill.name }}" data-description="{{ skill.description }}" data-kind="{{ skill.type }}" >
-                                                      <i class="material-icons" style="color: goldenrod">edit </i>
-                                                  </button>
+                                      {% if current_user.is_authenticated and current_user.admin %}
+                                          <td>
+                                              <div class="btn-group" role="group" aria-label="Basic example">
+                                                      <button type="button" class="btn d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#editSkillModal" data-skillid="{{ skill.id }}" data-name="{{ skill.name }}" data-description="{{ skill.description }}" data-kind="{{ skill.type }}" >
+                                                          <i class="material-icons" style="color: goldenrod">edit </i>
+                                                      </button>
 
-                                              <form action="{{ url_for('skills') }}" method="POST" onsubmit="return confirm('Do you really want to delete this skill?');">
-                                                  <input type="hidden" value="deleteSkill" name="actionToPerform">
-                                                  <input type="hidden" value="{{ skill.id }}" name="skillToDelete" id="skillToDelete">
-                                                  <button type="submit" class="btn d-flex justify-content-center align-content-between">
-                                                      <i class="material-icons" style="color: #b22222">delete</i>
-                                                  </button>
-                                              </form>
-                                          </div>
-                                      </td>
+                                                  <form action="{{ url_for('skills') }}" method="POST" onsubmit="return confirm('Do you really want to delete this skill?');">
+                                                      <input type="hidden" value="deleteSkill" name="actionToPerform">
+                                                      <input type="hidden" value="{{ skill.id }}" name="skillToDelete" id="skillToDelete">
+                                                      <button type="submit" class="btn d-flex justify-content-center align-content-between">
+                                                          <i class="material-icons" style="color: #b22222">delete</i>
+                                                      </button>
+                                                  </form>
+                                              </div>
+                                          </td>
+                                      {% endif %}
                                   </tr>
                               {% endfor %}
                           </tbody>
                       </table>
                   </div>
 
-                  <button type="button" class="btn btn-primary rounded-circle position-fixed" style="bottom:15px;right:15px;margin:5px;" data-toggle="modal" data-target="#newSkillModal">
-                      +
-                  </button>
-
-                  <!-- EDIT SKILL MODAL -->
-                  <div class="modal fade bd-example-modal-lg" id="editSkillModal" tabindex="-1" role="dialog" aria-labelledby="editSkillLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5>Edit skill</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                  {% if current_user.is_authenticated and current_user.admin %}
+                      <!-- EDIT SKILL MODAL -->
+                      <div class="modal fade bd-example-modal-lg" id="editSkillModal" tabindex="-1" role="dialog" aria-labelledby="editSkillLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5>Edit skill</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ url_for('skills')}}" method="POST">
+                                    <input type="hidden" value="editSkill" name="actionToPerform">
+                                    <input type="hidden" value="" name="skillToEdit" id="skillToEdit">
+                                    <div class="modal-body text-left">
+                                        <h5 id="skillNameh5"></h5>
+                                        <label for="skillTypeSelection">Skill type</label>
+                                        <div id="skillTypeSelection">
+                                          <div class="custom-control custom-radio custom-control-inline">
+                                            <input name="editedSkillType" class="custom-control-input" type="radio" id="radioSoft" value="soft">
+                                            <label for="radioSoft" class="custom-control-label">Soft skill</label>
+                                          </div>
+                                          <div class="custom-control custom-radio custom-control-inline">
+                                            <input name="editedSkillType" class="custom-control-input" type="radio" id="radioHard" value="hard">
+                                            <label for="radioHard" class="custom-control-label">Hard skill</label>
+                                          </div>
+                                        </div>
+                                        <label for="editedSkillDescription">Description</label>
+                                        <textarea class="form-control" id="editedSkillDescription" rows="5" name="editedSkillDescription" placeholder="Description of the skill" required></textarea>
+                                    </div>
+                                    <div class="modal-footer ">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                    </div>
+                                </form>
                             </div>
-                            <form action="{{ url_for('skills')}}" method="POST">
-                                <input type="hidden" value="editSkill" name="actionToPerform">
-                                <input type="hidden" value="" name="skillToEdit" id="skillToEdit">
-                                <div class="modal-body text-left">
-                                    <h5 id="skillNameh5"></h5>
-                                    <label for="skillTypeSelection">Skill type</label>
-                                    <div id="skillTypeSelection">
-                                      <div class="custom-control custom-radio custom-control-inline">
-                                        <input name="editedSkillType" class="custom-control-input" type="radio" id="radioSoft" value="soft">
-                                        <label for="radioSoft" class="custom-control-label">Soft skill</label>
-                                      </div>
-                                      <div class="custom-control custom-radio custom-control-inline">
-                                        <input name="editedSkillType" class="custom-control-input" type="radio" id="radioHard" value="hard">
-                                        <label for="radioHard" class="custom-control-label">Hard skill</label>
-                                      </div>
-                                    </div>
-                                    <label for="editedSkillDescription">Description</label>
-                                    <textarea class="form-control" id="editedSkillDescription" rows="5" name="editedSkillDescription" placeholder="Description of the skill" required></textarea>
-                                </div>
-                                <div class="modal-footer ">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Edit</button>
-                                </div>
-                            </form>
                         </div>
-                    </div>
-                  </div>
-                  <!-- Modal add new skill-->
-                  <div class="modal fade bd-example-modal-lg" id="newSkillModal" tabindex="-1" role="dialog" aria-labelledby="newSkillModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header ">
-                                <h5>Add Skill</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                      </div>
+                      <!-- Modal add new skill-->
+                      <div class="modal fade bd-example-modal-lg" id="newSkillModal" tabindex="-1" role="dialog" aria-labelledby="newSkillModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header ">
+                                    <h5>Add Skill</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ url_for('skills') }}" method="POST">
+                                    <input type="hidden" value="addSkill" name="actionToPerform">
+                                    <div class="modal-body ">
+                                        <label for="newSkillName">Name</label>
+                                        <input type="text" class="form-control" id="newSkillName" name="newSkillName" placeholder="Name of the skill" required>
+                                        <br/>
+                                        <br/>
+                                        <label for="newSkillType">Skill type</label>
+                                        <br/>
+                                        <div class="custom-control custom-radio custom-control-inline" id="newSkillType">
+                                            <input type="radio" class="custom-control-input" name="newSkillType" value="hard" id="hardSkill" required>
+                                            <label class="custom-control-label" for="hardSkill">Hard</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" class="custom-control-input" id="softSkill" name="newSkillType" value="soft" required>
+                                            <label class="custom-control-label" for="softSkill"> Soft </label>
+                                        </div>
+                                        <br/>
+                                        <br/>
+                                        <label for="newSkillDescription">Description</label>
+                                        <textarea class="form-control" id="newSkillDescription" rows="5" name="newSkillDescription" placeholder="Description of the skill" required></textarea>
+                                    </div>
+                                    <div class="modal-footer ">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
                             </div>
-                            <form action="{{ url_for('skills') }}" method="POST">
-                                <input type="hidden" value="addSkill" name="actionToPerform">
-                                <div class="modal-body ">
-                                    <label for="newSkillName">Name</label>
-                                    <input type="text" class="form-control" id="newSkillName" name="newSkillName" placeholder="Name of the skill" required>
-                                    <br/>
-                                    <br/>
-                                    <label for="newSkillType">Skill type</label>
-                                    <br/>
-                                    <div class="custom-control custom-radio custom-control-inline" id="newSkillType">
-                                        <input type="radio" class="custom-control-input" name="newSkillType" value="hard" id="hardSkill" required>
-                                        <label class="custom-control-label" for="hardSkill">Hard</label>
-                                    </div>
-                                    <div class="custom-control custom-radio custom-control-inline">
-                                        <input type="radio" class="custom-control-input" id="softSkill" name="newSkillType" value="soft" required>
-                                        <label class="custom-control-label" for="softSkill"> Soft </label>
-                                    </div>
-                                    <br/>
-                                    <br/>
-                                    <label for="newSkillDescription">Description</label>
-                                    <textarea class="form-control" id="newSkillDescription" rows="5" name="newSkillDescription" placeholder="Description of the skill" required></textarea>
-                                </div>
-                                <div class="modal-footer ">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
                         </div>
-                    </div>
-                  </div>
+                      </div>
+                  {% endif %}
                 <script type="text/javascript">
                     $('#editSkillModal').on('show.bs.modal', function (event) {
                       var button = $(event.relatedTarget); // Button that triggered the modal

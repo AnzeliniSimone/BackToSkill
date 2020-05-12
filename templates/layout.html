@@ -22,7 +22,7 @@ changes in the layout of main components we just have to do it once in this file
 
 <body>
 
-    <div class="view" style="background-image: url('https://www.touchsupport.com/wp-content/uploads/2015/06/picjumbo.com_HNCK3562.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center center;">
+    <div class="view" style="background-image: url('https://www.touchsupport.com/wp-content/uploads/2015/06/picjumbo.com_HNCK3562.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center center;" />
 
 </body>
 
@@ -33,9 +33,16 @@ changes in the layout of main components we just have to do it once in this file
 {#        logo#}
             <a class="navbar-brand" href="/home"><img src="/static/images/Logosmall.png" alt=""></a>
 {#        check on authentication, if user logged in it shows logout button and link to user profile#}
-                {% if session.get('id') %}
-                    <button class="btn btn-danger ml-auto">Logout</button>
-                    <a href="/user" class="btn btn-info ml-auto mr-1" role="button">My Profile</a>
+                {% if current_user.is_authenticated%}
+                    <div class="btn-group ml-auto mr-1">
+                        <h4 style="color: white; margin-right: 5px; font-family:'cursive'">Hi, {{ current_user.name }}</h4>
+                        {% if current_user.admin %}
+                            <a href="/users"><button class="btn btn-info">Users</button></a>
+                        {% endif %}
+                        <form action="/logout" method="POST">
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                    </div>
 {#        otherwise shows login button#}
                 {% else %}
                     <a href="/login" class="btn btn-info ml-auto mr-1" role="button">Login</a>
@@ -116,179 +123,136 @@ changes in the layout of main components we just have to do it once in this file
                         </div>
                     </li>
             </ul>
-
-{#              Search bar (not working right now)#}
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
-            </form>
-
           </div>
         </nav>
     </header>
 
-
-
 {#    container for the "dynamic" content, will be overwritten in every different page#}
     <main role="main" id="main-container">
-
         {% block pageContent %}
         {% endblock %}
     </main>
 
-</body>
+    <footer class="page-footer font-small bg-dark pt-4">
 
-
-<footer class="page-footer font-small bg-dark pt-4">
-
-  <!-- Footer Links -->
-  <div class="container-fluid text-center text-md-left">
-
-    <!-- Grid row -->
-    <div class="row">
-
-      <hr class="clearfix w-100 d-md-none pb-3">
-
-      <!-- Grid column -->
-      <div class="col-md-3 mb-md-0 mb-3">
-
-        <!-- Links -->
-
-        <ul class="list-unstyled">
-          <li>
-            <a href="#!">Copyrights</a>
-          </li>
-          <li>
-            <a href="#!">Privacy & Terms of use</a>
-          </li>
-
-        </ul>
-
-      </div>
-      <!-- Grid column -->
-
-       <hr class="clearfix w-100 d-md-none pb-3">
-
-      <!-- Grid column -->
-      <div class="col-md-3 mb-md-0 mb-3">
-          <li>
-
-            <a href="/faq" role="button">FAQ</a>
-
-          </li>
-
-          <li>
-            <a href="#!">Our Partners</a>
-          </li>
-          <li>
-            <a href="#!">Work with us</a>
-          </li>
+        <!-- Footer Links -->
+        <div class="container-fluid text-center text-md-left">
+            <!-- Grid row -->
+            <div class="row">
+                <hr class="clearfix w-100 d-md-none pb-3">
+                <!-- Grid column -->
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <!-- Links -->
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#">Copyrights</a>
+                        </li>
+                        <li>
+                            <a href="#">Privacy & Terms of use</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Grid column -->
+                <hr class="clearfix w-100 d-md-none pb-3">
+                <!-- Grid column -->
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <li>
+                        <a href="/faq" role="button">FAQ</a>
+                    </li>
+                    <li>
+                        <a href="#">Our Partners</a>
+                    </li>
+                    <li>
+                        <a href="#">Work with us</a>
+                    </li>
+                </div>
+                <!-- Grid column -->
+                <hr class="clearfix w-100 d-md-none">
+                <!-- Grid column -->
+                <div class="col-md-3 mx-auto">
+                    <!-- Links -->
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">Duca Degli Abruzzi 1, Torino, Italy</a>
+                        </li>
+                        <li>
+                            <a href="#!">+39 01 12345678</a>
+                        </li>
+                        <li>
+                            <a href="#!">xxx@studenti.polito.it</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Grid column -->
+            </div>
+            <!-- Grid row -->
         </div>
-      <!-- Grid column -->
+        <!-- Footer Links -->
+
+        <!-- Footer Elements -->
+        <div class="container">
+            <div class="mx-auto" style="width: 400px;">
+                <!-- Social buttons -->
+                <!-- Add icon library -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+                <div class=" text-center">
+                    <!-- Add font awesome icons -->
+                    <a href="#" class="fa fa-facebook"></a>
+                    <a href="#" class="fa fa-twitter"></a>
+                    <a href="#" class="fa fa-linkedin"></a>
+                    <a href="#" class="fa fa-google"></a>
+                </div>
+            </div>
+        </div>
+        <!-- Social buttons -->
+        <!-- Footer Elements -->
+        <!-- Copyright -->
+        <div class="footer-copyright text-white text-center py-3">© 2020 Copyright:
+            <a href=""> Back2Skills</a>
+        </div>
+
+        <style>
+            /* Style all font awesome icons */
+            .fa {
+                padding: 20px;
+                font-size: 30px;
+                width: 65px;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 25%;
+            }
+
+            /* Add a hover effect if you want */
+            .fa:hover {
+                opacity: 0.7;
+            }
+
+            /* Set a specific color for each brand */
+
+            /* Facebook */
+            .fa-facebook {
+                background: #3B5998;
+                color: white;
+            }
+
+            /* Twitter */
+            .fa-twitter {
+                background: #55ACEE;
+                color: white;
+            }
+
+            .fa-linkedin {
+                background: #007BB6;
+                color: white;
+            }
 
 
+            .fa-google {
+                background: #DD4B39;
+                color: white;
+            }
+        </style>
 
-        <hr class="clearfix w-100 d-md-none">
-
-      <!-- Grid column -->
-      <div class="col-md-3 mx-auto">
-
-        <!-- Links -->
-
-        <ul class="list-unstyled">
-          <li>
-            <a href="#!">Duca Degli Abruzzi 1, Torino, Italy</a>
-          </li>
-          <li>
-            <a href="#!">+39 01 12345678</a>
-          </li>
-          <li>
-            <a href="#!">xxx@studenti.polito.it</a>
-          </li>
-
-        </ul>
-
-      </div>
-      <!-- Grid column -->
-
-      </div>
-
-    <!-- Grid row -->
-
-  </div>
-  <!-- Footer Links -->
-
-    <!-- Footer Elements -->
-  <div class="container">
-      <div class="mx-auto" style="width: 400px;">
-    <!-- Social buttons -->
-
-      <!-- Add icon library -->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-          <div class=" text-center">
-<!-- Add font awesome icons -->
-      <a href="#" class="fa fa-facebook"></a>
-      <a href="#" class="fa fa-twitter"></a>
-      <a href="#" class="fa fa-linkedin"></a>
-      <a href="#" class="fa fa-google"></a>
-          </div>
-          </div>
-</div>
-
-<style>
-/* Style all font awesome icons */
-.fa {
-  padding: 20px;
-  font-size: 30px;
-  width: 65px;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 25%;
-}
-
-/* Add a hover effect if you want */
-.fa:hover {
-  opacity: 0.7;
-}
-
-/* Set a specific color for each brand */
-
-/* Facebook */
-.fa-facebook {
-  background: #3B5998;
-  color: white;
-}
-
-/* Twitter */
-.fa-twitter {
-  background: #55ACEE;
-  color: white;
-}
-
-.fa-linkedin {
-  background: #007BB6;
-  color: white;
-}
-
-
-.fa-google {
-  background: #DD4B39;
-  color: white;
-}
-</style>
-
-    <!-- Social buttons -->
-
-  </div>
-  <!-- Footer Elements -->
-
-  <!-- Copyright -->
-  <div class="footer-copyright text-white text-center py-3">© 2020 Copyright:
-    <a href=""> Back2Skills</a>
-  </div>
-
-</footer>
-
-
+    </footer>
+</body>
 </html>

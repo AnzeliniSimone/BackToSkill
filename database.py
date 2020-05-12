@@ -15,6 +15,24 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     admin = db.Column(db.Boolean)
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        try:
+            return str(self.id).encode("utf-8").decode("utf-8")
+        except AttributeError:
+            raise NotImplementedError('No `id` attribute - override `get_id`')
+
 
 class Role(db.Model):
     __tablename__ = 'role'
@@ -789,5 +807,44 @@ def update_employee(role_id,empl_id):
 
 
 def delete_all_grade_of_skill_of_job(job_id):
-    Role_Skill.query.filter(Role_Skill.role_id == job_id).delete()
+    Role_Skill.query.filter(Role_Skill.role_id == job_id).delete(synchronize_session='fetch')
     db.session.commit()
+
+
+def create_user(name, surname, email, password, admin=False):
+    user = User(name=name, surname=surname, email=email, password=password, admin=admin)
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+
+def delete_user(user_id):
+    deleted = User.query.filter(User.id==user_id).delete(synchronize_session='fetch')
+    db.session.commit()
+    return "User deleted"
+
+
+def make_user_admin(user_id):
+    user = get_user_by_id(user_id)
+    user.admin = True
+    db.session.commit()
+    return user
+
+
+def edit_user_password(user_id, new_password):
+    user = get_user_by_id(user_id)
+    user.password = new_password
+    db.session.commit()
+    return user
+
+
+def edit_user_email(user_id, new_email):
+    user = get_user_by_id(user_id)
+    user.email = new_email
+    db.session.commit()
+    return user
+
+
+def get_admins(admin):
+    admins=User.query.filter(User.admin==admin).all()
+    return admins
