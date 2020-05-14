@@ -6,6 +6,486 @@
     <title>Training</title>
 </head>
 <body>
+{% block pageContent %}
+    {% if training is none %}
+        <div class="alert alert-warning" role="alert"> No corresponding training found </div>
+    {% else %}
+        <h3>Training: {{ training.name }}</h3>
+    {% endif %}
 
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-training-tab" data-toggle="tab" href="#nav-training" role="tab" aria-controls="nav-training" aria-selected="true">Outline</a>
+            <a class="nav-item nav-link" id="nav-partecipant-tab" data-toggle="tab" href="#nav-partecipant" role="tab" aria-controls="nav-partecipant" aria-selected="false">Partecipants</a>
+        </div>
+    </nav>
+
+    <div class="tab-content" id="nav-tabContent">
+        <!--table del training generale -->
+        <div class="tab-pane fade show active" id="nav-training" role="tabpanel" aria-labelledby="nav-training-tab">
+            <form action="/training/{{ training.id }}" method="POST">
+                <input type="hidden" value="editTrainingInfo" name="actionToPerform">
+                <br/>
+                <h5>Name of the training</h5>
+                <p>
+                    <span id="currName">{{ training.name }}</span>
+                    <input type="text" value="{{ training.name }}" name="traName" id="newNameField" style="display: none" required>
+                    <button type="button" class="btn btn-default btn-sm" id="editName">
+                        <span class="material-icons">edit</span>
+                    </button>
+                </p>
+                <br/>
+                <h5>Beginning on:</h5>
+                <p>
+                    <span id="currStart">{{ training.starting_Date }}</span>
+                    <input type="date" value="{{ training.starting_Date }}" name="traStart" id="newStartField" style="display: none" onchange="compareDates()">
+                    <button type="button" class="btn btn-default btn-sm" id="editStart">
+                        <span class="material-icons">edit</span>
+                    </button>
+                </p>
+
+                <br/>
+                <h5>Ending on:</h5>
+                <p>
+                    <span id="currEnd">{{ training.ending_Date }}</span>
+                    <input type="date" value="{{ training.ending_Date }}" name="traEnd" id="newEndField" style="display: none" onchange="compareDates()">
+                    <button type="button" class="btn btn-default btn-sm" id="editEnd">
+                        <span class="material-icons">edit</span>
+                    </button>
+                <div class="alert alert-warning" role="alert" id="warningDates" style="display:none">
+                    A training cannot end before its beginning, can it?
+                </div>
+                </p>
+                <br/>
+                <h5>Hours</h5>
+                <p>
+                    <span id="currHours">{{ training.hours }}</span>
+                    <input value="{{ training.hours }}" name="traHours" id="newHoursField" style="display:none" required>
+                    <button type="button" class="btn btn-default btn-sm" id="editHours">
+                        <span class="material-icons">edit</span>
+                    </button>
+                </p>
+                <br/>
+                <h5>Skill achieve</h5>
+                <table class="table table-hover table-bordered table-striped text-center">
+                    <thead>
+                    <tr>
+                        <th scope="col">Skill</th>
+                        <th scope="col">Points assigned</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for skill,point in skill_point %}
+                        <tr>
+                            <td>{{ skill.name }}</td>
+                            <td>{{ point }}</td>
+                            <td>
+                                <button type="button" class="btn btn-default btn-sm deleteSkill" id={{ skill.id }} data-toggle="modal" data-target="#deleteSkillModal" data-whatever="{{ skill.id }}">
+                                    <span class="material-icons" style="color:#a71d2a">delete</span>
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <br/>
+                <button type="submit" class="btn btn-info" id="submitChanges">Submit changes</button>
+            </form>
+            <br/>
+            <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#editSkillModal">
+                Edit Skill
+            </button>
+            <br/>
+            <button type="button" class="btn btn-danger deleteTraining" id="{{ training.id }}" data-toggle="modal" data-target="#deleteTrainingModal" data-whatever="{{ training.id }}">
+                Delete Training
+            </button>
+        </div>
+        <!-- table dei employee nel training -->
+        <div class="tab-pane fade" id="nav-partecipant" role="tabpanel" aria-labelledby="nav-partecipant-tab">
+            <br/>
+            <form action="/training/{{ training.id }}" method="POST">
+                <input type="hidden" value="assignEmployees" name="actionToPerform">
+                <h5>Partecipants of the trainings</h5>
+                <table class="table table-hover table-bordered table-striped text-center">
+                    <thead>
+                    <tr>
+                        <td scope="col">Name</td>
+                        <td scope="col">Surname</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for emp in employees %}
+                        <tr>
+                            <td><a href="/employee/{{ emp.id }}"> {{ emp.name }}</a></td>
+                            <td>{{ emp.surname }}</td>
+                            <td>
+
+                                <button type="button" class="btn btn-default btn-sm deleteEmployee" id={{ emp.id }} data-toggle="modal" data-target="#deassignEmployeeModal" data-whatever="{{ emp.id }}">
+                                    <span class="material-icons" style="color:#a71d2a">delete</span>
+                                </button>
+
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <div class="form-row">
+                        <button type="button" class="btn btn-default btn-sm" id="addEmployee{{ training.id }}" onclick="toggleSelect({{training.id}})" data-toggle="tooltip" data-placement="top" title="Select an employee for this training">
+                            <span class="material-icons" style="color:#28a745">person_add</span>
+                        </button>
+                        <select class="addEmp" id="addEmployeeTraining{{ training.id }}" name="addEmployeeTraining{{ training.id }}" style="display: none">
+                            <option value="" selected disabled hidden>Choose an employee</option>
+                            <optgroup label="Available employee">
+                                {% for emp in employees1 %}
+                                    <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        </select>
+                    </div>
+                    </tfoot>
+                </table>
+                <button type="submit" class="btn btn-info">Assign employees</button>
+            </form>
+        </div>
+        <!--fine table partecipant-->
+        <!--MODALS -->
+        <div class="modal fade bd-example-modal-lg" id="deleteTrainingModal" tabindex="-1" role="dialog" aria-labelledby="deleteTrainingModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteTrainingModalLabel">Delete training</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <form action="/training/{{ training.id }}" method="POST">
+                        <div class="modal-body">
+                            <h5>Are you sure you want to delete this training?</h5>
+                            <p>The training's information will be deleted completely. If you wish to close the training you can set its ending date to today's date.</p>
+                            <input type="hidden" value="deleteTraining" name="actionToPerform">
+                            <input type="hidden" value="" name="trainingToDelete" id="trainingToDelete">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Confirm</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="deleteSkillModal" tabindex="-1" role="dialog" aria-labelledby="deleteSkillModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteSkillModalLabel">Delete skill</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <form action="/training/{{ training.id }}" method="POST">
+                        <div class="modal-body">
+                            <h5>Are you sure you want to delete this skill?</h5>
+                            <input type="hidden" value="deleteSkill" name="actionToPerform">
+                            <input type="hidden" value="" name="skillToDelete" id="skillToDelete">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Confirm</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="deassignEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="deassignEmployeeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deassignEmployeeModalLabel">Remove employee from training</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <form action="/training/{{ training.id }}" method="POST">
+                        <div class="modal-body">
+                            <h5>Are you sure you want to remove <span id="nameEmployee"></span> from this training?</h5>
+                            <input type="hidden" value="deassignEmployee" name="actionToPerform">
+                            <input type="hidden" value="" name="employeeToDeassign" id="employeeToDeassign">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Remove</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-lg" id="editSkillModal" tabindex="-1" role="dialog" aria-labelledby="editSkillModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editSkillModalLabel">Add/Remove skills from the training</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="/training/{{ training.id }}" method="POST">
+                        <input type="hidden" value="editSkill" name="actionToPerform">
+                        <input type="hidden" value="" name="skillToEdit" id="skillToEdit">
+
+                        <div class="modal-body">
+                            <div class="col-6">
+                                <div>
+                                    <!--Title and Button add-->
+                                    <!--Title-->
+                                    <label for="Skill">Skill </label>
+                                    <!--Button add-->
+                                    <div class="col align-self-end text-right">
+                                        <input type="button" value="Add" class="btn btn-primary"
+                                               onclick="createRow()">
+                                    </div>
+                                </div><!--Title and Button add-->
+                                <!--Skills and buttons-->
+                                <!--Skills-->
+                                <div class="row">
+                                    <!--Skills-->
+                                    <div id="container" class="col-6">
+                                        <input hidden type="text" id="number" name="number" value="{{dic|length}}">
+                                        <div hidden class="form-group" id="div_example"></div>
+                                        <label hidden id="label_example">Skill</label>
+                                        {% for job_skill in dic %}
+                                            <select class="custom-select mt-3"
+                                                    name="skill{{dic.index(job_skill)}}">
+                                                {% for skill in all_skill %}
+                                                    <option {% if  job_skill[1] == skill.name %}selected{% endif %}
+                                                            value="{{skill.id}}">{{ skill.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        {% endfor %}
+                                    </div>
+                                    <!--Score-->
+                                    <div id="container1" class="col-3">
+                                        {% for job_skill in dic %}
+                                            <select class="custom-select mt-3"
+                                                    name="score{{dic.index(job_skill)}}">
+                                                {% for i in range(1,11) %}
+                                                    <option {% if  job_skill[2] == i %}selected{% endif %}
+                                                            value="{{i}}">{{ i }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        {% endfor %}
+                                    </div>
+                                    <!--Delete-->
+                                    <div id="container2" class="col-3">
+                                        {% for job_skill in dic %}
+                                            <div>
+                                                <a class="btn btn-danger mt-3" style="color:white"
+                                                   name="remove{{dic.index(job_skill)}}"
+                                                   onclick="removeRow({{dic.index(job_skill)}})">Remove</a>
+                                            </div>
+
+                                        {% endfor %}
+                                    </div>
+                                    <!--Select Skills Format-->
+                                    <select hidden class="custom-select mt-3" id="select_example">
+                                        {% for skill in all_skill %}
+                                            <option value="{{ skill.id }}">{{ skill.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <!--New Score Format-->
+                                    <select hidden class="custom-select mt-3" id="select_example1" mt-3>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                            </div><!--col 6-->
+                        </div> <!--row-->
+
+                        <div class="modal-footer ">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary"  type="submit"> Submit </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type='text/javascript'>
+        function removeRow(index) {
+            let skill = "skill" + index
+            let score = "score" + index
+            let remove = "remove" + index
+
+            $("[name='" + skill + "']").remove();
+            $("[name='" + score + "']").remove();
+            $("[name='" + remove + "']").remove();
+
+            console.log("removed " + skill)
+        }
+
+        function createRow() {
+            let rowNumber = getRowNumber();
+
+            addSkill(rowNumber);
+            addScore(rowNumber);
+            addRemove(rowNumber)
+
+            updateRowNumber();
+        }
+
+        function getRowNumber() {
+            // Number of inputs to create
+            return number = parseInt(document.getElementById("number").value);
+        }
+
+        function updateRowNumber() {
+            // Number of inputs to update
+            document.getElementById("number").value = number + 1;
+        }
+
+        function addRemove(number) {
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container2");
+
+            let div = document.createElement("div");
+            let buttorRemove = document.createElement("a");
+
+            buttorRemove.setAttribute("class","btn btn-danger mt-3");
+            buttorRemove.setAttribute("name","remove"+number);
+            buttorRemove.setAttribute("onclick","removeRow("+number+")");
+            buttorRemove.setAttribute("style","color:'white'");
+            buttorRemove.style="color:white"
+            buttorRemove.innerHTML="Remove"
+
+            div.appendChild(buttorRemove);
+            container.appendChild(div);
+        }
+
+
+        function addSkill(number) {
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container");
+
+            //Get select hidden
+            var select_example = document.getElementById("select_example");
+
+            // Clone select
+            let cloneSelect = select_example.cloneNode(true);
+            cloneSelect.hidden = false;
+            cloneSelect.setAttribute('name', "skill" + number);
+            container.appendChild(cloneSelect);
+        }
+
+        function addScore(number) {
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container1");
+
+            //Select
+            var select_example = document.getElementById("select_example1");
+
+            // Clone
+            let cloneS = select_example.cloneNode(true);
+            cloneS.hidden = false;
+            cloneS.setAttribute('name', "score" + number);
+            container.appendChild(cloneS);
+        }
+
+        $(document).ready(function() {
+            $("#editName").click(function() {
+                $("#newNameField").toggle();
+                $("#currName").toggle();
+                $("#editName").hide();
+            });
+            $("#editHours").click(function() {
+                $("#newHoursField").toggle();
+                $("#currHours").toggle();
+                $("#editHours").hide();
+            });
+            $("#editStart").click(function() {
+                $("#newStartField").toggle();
+                $("#currStart").toggle();
+                $("#editStart").hide();
+            });
+            $("#editEnd").click(function() {
+                $("#newEndField").toggle();
+                $("#currEnd").toggle();
+                $("#editEnd").hide();
+            });
+        });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
+        function toggleSelect(index) {
+            $("#addEmployeeTraining"+index).toggle();
+            $("#addEmployee"+index).toggle();
+            $("#undoAdd"+index).toggle();
+            $("#addEmployeeTraining"+index).val("");
+        }
+
+        function toggleEvaluations() {
+            $(".inputEvaluation").show();
+            $(".evaluationLabel").hide();
+            $("#submitEvaluations").show();
+            $("#toggleEvaluationInput").hide();
+        }
+
+        function compareDates(){
+            var start = document.getElementById("newStartField").value;
+            var end = document.getElementById("newEndField").value;
+            var alert = document.getElementById("warningDates");
+            var submitDates = document.getElementById("submitChanges");
+            if (new Date(start).getTime() < new Date(end).getTime()){
+                submitDates.disabled = true;
+                alert.show();
+            }
+            else{
+                submitDates.disabled = false;
+                alert.hide();
+            }
+        }
+
+        $(window).bind('beforeunload', function(){
+            return 'Leaving without saving changes will delete them, are you sure?';
+        });
+
+        $('#deleteTrainingModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            var modal = $(this)
+            modal.find('#trainingToDelete').val(recipient)
+        });
+        $('#deleteSkillModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            var modal = $(this)
+            modal.find('#skillToDelete').val(recipient)
+        });
+        $('#deassignEmployeeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            var nameEmployee = button.data('name')
+            var modal = $(this)
+            modal.find('#employeeToDeassign').val(recipient)
+            modal.find('#nameEmployee').text(nameEmployee)
+        });
+
+    </script>
+{% endblock %}
 </body>
 </html>

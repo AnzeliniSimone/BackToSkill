@@ -8,484 +8,480 @@
 <body>
 {% block pageContent %}
     {% if project is none %}
-      <div class="alert alert-warning" role="alert"> No corresponding project found </div>
+        <div class="alert alert-warning" role="alert"> No corresponding project found </div>
     {% else %}
         <h3>Project: {{ project.name }}</h3>
     {% endif %}
 
     <nav>
-      <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <a class="nav-item nav-link active" id="nav-project-tab" data-toggle="tab" href="#nav-project" role="tab" aria-controls="nav-project" aria-selected="true">Outline</a>
-        <a class="nav-item nav-link" id="nav-roles-tab" data-toggle="tab" href="#nav-roles" role="tab" aria-controls="nav-roles" aria-selected="false">Team</a>
-        <a class="nav-item nav-link" id="nav-evaluations-tab" data-toggle="tab" href="#nav-evaluations" role="tab" aria-controls="nav-evaluations" aria-selected="false">Evaluations</a>
-      </div>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-project-tab" data-toggle="tab" href="#nav-project" role="tab" aria-controls="nav-project" aria-selected="true">Outline</a>
+            <a class="nav-item nav-link" id="nav-roles-tab" data-toggle="tab" href="#nav-roles" role="tab" aria-controls="nav-roles" aria-selected="false">Team</a>
+            {% if closable %}
+                <a class="nav-item nav-link" id="nav-evaluations-tab" data-toggle="tab" href="#nav-evaluations" role="tab" aria-controls="nav-evaluations" aria-selected="false">Evaluations</a>
+            {% endif %}
+        </div>
     </nav>
 
     <!-- TABS CONTAINER -->
     <div class="tab-content" style="background-color: white; padding:10px" id="nav-tabContent">
-    <!-- TAB FOR MAIN PROJECT INFO -->
-      <div class="tab-pane fade show active" id="nav-project" role="tabpanel" aria-labelledby="nav-project-tab">
-      <form action="/project/{{ project.id }}" method="POST">
-          <div class="row">
-              <div class="col-sm-6" style="padding: 1.5rem; padding-top: 1rem; padding-bottom: 0rem">
-                <input type="hidden" value="editProjectInfo" name="actionToPerform">
-              <h5>Name of the project</h5>
-              <p>
-                  <span id="currName">{{ project.name }}</span>
-                  <input type="text" value="{{ project.name }}" name="prjName" id="newNameField" style="display: none" required>
-                  <button type="button" class="btn btn-default btn-sm" id="editName">
-                      <span class="material-icons">edit</span>
-                  </button>
-              </p>
-
-              <br/>
-              <h5>Description</h5>
-              <p>
-                  <span id="currDesc">{{ project.description }}</span>
-                  <input type="text" value="{{ project.description }}" name="prjDesc" id="newDescField" style="display: none">
-                  <button type="button" class="btn btn-default btn-sm" id="editDesc">
-                      <span class="material-icons">edit</span>
-                  </button>
-              </p>
-              <p>
-                  Beginning on:
-                  <span id="currStart">{{ project.starting_date }}</span>
-                  <input type="date" value="{{ project.starting_date }}" name="prjStart" id="newStartField" style="display: none" onchange="compareDates()">
-                  <button type="button" class="btn btn-default btn-sm" id="editStart">
-                      <span class="material-icons">edit</span>
-                  </button>
-
-                  and ending on:
-                  <span id="currEnd">{{ project.ending_date }}</span>
-                  <input type="date" value="{{ project.ending_date }}" name="prjEnd" id="newEndField" style="display: none" onchange="compareDates()">
-                  <button type="button" class="btn btn-default btn-sm" id="editEnd">
-                      <span class="material-icons">edit</span>
-                  </button>
-                  <div class="alert alert-warning" role="alert" id="warningDates" style="display:none">
-                      A project cannot end before its beginning, can it?
-                  </div>
-              </p>
-              <br/>
-              <button type="submit" class="btn btn-info" id="submitChanges">Submit changes</button>
-              <br/>
-          </div>
-
-          <div class="col-sm-6 col-lg-3" style="padding: 1.5rem; padding-top: 1rem; padding-bottom: 0rem">
-              <h5>Supervisor</h5>
-              {% if supervisor %}
-                <div class="row" style="border: 1px solid; border-color: rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
-                    <div class="col-4 nopadding">
-                        <img src="static/images/user.png" class="card-img-top" style="width: 100px; " alt="...">
-                    </div>
-                    <div class="col-6">
-                        <div>
-                            <a class="card-title"><b>{{ supervisor.name }} {{ supervisor.surname }}</b></a>
-                        </div>
-                        <div>
-                            <a style="font-size: 13px;" class="card-title">{{ supervisor.role}}</a>
-                        </div>
-                        <div>
-                            <a style="font-size: 13px;" class="card-title">{{ supervisor.email }}</a>
-                        </div>
-                        <div>
-                            <i class="fa fa-phone" aria-hidden="true"></i>
-                            <a style="font-size: 13px;" class="card-title"><i class="fa fa-phone" aria-hidden="true"></i> {{ supervisor.telephone }}</a>
-                        </div>
-                    </div>
-                    <div class="col-2 align-self-center">
-                        <a href="{{ url_for('employee', id=supervisor.id) }}">
-                            <i class="material-icons">keyboard_arrow_right</i>
-                        </a>
-                    </div>
-                </div>
-              {% endif %}
-                <div>
-                <button type="button" class="btn btn-default btn-sm" id="editSupervisor" data-toggle="tooltip" data-placement="top" title="Change supervisor">
-                  <span class="material-icons">edit</span>
-                </button>
-                {% if not supervisor %}
-                    <p>No supervisor assigned yet. Select an employee to assign.</p>
-                    <br/>
-                    <select id="prjSupervisor" name="prjSupervisor" class="form-control">
-                    <option value="" selected>Choose an employee...</option>
-                {% else %}
-                    <br/>
-                    <div id="selectSupervisorLabel" style="display:None">
-                        <h6>Select another employee</h6>
-                    </div>
-                    <select id="prjSupervisor" name="prjSupervisor" class="form-control" style="display: None">
-                {% endif %}
-                        {% for emp in employees %}
-                            <option value="{{ emp.id }}" {% if supervisor.id == emp.id %} selected {% endif %}>
-                                {{ emp.name }} {{ emp.surname }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-          </div>
-        </div>
-          <div class="text-center">
-            <button type="button" class="btn btn-danger deleteProject" id="{{ project.id }}" data-toggle="modal" data-target="#deleteProjectModal" data-whatever="{{ project.id }}">
-                  Delete project
-            </button>
-          </div>
-      </form>
-      </div>
-
-    <!-- TAB FOR EMPLOYEE-ROLE ASSIGNMENTS -->
-    <div class="tab-pane fade" id="nav-roles" role="tabpanel" aria-labelledby="nav-roles-tab">
-        <br/>
-        <h5>Team members</h5>
-            <table class="table table-hover table-bordered table-striped text-center">
-              <thead>
-                <tr>
-                  <th scope="col">Employee</th>
-                  <th scope="col">Role</th>
-                  <th scope="col">Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for emp,role in employees_roles %}
-                    <tr>
-                      <td><a href="/employee/{{ emp.id }}"> {{ emp.name }} {{ emp.surname }}</a></td>
-                      <td>{{ role.name }}</td>
-                      <td>{{ role.description }}</td>
-                      <td>
-                        <button type="button" class="btn btn-default btn-sm deassignRole" data-toggle="modal" data-target="#deassignRoleModal" data-name="{{ emp.name }} {{ emp.surname }}" data-whatever="{{ role.id }}">
-                            <span class="material-icons" style="color:#a71d2a">clear</span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm deleteRole" data-toggle="modal" data-target="#deleteRoleModal" data-whatever="{{ role.id }}">
-                            <span class="material-icons" style="color:#a71d2a">delete</span>
-                        </button>
-                      </td>
-                    </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-
-        <br/>
-      <form action="/project/{{ project.id }}" method="POST">
-          <input type="hidden" value="assignEmployees" name="actionToPerform">
-        <h5>Available roles</h5>
-        <table class="table table-hover table-bordered table-striped text-center">
-          <thead>
-            <tr>
-              <th scope="col">Role</th>
-              <th scope="col">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for role, se, ue, ne in free_roles_and_employees %}
-                <tr>
-                    <td>{{ role.name }}</td>
-                    <td>{{ role.description }}</td>
-                    <td><div class="form-row">
-                        <button type="button" class="btn btn-default btn-sm" id="addEmployee{{ role.id }}" onclick="toggleSelect({{role.id}})" data-toggle="tooltip" data-placement="top" title="Select an employee for this role">
-                            <span class="material-icons" style="color:#28a745">person_add</span>
-                        </button>
-                        <select class="addEmp" id="addEmployeeRole{{ role.id }}" name="addEmployeeRole{{ role.id }}" style="display: none">
-                            <option value="" selected disabled hidden>Choose an employee</option>
-
-                            <optgroup label="Best choices">
-                                {% if not se %}
-                                    <option value="" disabled>------</option>
-                                {% endif %}
-                                {% for emp, score in se %}
-                                    <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}   -Score: {{ score }}</option>
-                                {% endfor %}
-                            </optgroup>
-                            <optgroup label="Medium choices">
-                                {% if not ue %}
-                                    <option value="" disabled>------</option>
-                                {% endif %}
-                                {% for emp, score in ue %}
-                                    <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}   -Score: {{ score }}</option>
-                                {% endfor %}
-                            </optgroup>
-                            <optgroup label="Other choices">
-                                {% if not ne %}
-                                    <option value="" disabled>------</option>
-                                {% endif %}
-                                {% for emp, score in ne %}
-                                    <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}   -Score: {{ score }}</option>
-                                {% endfor %}
-                            </optgroup>
-                            <optgroup label="All available employees">
-                                {% if not available_employees %}
-                                    <option value="" disabled>------</option>
-                                {% endif %}
-                                {% for emp in available_employees %}
-                                    <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}</option>
-                                {% endfor %}
-                            </optgroup>
-                        </select>
-                        <button type="button" class="btn btn-default btn-sm" id="undoAdd{{ role.id }}" onclick="toggleSelect({{role.id}})" data-toggle="tooltip" data-placement="top" title="Clear" style="display:none">
-                            <span class="material-icons" style="color:#a71d2a">clear</span>
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm deleteRole" id="{{ role.id }}" data-toggle="modal" data-target="#deleteRoleModal" data-whatever="{{ role.id }}">
-                            <span class="material-icons" style="color:#a71d2a">delete</span>
-                        </button>
-                    </div>
-                    </td>
-                </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% if free_roles_and_employees %}
-        <button type="submit" class="btn btn-info">Assign employees</button>
-          <br/>
-      {% endif %}
-        <br/>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addRoleModal">
-          Add a role to the project
-        </button>
-      </form>
-    </div>
-
-
-        <!-- TAB FOR EMPLOYEE'S EVALUATION OVERLOOK -->
-      <div class="tab-pane fade" id="nav-evaluations" role="tabpanel" aria-labelledby="nav-evaluations-tab">
-          <form action="/project/{{ project.id }}" method="POST">
-          <input type="hidden" value="addEvaluations" name="actionToPerform">
-            <table class="table table-hover table-bordered table-striped text-center">
-              <thead>
-                <tr>
-                  <th scope="col">Employee</th>
-                  <th scope="col">Evaluation</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for emp,ev in employee_evaluations %}
-                    {% if emp and ev %}
-                        <tr>
-                          <td><a href="/employee/{{ emp.id }}"> {{ emp.name }} {{ emp.surname }}</a></td>
-                            {% if ev != "None"%}
-                                <td>{{ ev }}</td>
-                            {% else %}
-                                {% if closable %}
-                                    <td>
-                                        <span class="evaluationLabel">No evaluation yet</span>
-                                        <input type="text" name="evaluationEmp{{ emp.id }}" value="" class="inputEvaluation form-control" style="display:none">
-                                    </td>
-                                {% else %}
-                                    <td>The project is not over yet</td>
-                                {% endif %}
-                            {% endif %}
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-           <button type="submit" class="btn btn-info" id="submitEvaluations" style="display:none">Register evaluations</button>
-          </form>
-      {% if closable %}
-            <button class="btn btn-secondary float-right" id="toggleEvaluationInput" onclick="toggleEvaluations()">
-              <span class="material-icons">edit</span> Insert evaluations
-          </button>
-      {% endif %}
-      </div>
-    </div>
-
-    <div class="modal fade bd-example-modal-lg" id="addRoleModal" tabindex="-1" role="dialog" aria-labelledby="addRoleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addRoleModalLabel">Add a role to the project</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-
+        <!-- TAB FOR MAIN PROJECT INFO -->
+        <div class="tab-pane fade show active" id="nav-project" role="tabpanel" aria-labelledby="nav-project-tab">
             <form action="/project/{{ project.id }}" method="POST">
-                <div class="modal-body">
-                    <h5>Select the roles you wish to add</h5>
-                    <input type="hidden" value="addRoles" name="actionToPerform">
-                    {% for role in other_roles %}
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="{{ role.id }}" name="new_roles" id="checkbox{{ role.id }}">
-                          <label class="form-check-label" for="checkbox{{ role.id }}">
-                            {{ role.name }}
-                          </label>
+                <div class="row">
+                    <div class="col-sm-6" style="padding: 1.5rem; padding-top: 1rem; padding-bottom: 0rem">
+                        <input type="hidden" value="editProjectInfo" name="actionToPerform">
+                        <h5>Name of the project</h5>
+                        <p>
+                            <span id="currName">{{ project.name }}</span>
+                            <input type="text" value="{{ project.name }}" name="prjName" id="newNameField" style="display: none" required>
+                            <button type="button" class="btn btn-default btn-sm" id="editName">
+                                <span class="material-icons">edit</span>
+                            </button>
+                        </p>
+
+                        <br/>
+                        <h5>Description</h5>
+                        <p>
+                            <span id="currDesc">{{ project.description }}</span>
+                            <input type="text" value="{{ project.description }}" name="prjDesc" id="newDescField" style="display: none">
+                            <button type="button" class="btn btn-default btn-sm" id="editDesc">
+                                <span class="material-icons">edit</span>
+                            </button>
+                        </p>
+                        <p>
+                            Beginning on:
+                            <span id="currStart">{{ project.starting_date }}</span>
+                            <input type="date" value="{{ project.starting_date }}" name="prjStart" id="newStartField" style="display: none" onchange="compareDates()">
+                            <button type="button" class="btn btn-default btn-sm" id="editStart">
+                                <span class="material-icons">edit</span>
+                            </button>
+
+                            and ending on:
+                            <span id="currEnd">{{ project.ending_date }}</span>
+                            <input type="date" value="{{ project.ending_date }}" name="prjEnd" id="newEndField" style="display: none" onchange="compareDates()">
+                            <button type="button" class="btn btn-default btn-sm" id="editEnd">
+                                <span class="material-icons">edit</span>
+                            </button>
+                        <div class="alert alert-warning" role="alert" id="warningDates" style="display:none">
+                            A project cannot end before its beginning, can it?
                         </div>
-                    {% endfor %}
-                    <br/>
-                    <a href="/roles" class="btn btn-outline-info" role="button"><span class="material-icons">add</span> New role</a>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        </p>
+                        <br/>
+                        <button type="submit" class="btn btn-info" id="submitChanges">Submit changes</button>
+                        <br/>
                     </div>
+
+                    <div class="col-sm-6 col-lg-3" style="padding: 1.5rem; padding-top: 1rem; padding-bottom: 0rem">
+                        <h5>Supervisor</h5>
+                        {% if supervisor %}
+                            <div class="row" style="border: 1px solid; border-color: rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
+                                <div class="col-4 nopadding">
+                                    <img src="static/images/user.png" class="card-img-top" style="width: 100px; " alt="...">
+                                </div>
+                                <div class="col-6">
+                                    <div>
+                                        <a class="card-title"><b>{{ supervisor.name }} {{ supervisor.surname }}</b></a>
+                                    </div>
+                                    <div>
+                                        <a style="font-size: 13px;" class="card-title">{{ supervisor.role}}</a>
+                                    </div>
+                                    <div>
+                                        <a style="font-size: 13px;" class="card-title">{{ supervisor.email }}</a>
+                                    </div>
+                                    <div>
+                                        <i class="fa fa-phone" aria-hidden="true"></i>
+                                        <a style="font-size: 13px;" class="card-title"><i class="fa fa-phone" aria-hidden="true"></i> {{ supervisor.telephone }}</a>
+                                    </div>
+                                </div>
+                                <div class="col-2 align-self-center">
+                                    <a href="{{ url_for('employee', id=supervisor.id) }}">
+                                        <i class="material-icons">keyboard_arrow_right</i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <button type="button" class="btn btn-default btn-sm" id="editSupervisor" data-toggle="tooltip" data-placement="top" title="Change supervisor">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            {% if not supervisor %}
+                                <p>No supervisor assigned yet. Select an employee to assign.</p>
+                                <br/>
+                                <select id="prjSupervisor" name="prjSupervisor" class="form-control">
+                                <option value="" selected>Choose an employee...</option>
+                            {% else %}
+                                <br/>
+                                <div id="selectSupervisorLabel" style="display:None">
+                                    <h6>Select another employee</h6>
+                                </div>
+                                <select id="prjSupervisor" name="prjSupervisor" class="form-control" style="display: None">
+                            {% endif %}
+                            {% for emp in employees %}
+                                <option value="{{ emp.id }}" {% if supervisor.id == emp.id %} selected {% endif %}>
+                                    {{ emp.name }} {{ emp.surname }}
+                                </option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-danger deleteProject" id="{{ project.id }}" data-toggle="modal" data-target="#deleteProjectModal" data-whatever="{{ project.id }}">
+                        Delete project
+                    </button>
                 </div>
             </form>
         </div>
-      </div>
+
+        <!-- TAB FOR EMPLOYEE-ROLE ASSIGNMENTS -->
+        <div class="tab-pane fade" id="nav-roles" role="tabpanel" aria-labelledby="nav-roles-tab">
+            <br/>
+            <h5>Team members</h5>
+            <table class="table table-hover table-bordered table-striped text-center">
+                <thead>
+                <tr>
+                    <th scope="col">Employee</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for emp,role in employees_roles %}
+                    <tr>
+                        <td><a href="/employee/{{ emp.id }}"> {{ emp.name }} {{ emp.surname }}</a></td>
+                        <td>{{ role.name }}</td>
+                        <td>{{ role.description }}</td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-sm deassignRole" data-toggle="modal" data-target="#deassignRoleModal" data-name="{{ emp.name }} {{ emp.surname }}" data-whatever="{{ role.id }}">
+                                <span class="material-icons" style="color:#a71d2a">clear</span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-sm deleteRole" data-toggle="modal" data-target="#deleteRoleModal" data-whatever="{{ role.id }}">
+                                <span class="material-icons" style="color:#a71d2a">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <br/>
+            <form action="/project/{{ project.id }}" method="POST">
+                <input type="hidden" value="assignEmployees" name="actionToPerform">
+                <h5>Available roles</h5>
+                <table class="table table-hover table-bordered table-striped text-center">
+                    <thead>
+                    <tr>
+                        <th scope="col">Role</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for role, se, ue, ne in free_roles_and_employees %}
+                        <tr>
+                            <td>{{ role.name }}</td>
+                            <td>{{ role.description }}</td>
+                            <td><div class="form-row">
+                                <button type="button" class="btn btn-default btn-sm" id="addEmployee{{ role.id }}" onclick="toggleSelect({{role.id}})" data-toggle="tooltip" data-placement="top" title="Select an employee for this role">
+                                    <span class="material-icons" style="color:#28a745">person_add</span>
+                                </button>
+                                <select class="addEmp" id="addEmployeeRole{{ role.id }}" name="addEmployeeRole{{ role.id }}" style="display: none">
+                                    <option value="" selected disabled hidden>Choose an employee</option>
+
+                                    <optgroup label="Best choices">
+                                        {% if not se %}
+                                            <option value="" disabled>------</option>
+                                        {% endif %}
+                                        {% for emp, score in se %}
+                                            <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}   -Score: {{ score }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                    <optgroup label="Medium choices">
+                                        {% if not ue %}
+                                            <option value="" disabled>------</option>
+                                        {% endif %}
+                                        {% for emp, score in ue %}
+                                            <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}   -Score: {{ score }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                    <optgroup label="Other choices">
+                                        {% if not ne %}
+                                            <option value="" disabled>------</option>
+                                        {% endif %}
+                                        {% for emp, score in ne %}
+                                            <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}   -Score: {{ score }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                    <optgroup label="All available employees">
+                                        {% if not available_employees %}
+                                            <option value="" disabled>------</option>
+                                        {% endif %}
+                                        {% for emp in available_employees %}
+                                            <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                </select>
+                                <button type="button" class="btn btn-default btn-sm" id="undoAdd{{ role.id }}" onclick="toggleSelect({{role.id}})" data-toggle="tooltip" data-placement="top" title="Clear" style="display:none">
+                                    <span class="material-icons" style="color:#a71d2a">clear</span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm deleteRole" id="{{ role.id }}" data-toggle="modal" data-target="#deleteRoleModal" data-whatever="{{ role.id }}">
+                                    <span class="material-icons" style="color:#a71d2a">delete</span>
+                                </button>
+                            </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% if free_roles_and_employees %}
+                    <button type="submit" class="btn btn-info">Assign employees</button>
+                    <br/>
+                {% endif %}
+                <br/>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addRoleModal">
+                    Add a role to the project
+                </button>
+            </form>
+        </div>
+
+        {% if closable %}
+            <!-- TAB FOR EMPLOYEE'S EVALUATION OVERLOOK -->
+            <div class="tab-pane fade" id="nav-evaluations" role="tabpanel" aria-labelledby="nav-evaluations-tab">
+                <form action="/project/{{ project.id }}" method="POST">
+                    <input type="hidden" value="addEvaluations" name="actionToPerform">
+                    <table class="table table-hover table-bordered table-striped text-center">
+                        <thead>
+                        <tr>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Evaluation</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for emp,ev in employee_evaluations %}
+                            {% if emp and ev %}
+                                <tr>
+                                    <td><a href="/employee/{{ emp.id }}"> {{ emp.name }} {{ emp.surname }}</a></td>
+                                    <td>
+                                        <span class="evaluationLabel">{% if ev != "None"%} {{ ev }} {% else %}No evaluation yet {% endif %}</span>
+                                        <input type="text" name="evaluationEmp{{ emp.id }}" value="{% if ev != "None"%}{{ev}}{% endif %}" class="inputEvaluation form-control" style="display:none">
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div>
+                        <button type="submit" class="btn btn-info" id="submitEvaluations" style="display:none">Register evaluations</button>
+                        <button type="button" class="btn btn-secondary" id="toggleEvaluationInput" onclick="toggleEvaluations()">
+                            <span class="material-icons">edit</span> Insert evaluations
+                        </button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+
+    <div class="modal fade bd-example-modal-lg" id="addRoleModal" tabindex="-1" role="dialog" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRoleModalLabel">Add a role to the project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form action="/project/{{ project.id }}" method="POST">
+                    <div class="modal-body">
+                        <h5>Select the roles you wish to add</h5>
+                        <input type="hidden" value="addRoles" name="actionToPerform">
+                        {% for role in other_roles %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="{{ role.id }}" name="new_roles" id="checkbox{{ role.id }}">
+                                <label class="form-check-label" for="checkbox{{ role.id }}">
+                                    {{ role.name }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        <br/>
+                        <a href="/roles" class="btn btn-outline-info" role="button"><span class="material-icons">add</span> New role</a>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade bd-example-modal-lg" id="deleteProjectModal" tabindex="-1" role="dialog" aria-labelledby="deleteProjectModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteProjectModalLabel">Delete project</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-
-            <form action="/project/{{ project.id }}" method="POST">
-                <div class="modal-body">
-                    <h5>Are you sure you want to delete this project?</h5>
-                    <p>The project's information will be deleted completely. If you wish to close the project you can set its ending date to today's date.</p>
-                    <input type="hidden" value="deleteProject" name="actionToPerform">
-                    <input type="hidden" value="" name="projectToDelete" id="projectToDelete">
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Confirm</button>
-                    </div>
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteProjectModalLabel">Delete project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-            </form>
+
+                <form action="/project/{{ project.id }}" method="POST">
+                    <div class="modal-body">
+                        <h5>Are you sure you want to delete this project?</h5>
+                        <p>The project's information will be deleted completely. If you wish to close the project you can set its ending date to today's date.</p>
+                        <input type="hidden" value="deleteProject" name="actionToPerform">
+                        <input type="hidden" value="" name="projectToDelete" id="projectToDelete">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
     </div>
 
     <div class="modal fade bd-example-modal-lg" id="deleteRoleModal" tabindex="-1" role="dialog" aria-labelledby="deleteRoleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteRoleModalLabel">Delete role</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-
-            <form action="/project/{{ project.id }}" method="POST">
-                <div class="modal-body">
-                    <h5>Are you sure you want to delete this role?</h5>
-                    <input type="hidden" value="deleteRole" name="actionToPerform">
-                    <input type="hidden" value="" name="roleToDelete" id="roleToDelete">
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Confirm</button>
-                    </div>
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteRoleModalLabel">Delete role</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-            </form>
+
+                <form action="/project/{{ project.id }}" method="POST">
+                    <div class="modal-body">
+                        <h5>Are you sure you want to delete this role?</h5>
+                        <input type="hidden" value="deleteRole" name="actionToPerform">
+                        <input type="hidden" value="" name="roleToDelete" id="roleToDelete">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
     </div>
 
     <div class="modal fade bd-example-modal-lg" id="deassignRoleModal" tabindex="-1" role="dialog" aria-labelledby="deassignRoleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deassignRoleModalLabel">Remove employee from role</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-
-            <form action="/project/{{ project.id }}" method="POST">
-                <div class="modal-body">
-                    <h5>Are you sure you want to remove <span id="nameEmployee"></span> from this role?</h5>
-                    <input type="hidden" value="deassignRole" name="actionToPerform">
-                    <input type="hidden" value="" name="roleToDeassign" id="roleToDeassign">
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Remove</button>
-                    </div>
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deassignRoleModalLabel">Remove employee from role</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-            </form>
+
+                <form action="/project/{{ project.id }}" method="POST">
+                    <div class="modal-body">
+                        <h5>Are you sure you want to remove <span id="nameEmployee"></span> from this role?</h5>
+                        <input type="hidden" value="deassignRole" name="actionToPerform">
+                        <input type="hidden" value="" name="roleToDeassign" id="roleToDeassign">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Remove</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
     </div>
 
-<!--SCRIPTS -->
-<script type="text/javascript">
-    $(document).ready(function() {
-      $("#editName").click(function() {
-        $("#newNameField").toggle();
-        $("#currName").toggle();
-        $("#editName").hide();
-      });
-      $("#editDesc").click(function() {
-        $("#newDescField").toggle();
-        $("#currDesc").toggle();
-        $("#editDesc").hide();
-      });
-      $("#editStart").click(function() {
-        $("#newStartField").toggle();
-        $("#currStart").toggle();
-        $("#editStart").hide();
-      });
-      $("#editEnd").click(function() {
-        $("#newEndField").toggle();
-        $("#currEnd").toggle();
-        $("#editEnd").hide();
-      });
-      $("#editSupervisor").click(function() {
-        $("#prjSupervisor").show();
-        $("#editSupervisor").hide();
-        $("#clearSupervisor").show();
-        $("#selectSupervisorLabel").show();
-      });
-    });
+    <!--SCRIPTS -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#editName").click(function() {
+                $("#newNameField").toggle();
+                $("#currName").toggle();
+                $("#editName").hide();
+            });
+            $("#editDesc").click(function() {
+                $("#newDescField").toggle();
+                $("#currDesc").toggle();
+                $("#editDesc").hide();
+            });
+            $("#editStart").click(function() {
+                $("#newStartField").toggle();
+                $("#currStart").toggle();
+                $("#editStart").hide();
+            });
+            $("#editEnd").click(function() {
+                $("#newEndField").toggle();
+                $("#currEnd").toggle();
+                $("#editEnd").hide();
+            });
+            $("#editSupervisor").click(function() {
+                $("#prjSupervisor").show();
+                $("#editSupervisor").hide();
+                $("#clearSupervisor").show();
+                $("#selectSupervisorLabel").show();
+            });
+        });
 
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
 
-    function toggleSelect(index) {
+        function toggleSelect(index) {
             $("#addEmployeeRole"+index).toggle();
             $("#addEmployee"+index).toggle();
             $("#undoAdd"+index).toggle();
             $("#addEmployeeRole"+index).val("");
-    }
+        }
 
-    function toggleEvaluations() {
+        function toggleEvaluations() {
             $(".inputEvaluation").show();
             $(".evaluationLabel").hide();
             $("#submitEvaluations").show();
             $("#toggleEvaluationInput").hide();
-    }
-
-    function compareDates(){
-        var start = document.getElementById("newStartField").value;
-        var end = document.getElementById("newEndField").value;
-        var alert = document.getElementById("warningDates");
-        var submitDates = document.getElementById("submitChanges");
-        if (new Date(start).getTime() < new Date(end).getTime()){
-            submitDates.disabled = true;
-            alert.show();
         }
-        else{
-            submitDates.disabled = false;
-            alert.hide();
+
+        function compareDates(){
+            var start = document.getElementById("newStartField").value;
+            var end = document.getElementById("newEndField").value;
+            var alert = document.getElementById("warningDates");
+            var submitDates = document.getElementById("submitChanges");
+            if (new Date(start).getTime() < new Date(end).getTime()){
+                submitDates.disabled = true;
+                alert.show();
+            }
+            else{
+                submitDates.disabled = false;
+                alert.hide();
+            }
         }
-    }
 
-    $(window).bind('beforeunload', function(){
-      return 'Leaving without saving changes will delete them, are you sure?';
-    });
+        $(window).bind('beforeunload', function(){
+            return 'Leaving without saving changes will delete them, are you sure?';
+        });
 
-    $('#deleteRoleModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) // Button that triggered the modal
-      var recipient = button.data('whatever') // Extract info from data-* attributes
-      var modal = $(this)
-      modal.find('#roleToDelete').val(recipient)
-    });
-    $('#deleteProjectModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) // Button that triggered the modal
-      var recipient = button.data('whatever') // Extract info from data-* attributes
-      var modal = $(this)
-      modal.find('#projectToDelete').val(recipient)
-    });
-    $('#deassignRoleModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) // Button that triggered the modal
-      var recipient = button.data('whatever') // Extract info from data-* attributes
-      var nameEmployee = button.data('name')
-      var modal = $(this)
-      modal.find('#roleToDeassign').val(recipient)
-      modal.find('#nameEmployee').text(nameEmployee)
-    });
+        $('#deleteRoleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            var modal = $(this)
+            modal.find('#roleToDelete').val(recipient)
+        });
+        $('#deleteProjectModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            var modal = $(this)
+            modal.find('#projectToDelete').val(recipient)
+        });
+        $('#deassignRoleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            var nameEmployee = button.data('name')
+            var modal = $(this)
+            modal.find('#roleToDeassign').val(recipient)
+            modal.find('#nameEmployee').text(nameEmployee)
+        });
 
-</script>
+    </script>
 {% endblock %}
 
 </body>

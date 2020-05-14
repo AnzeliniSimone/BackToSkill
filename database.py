@@ -374,10 +374,13 @@ def get_free_roles_in_project(prj_id):
 
 # Returns a list of all the employees involved in a given training (identified by the id passed)
 def get_employees_in_training(train_id):
-    training = Training.query.filter(Training.id == train_id).first()
-    employees = training.employee
+    links = Employee_Training.query.filter(Employee_Training.train_id == train_id).all()
+    emp_ids = []
+    for l in links:
+        if l.emp_id:
+            emp_ids.append(l.emp_id)
+    employees = Employee.query.filter(Employee.id.in_(emp_ids)).all()
     return employees
-
 
 # Returns a list of all the projects in which is involved a given employee (identified by the id passed)
 def get_projects_of_employee(emp_id):
@@ -616,6 +619,11 @@ def add_role_to_project(prj_id, role_id):
 
 def remove_role_from_project(prj_id, role_id):
     prj_role = Project_Role.query.filter(Project_Role.role_id==role_id, Project_Role.prj_id==prj_id).delete(synchronize_session='fetch')
+
+
+def add_role_todb(name, description):
+    role=Role(name=name,description=description)
+    db.session.add(role)
     db.session.commit()
     return "done"
 
@@ -644,6 +652,50 @@ def add_employee_to_project(prj_id, role_id, emp_id):
     db.session.commit()
     return prj_role
 
+def add_skill_to_training(train_id,skill_id,grade):
+    skill_train=Training_Skill(train_id=train_id,skill_id=skill_id,points=grade)
+    db.session.add(skill_train)
+    db.session.commit()
+
+def add_training_to_db(name,start,end,hours):
+    training=Training(name=name,starting_Date=start,ending_Date=end,hours=hours)
+    db.session.add(training)
+    db.session.commit()
+    just_added=Training.query.filter(Training.name==name).first()
+    return just_added.id
+
+def get_trainings_by_id(id):
+    tra=Training.query.filter(Training.id==id).first()
+    return tra
+
+def get_skill_in_training_with_points(id):
+    link=Training_Skill.query.filter(Training_Skill.train_id==id).all()
+    skill_ids=[]
+    for l in link:
+        if l.skill_id:
+            skill_ids.append(l.skill_id)
+    skills = Skill.query.filter(Skill.id.in_(skill_ids)).all()
+    array=[]
+    for skill in skills:
+        points = get_pointsassigned_by_training_to_skill(id,skill.id)
+        array.append(tuple([skill,points]))
+    return array
+
+def edit_training_info(id,name,start,end,hours):
+    training=get_trainings_by_id(id)
+    training.name=name
+    training.starting_Date=start
+    training.ending_Date=end
+    training.hours=hours
+    db.session.commit()
+    return training
+
+def add_employee_to_training(id,emp_id):
+    link=Employee_Training.query.filter(Employee_Training.train_id==id).all()
+    new_link =Employee_Training(train_id=id,emp_id=emp_id)
+    db.session.add(new_link)
+    db.session.commit()
+
 
 def add_evaluation_to_employee_in_project(prj_id, emp_id, ev):
     prj_role = Project_Role.query.filter(Project_Role.prj_id==prj_id, Project_Role.emp_id==emp_id).first()
@@ -652,6 +704,24 @@ def add_evaluation_to_employee_in_project(prj_id, emp_id, ev):
     db.session.commit()
     return prj_role
 
+
+def delete_training(tra_id):
+    links =Training_Skill.query.filter(Training_Skill.train_id==tra_id).delete(synchronize_session='fetch')
+    prj = Training.query.filter(Training.id == tra_id).delete(synchronize_session='fetch')
+    emp=Employee_Training.query.filter(Employee_Training.train_id==tra_id).delete(synchronize_session='fetch')
+    db.session.commit()
+    return "Training deleted"
+
+def delete_skill_from_training(tra_id,skill):
+    tra_skill= Training_Skill.query.filter(Training_Skill.train_id == tra_id, Training_Skill.skill_id == skill).delete(synchronize_session='fetch')
+    db.session.commit()
+    return "done"
+
+
+def delete_employee_from_training(tra_id,emp):
+    tra_emp= Employee_Training.query.filter(Employee_Training.train_id == tra_id, Employee_Training.emp_id == emp).delete(synchronize_session='fetch')
+    db.session.commit()
+    return "done"
 
 def delete_project(prj_id):
     links = Project_Role.query.filter(Project_Role.prj_id==prj_id).delete(synchronize_session='fetch')
@@ -813,10 +883,23 @@ def update_role(role_id,desc):
    return job
 
 
-def update_employee(role_id,empl_id):
-   employee=Employee.query.filter(Employee.id==empl_id).first()
-   employee.role = role_id
-   db.session.commit()
+#Aggiorna gli attributi di un employee and db
+def update_employee(new_employee):
+    old_employee = get_employee_by_id(new_employee.id)
+    old_employee.name = new_employee.name
+    old_employee.surname = new_employee.surname
+    old_employee.date_of_birth = new_employee.date_of_birth
+    old_employee.email = new_employee.email
+    old_employee.telephone = new_employee.telephone
+    old_employee.living_place = new_employee.living_place
+    old_employee.driving_licence = new_employee.driving_licence
+    old_employee.date_of_assumption = new_employee.date_of_assumption
+    old_employee.state_in_company = new_employee.state_in_company
+    old_employee.role = new_employee.role
+    old_employee.education_level = new_employee.education_level
+    old_employee.language_certificate = new_employee.language_certificate
+    old_employee.photo=new_employee.photo
+    db.session.commit()
 
 
 def delete_all_grade_of_skill_of_job(job_id):
@@ -861,3 +944,34 @@ def edit_user_email(user_id, new_email):
 def get_admins(admin):
     admins=User.query.filter(User.admin==admin).all()
     return admins
+
+
+###### EMPLOYEE
+#Aggiunge employee and db
+def set_employee(employee):
+    db.session.add(employee)
+    db.session.commit()
+
+
+#Cancella employee
+def delete_employee(id):
+    Employee_Skill.query.filter_by(emp_id=id).delete()
+    Employee_Training.query.filter_by(emp_id=id).delete()
+    Employee.query.filter_by(id=id).delete()
+    db.session.commit()
+
+#AGGIUNTA
+def delete_all_grade_of_skill_of_employee(emp_id):
+    Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id).delete()
+    db.session.commit()
+
+#AGGIUNTA
+def delete_grade_of_skill_of_employee(emp_id, skill_id):
+    Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id,Employee_Skill.skill_id == skill_id).delete()
+    db.session.commit()
+
+
+#AGGIUNTA
+def get_grade_of_skill_of_employee(emp_id, skill_id):
+    emp_skill = Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id,Employee_Skill.skill_id == skill_id).first()
+    return emp_skill
