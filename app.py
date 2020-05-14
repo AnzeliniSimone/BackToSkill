@@ -117,13 +117,8 @@ def jobs():
         # get values from the inputs of the form in job.html
         job_name = str(request.form.get('role'))
         job_description = str(request.form.get('Jdescription'))
-        job_softskill_id_list = request.form.getlist('skselection')
-        job_hardskill_id_list = request.form.getlist('hkselection')
-        job_skill_id_list=job_hardskill_id_list+job_softskill_id_list
         id_job = add_role_todb(job_name, job_description)
-       # the job is connected to the skills required for it
-        for skill_id in job_skill_id_list :
-           add_skill_to_role(id_job, skill_id)
+
         # redirecting to the page of the job created
         # Skills
         number = request.form["number"]
@@ -224,30 +219,136 @@ def job(id):
 @app.route('/trainings/<period>')
 @login_required
 def trainings(period="all"):
-     skills=get_skills()
-     if period == "past":
+    if request.method=="POST":
+         tra_name=str(request.form.get('traName'))
+         tra_hours=request.form.get('traHours')
+         tra_start_date = request.form.get('traStartingDate')
+         tra_start_date = datetime.datetime.strptime(str(tra_start_date), '%Y-%m-%d').date()
+         # if there's a value inside the prjEndingDate it is converted into datetime, otherwise is set to none
+         tra_end_date = request.form.get('traEndingDate')
+         if tra_end_date:
+             tra_end_date = datetime.datetime.strptime(str(tra_end_date), '%Y-%m-%d').date()
+         else:
+             tra_end_date = None
+
+         training1=add_training_to_db(tra_name,tra_start_date,tra_end_date,tra_hours)
+
+         number = request.form["number"]
+         number = int(number)
+         dic = []
+         for x in range(number):
+             skill_index = "skill" + str(x)
+             skill = request.form.get(skill_index)
+             if skill != None:
+                 skill_id = request.form[skill_index]  # Parametro form (ex. skill0=adaptability)
+                 score_index = "score" + str(x)
+                 score = request.form[score_index]
+                 dic.append((skill_id, score))
+
+         for y in dic:
+             add_skill_to_training(training1, y[0], y[1])
+
+         return redirect(url_for('training',id=training1))
+
+
+    skills=get_skills()
+    if period == "past":
          trainings_list = get_past_trainings()
-     elif period == "current":
+    elif period == "current":
          trainings_list = get_current_trainings()
-     else:
+    else:
          trainings_list= get_trainings()
 
-     trainings_list.sort(key=lambda x: x.starting_Date, reverse=True)
-     range=[1,2,3,4,5,6,7,8,9,10]
+    trainings_list.sort(key=lambda x: x.starting_Date, reverse=True)
+    ranges=[1,2,3,4,5,6,7,8,9,10]
 
-     return render_template('trainings.html',skills=skills,trainings_list=trainings_list,range=range)
+    return render_template('trainings.html',skills=skills,trainings_list=trainings_list,range=ranges)
 
 
-@app.route('/training/<int:id>')
+@app.route('/training/<int:id>', methods=['GET','POST'])
 @login_required
 def training(id):
-    # Here you have to add all the conditions and the instructions to retrieve the right training's information from
-    # the db
-    # Also, you will have to pass the entire training instance to the html page (see the skill(kind) function to see
-    # how to do it
-    # In the training.html you will have to take the information you have to show from the variable passed from here,
-    # see skills.html to have an example
-    return render_template('training.html')
+    if request.method=='POST':
+        action=str(request.form.get('actionToPerform'))
+        if action == "editTrainingInfo":
+            tra_name=str(request.form.get('traName'))
+            tra_hours=request.form.get('traHours')
+            tra_start_date = request.form.get('traStart')
+            tra_start_date = datetime.datetime.strptime(str(tra_start_date), '%Y-%m-%d').date()
+            tra_end_date = request.form.get('traEnd')
+            if tra_end_date:
+                tra_end_date = datetime.datetime.strptime(str(tra_end_date), '%Y-%m-%d').date()
+            else:
+                tra_end_date = None
+            edited_Tra=edit_training_info(id,tra_name,tra_start_date,tra_end_date,tra_hours)
+
+        elif action=="assignEmployees":
+            training=get_trainings()
+            for tra in training:
+                emp_id = request.form.get("addEmployeeTraining"+str(tra.id))
+                if emp_id:
+                    add_employee_to_training(id,emp_id)
+
+        elif action=="deleteTraining":
+            delete_training(id)
+            return redirect('/trainings/all')
+
+        elif action=="deleteSkill":
+            skill=request.form.get('skillToDelete')
+            check_delete=delete_skill_from_training(id,skill)
+
+        elif action=="deassignEmployee":
+            emp=request.form.get('employeeToDeassign')
+            check_delete=delete_employee_from_training(id,emp)
+
+        elif action=="editSkill":
+            number = request.form["number"]
+            number = int(number)
+            dic = []
+            for x in range(number):
+                skill_index = "skill" + str(x)
+                skill = request.form.get(skill_index)
+                if skill != None:
+                    skill_id = request.form[skill_index]  # Parametro form (ex. skill0=adaptability)
+                    score_index = "score" + str(x)
+                    score = request.form[score_index]
+                    dic.append((skill_id, score))
+
+            delete_all_grade_of_skill_of_job(id)
+
+            # Delete all duplicate from the list dic
+            seen = set()
+            dic = [(a, b) for a, b in dic if not (a in seen or seen.add(a))]
+            # Add the skills of the employee into db
+            for skill in dic:
+                add_skill_to_training(id, skill[0], skill[1])  # insert all new skills
+
+        return redirect(url_for('training',id=id))
+
+    link = Training_Skill.query.filter(Training_Skill.train_id == id).all()
+    skill_ids = []
+    skills=[]
+    for l in link:
+        if l.skill_id:
+            skill_ids.append(l.skill_id)
+    for k in skill_ids:
+        skill=get_skill_by_id(k)
+        skills.append(skill)
+
+
+    # get the grades of the skills of the employee in db
+    dic = []
+    for i in skills:
+        point = get_pointsassigned_by_training_to_skill(id, i.id)
+        dic.append((i.id, i.name, point))
+
+    all_skill=get_skills()
+    training=get_trainings_by_id(id)
+    skill_point=get_skill_in_training_with_points(id)
+    emp=get_employees_in_training(id)
+    employees1=get_employees()
+
+    return render_template('training.html',training=training,skill_point=skill_point,employees=emp,dic=dic,skills=skills,all_skill=all_skill,employees1=employees1)
 
 
 # //PROJECTS PAGES\\
