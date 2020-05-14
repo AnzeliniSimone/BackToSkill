@@ -1,0 +1,97 @@
+
+{% extends "index.html" %}
+
+{% block sectionContent %}
+
+<div class="p-5 "> </div>
+
+     <header class=" text-center py-2 mb-1 text-light">
+
+          <h1 class="display-3">Frequently asked questions</h1>
+          <div class="p-5 "> </div>
+          <h2>Want to find out more about our service? Look for your question below and click it to see the answer, otherwise feel free to contact us directly!</h2>
+          <div class="p-3 "> </div>
+
+     </header>
+
+    {#        collapsible#}
+    {#        html part#}
+
+<button type="button" class="collapsible">How is BackToSkill's service different to other competitors?</button>
+<div class="content">
+  <p>Our system takes an innovative approach by providing a service that only requires the information input by the management and automatically gives an efficient allocation. Since the information (skills, skills required for project and jobs etc) is cutomizable by the user, the website is flexible and can be used by any type of firm.  </p>
+</div>
+
+    <button type="button" class="collapsible">What payments methods do we accept?</button>
+<div class="content">
+  <p>Our service is fully online, so we accept credid cards, debit cards, Paypal</p>
+</div>
+
+    <button type="button" class="collapsible">What are the fees?</button>
+<div class="content">
+  <p>Fees depend on the type of subscription. You can choose between basic subscription and premium. </p>
+</div>
+
+    <button type="button" class="collapsible">Do I have to be part of the HR to access this service? </button>
+<div class="content">
+  <p>While our website is designed to be an assistance to the the HR department, no one stops you from using the service if you find it useful </p>
+</div>
+
+    <button type="button" class="collapsible">What if I am not satisfied with the service? </button>
+<div class="content">
+  <p>If you are not satisfied you can cancel your subscription or provide feedback, which we will immediately take into account and see if we can improve our system to meet your demands</p>
+</div>
+
+{#        css part#}
+    <style>
+    /* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: #343a40;
+  color: #eeeeee;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+    </style>
+
+    {#        javascript#}
+<script>
+
+    var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
+
+<div class="p-5 "> </div>
+
+{% endblock %}
+
+</body>

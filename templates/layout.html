@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 {#This is the main skeleton for the website, it is the page that most of the other pages will use (by 'extend' feature) to provide the
 user with the navbar and the main buttons like login and logout. Plus, it gives basic style to the website, so that if we want to make some
-changes in the layout of main components we just have to do it once in this file#}
+changes in the layout of main components we just have to do it once in this file
+
+
+#}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +12,7 @@ changes in the layout of main components we just have to do it once in this file
 {#    Links to css files in the static folder#}
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.css') }}" >
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-override.css') }}" >
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 {#    Links to jquery and popper#}
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -17,15 +21,28 @@ changes in the layout of main components we just have to do it once in this file
 </head>
 
 <body>
+
+    <div class="view" style="background-image: url('https://www.touchsupport.com/wp-content/uploads/2015/06/picjumbo.com_HNCK3562.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center center;" />
+
+</body>
+
+<body>
     <header>
         <!-- navbar with login button, probably to change into a dropdown with options: my profile, logout-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light" id="loginNavbar">
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark" id="loginNavbar">
 {#        logo#}
             <a class="navbar-brand" href="/home"><img src="/static/images/Logosmall.png" alt=""></a>
 {#        check on authentication, if user logged in it shows logout button and link to user profile#}
-                {% if session.get('id') %}
-                    <button class="btn btn-danger ml-auto">Logout</button>
-                    <a href="/user" class="btn btn-info ml-auto mr-1" role="button">My Profile</a>
+                {% if current_user.is_authenticated%}
+                    <div class="btn-group ml-auto mr-1">
+                        <h4 style="color: white; margin-right: 5px; font-family:'cursive'">Hi, {{ current_user.name }}</h4>
+                        {% if current_user.admin %}
+                            <a href="/users"><button class="btn btn-info">Users</button></a>
+                        {% endif %}
+                        <form action="/logout" method="POST">
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                    </div>
 {#        otherwise shows login button#}
                 {% else %}
                     <a href="/login" class="btn btn-info ml-auto mr-1" role="button">Login</a>
@@ -33,21 +50,23 @@ changes in the layout of main components we just have to do it once in this file
         </nav>
 
         <!-- navbar with dropdown buttons to navigate the site-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light" id="menuNavbar">
+        <nav class="navbar navbar-expand-lg navbar-light text-white bg-dark" id="menuNavbar">
 {#            button for responsive purposes, makes the navbar collapse when screen is too little#}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
 
-{#            Container for all the buttons linkin to the different pages and for the search bar#}
+{#            Container for all the buttons linking to the different pages and for the search bar#}
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
               <ul class="navbar-nav mr-auto">
 
+
+
                  <!-- Main page dropdown button -->
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="homepageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <li class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="homepageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Home
                     </a>
                     <div class="dropdown-menu" aria-labelledby="homepageDropdown">
@@ -55,44 +74,46 @@ changes in the layout of main components we just have to do it once in this file
                         <a class="dropdown-item" href="/guide">Guide</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/about">About BackToSkill</a>
+                        <a class="dropdown-item" href="/team">Meet our team</a>
                     </div>
                   </li>
 
                   <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="/skills" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle text-white" href="/skills" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Skills
                     </a>
                     <div class="dropdown-menu" aria-labelledby="skillsDropdown">
                       <a class="dropdown-item" href="/skills/soft">Soft skills list</a>
                       <a class="dropdown-item" href="/skills/technical">Technical skills list</a>
                     </div>
+
                   </li>
 
                   <li class="nav-item">
-                    <a class="nav-link" href="/employees" id="employeesButton" role="button" aria-haspopup="true" aria-expanded="false">
-                      Employees
+                    <a class="nav-link" href="/employees" id="employeesButton" role="button" aria-haspopup="true" aria-expanded="false" >
+                      <p class="text-light"> Employees</p>
                     </a>
                   </li>
 
                   <li class="nav-item">
                     <a class="nav-link" href="/jobs" id="jobsButton" role="button" aria-haspopup="true" aria-expanded="false">
-                      Job Openings
+                      <p class="text-light">Job Openings</p>
                     </a>
                   </li>
 
                   <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="trainingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="trainingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Trainings
                     </a>
                     <div class="dropdown-menu" aria-labelledby="trainingsDropdown">
-                      <a class="dropdown-item" href="/trainings">Courses list</a>
-                      <a class="dropdown-item" href="#">Upcoming courses</a>
-                      <a class="dropdown-item" href="#">Courses archive</a>
+                      <a class="dropdown-item" href="/trainings/all">Courses list</a>
+                      <a class="dropdown-item" href="/trainings/current">Current courses</a>
+                      <a class="dropdown-item" href="/trainigns/past">Courses archive</a>
                     </div>
                   </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Projects
                         </a>
                         <div class="dropdown-menu" aria-labelledby="projectsDropdown">
@@ -102,13 +123,6 @@ changes in the layout of main components we just have to do it once in this file
                         </div>
                     </li>
             </ul>
-
-{#              Search bar (not working right now)#}
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-
           </div>
         </nav>
     </header>
@@ -118,85 +132,127 @@ changes in the layout of main components we just have to do it once in this file
         {% block pageContent %}
         {% endblock %}
     </main>
+
+    <footer class="page-footer font-small bg-dark pt-4">
+
+        <!-- Footer Links -->
+        <div class="container-fluid text-center text-md-left">
+            <!-- Grid row -->
+            <div class="row">
+                <hr class="clearfix w-100 d-md-none pb-3">
+                <!-- Grid column -->
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <!-- Links -->
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#">Copyrights</a>
+                        </li>
+                        <li>
+                            <a href="#">Privacy & Terms of use</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Grid column -->
+                <hr class="clearfix w-100 d-md-none pb-3">
+                <!-- Grid column -->
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <li>
+                        <a href="/faq" role="button">FAQ</a>
+                    </li>
+                    <li>
+                        <a href="#">Our Partners</a>
+                    </li>
+                    <li>
+                        <a href="#">Work with us</a>
+                    </li>
+                </div>
+                <!-- Grid column -->
+                <hr class="clearfix w-100 d-md-none">
+                <!-- Grid column -->
+                <div class="col-md-3 mx-auto">
+                    <!-- Links -->
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="#!">Duca Degli Abruzzi 1, Torino, Italy</a>
+                        </li>
+                        <li>
+                            <a href="#!">+39 01 12345678</a>
+                        </li>
+                        <li>
+                            <a href="#!">xxx@studenti.polito.it</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Grid column -->
+            </div>
+            <!-- Grid row -->
+        </div>
+        <!-- Footer Links -->
+
+        <!-- Footer Elements -->
+        <div class="container">
+            <div class="mx-auto" style="width: 400px;">
+                <!-- Social buttons -->
+                <!-- Add icon library -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+                <div class=" text-center">
+                    <!-- Add font awesome icons -->
+                    <a href="#" class="fa fa-facebook"></a>
+                    <a href="#" class="fa fa-twitter"></a>
+                    <a href="#" class="fa fa-linkedin"></a>
+                    <a href="#" class="fa fa-google"></a>
+                </div>
+            </div>
+        </div>
+        <!-- Social buttons -->
+        <!-- Footer Elements -->
+        <!-- Copyright -->
+        <div class="footer-copyright text-white text-center py-3">© 2020 Copyright:
+            <a href=""> Back2Skills</a>
+        </div>
+
+        <style>
+            /* Style all font awesome icons */
+            .fa {
+                padding: 20px;
+                font-size: 30px;
+                width: 65px;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 25%;
+            }
+
+            /* Add a hover effect if you want */
+            .fa:hover {
+                opacity: 0.7;
+            }
+
+            /* Set a specific color for each brand */
+
+            /* Facebook */
+            .fa-facebook {
+                background: #3B5998;
+                color: white;
+            }
+
+            /* Twitter */
+            .fa-twitter {
+                background: #55ACEE;
+                color: white;
+            }
+
+            .fa-linkedin {
+                background: #007BB6;
+                color: white;
+            }
+
+
+            .fa-google {
+                background: #DD4B39;
+                color: white;
+            }
+        </style>
+
+    </footer>
 </body>
-
-<footer class="page-footer font-small blue pt-4">
-
-  <!-- Footer Links -->
-  <div class="container-fluid text-center text-md-left">
-
-    <!-- Grid row -->
-    <div class="row">
-
-      <hr class="clearfix w-100 d-md-none pb-3">
-
-      <!-- Grid column -->
-      <div class="col-md-3 mb-md-0 mb-3">
-
-        <!-- Links -->
-
-        <ul class="list-unstyled">
-          <li>
-            <a href="#!">Copyrights</a>
-          </li>
-          <li>
-            <a href="#!">Privacy & Terms of use</a>
-          </li>
-          <li>
-            <a href="#!">FAQ</a>
-          </li>
-          <li>
-            <a href="#!">Our Partners</a>
-          </li>
-          <li>
-            <a href="#!">Work with us</a>
-          </li>
-        </ul>
-
-      </div>
-      <!-- Grid column -->
-
-    <!-- Grid row -->
-
-  </div>
-  <!-- Footer Links -->
-
-    <!-- Footer Elements -->
-  <div class="container">
-
-    <!-- Social buttons -->
-    <ul class="list-unstyled list-inline text-center">
-      
-      <li class="list-inline-item">
-        <a class="btn-floating btn-tw mx-1">
-          <i class="fab fa-twitter"> </i>
-        </a>
-      </li>
-      <li class="list-inline-item">
-        <a class="btn-floating btn-gplus mx-1">
-          <i class="fab fa-google-plus-g"> </i>
-        </a>
-      </li>
-      <li class="list-inline-item">
-        <a class="btn-floating btn-li mx-1">
-          <i class="fab fa-linkedin-in"> </i>
-        </a>
-      </li>
-      <li class="list-inline-item">
-        <a class="btn-floating btn-dribbble mx-1">
-          <i class="fab fa-dribbble"> </i>
-        </a>
-      </li>
-    </ul>
-    <!-- Social buttons -->
-
-  </div>
-  <!-- Footer Elements -->
-
-  <!-- Copyright -->
-  <div class="footer-copyright text-center py-3">© 2020 Copyright:
-    <a href=""> Back2Skills</a>
-  </div>
-
-</footer>
 </html>

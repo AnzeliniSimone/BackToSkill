@@ -11,43 +11,97 @@
         <div class="col-md-2">
           <div class="content-section">
               <div class="list-group">
-                  <a href="/trainings" class="list-group-item list-group-item-action">All courses</a>
-                  <a href="#" class="list-group-item list-group-item-action">Upcoming courses list</a>
-                  <a href="#" class="list-group-item list-group-item-action">Completed courses list</a>
+                  <a href="/trainings/all" class="list-group-item list-group-item-action">All courses</a>
+                  <a href="/trainings/current" class="list-group-item list-group-item-action">Current courses list</a>
+                  <a href="/trainings/past" class="list-group-item list-group-item-action">Completed courses list</a>
               </div>
           </div>
         </div>
           <div class="col-md-10">
 {#          Table for the trainings that will be taken out from the db#}
               {% block sectionContent %}
+                  <br/>
+                    <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#newTrainingModal">
+                      New Training
+                    </button>
+                  <br/>
+                   <!-- Modal -->
+                    <div class="modal fade bd-example-modal-lg" id="newTrainingModal" tabindex="-1" role="dialog" aria-labelledby="newProjectModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="newTrainingModalLabel">Define a new training</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+
+                            <form action="{{ url_for('trainings') }}" method="POST">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="inputName">Training name</label>
+                                        <input type="text" class="form-control" id="inputName" name="traName" placeholder="Name of the training" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputDescription">Total hours</label>
+                                        <input type="int" class="form-control" id="inputHours" name="traHours" placeholder="Total Amount of hours">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputBeginningDate">Beginning on:</label>
+                                        <input type="date" class="form-control" id="inputBeginningDate" name="traStartingDate" placeholder="dd/mm/yyyy" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputEndingDate">Ending on:</label>
+                                        <input type="date" class="form-control" id="inputEndingDate" name="traEndingDate" placeholder="dd/mm/yyyy">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="inputSelectSkill">Select the skills that will be improved with the training </label>
+                                        <select multiple class="form-control" id="inputSelectSkill" name="traSkill" aria-describedby="selectHelp">
+                                            {% for skill in skills %}
+                                                <option value="{{ skill.id }}">{{ skill.name }}</option>
+                                                <select multiple class="form-control" id="inputSelectGrade" name="gradeSkill" aria-describedby="selectHelp">
+                                                {% for i in range %}
+                                                    <option value="int">{{ i }}</option>
+                                                 {% endfor %}
+                                                </select>
+                                            {% endfor %}
+                                        </select>
+                                        <small id="selectHelp" class="form-text text-muted">To select multiple skills hold CTRL while clicking on them.</small>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                      </div>
+                    </div>
+         {# list of trainings #}
+                  <h4>List of {{ period }} trainings </h4>
                   <div class="table-responsive">
                       <table class="table table-hover">
                           <thead>
                             <tr>
                               <th scope="col">#</th>
-                              <th scope="col">First</th>
-                              <th scope="col">Last</th>
-                              <th scope="col">Handle</th>
+                              <th scope="col">Training</th>
+                              <th scope="col">Beginning</th>
+                              <th scope="col">Ending</th>
+                              <th scope="col">Hours</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <th scope="row">1</th>
-                              <td>Mark</td>
-                              <td>Otto</td>
-                              <td>@mdo</td>
-                            </tr>
-                            <tr>
-                              <th scope="row">2</th>
-                              <td>Jacob</td>
-                              <td>Thornton</td>
-                              <td>@fat</td>
-                            </tr>
-                            <tr>
-                              <th scope="row">3</th>
-                              <td colspan="2">Larry the Bird</td>
-                              <td>@twitter</td>
-                            </tr>
+                          {% for training in trainings_list %}
+                                <tr>
+                                  <th scope="row">{{loop.index}}</th>
+                                  <td><a href="/training/{{ training.id }}"> {{ training.name }} </a></td>
+                                  <td>{{ training.hours }}</td>
+                                  <td>{{ training.starting_date }}</td>
+                                  <td>{{ training.ending_date }}</td>
+                                </tr>
+                            {% endfor %}
+
                           </tbody>
                       </table>
                   </div>
