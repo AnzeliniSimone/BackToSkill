@@ -4,16 +4,26 @@ from sqlalchemy import not_, or_, and_
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 import datetime
 from datetime import datetime as dt
-from flask_wtf import FlaskForm
-
+from flask_wtf import Form, FlaskForm
+from wtforms import StringField, SubmitField, DateField, SelectField, FileField, validators
+from wtforms.validators import DataRequired, InputRequired
+from flask_uploads import UploadSet
+from flask_uploads import configure_uploads
+from flask_uploads import IMAGES, patch_request_class
+import os, sys
 from sqlalchemy import true, false
 
 from database import *
 from flask_bcrypt import Bcrypt
 
+UPLOAD_FOLDER = 'static/images/profile'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '1234'
+app.config['SECRET_KEY'] = 'nksndfkvnfjkvn'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database_per_prove.db'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+track_modifications = app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', False)
 bcrypt=Bcrypt(app)
 db.init_app(app)
 login_manager = LoginManager()
@@ -88,22 +98,302 @@ def skills(kind="soft", s=None):
 
 
 # //EMPLOYEES PAGES (third button of navbar)\\
-@app.route('/employees')
+###EMPLOYEES GRID###
+@app.route('/employees',methods=["GET","POST"])
 @login_required
 def employees():
-    return render_template('employees.html')
+    search=""
+    roles=get_roles()
+    if request.method == 'POST':
+        search = request.form['search']
+        #Search
+        if search!="":
+            employees=[]
+            for employee in get_employees():
+                print (employee.name)
+                if search in employee.name or search in employee.surname:
+                    employees.append(employee)
+
+        else:
+            employees = get_employees()
+    else:
+        employees = get_employees()
+    return render_template('employees.html', employees=employees,search=search,roles=roles)
+###END EMPLOYEES GRID###
 
 
+###CLASS FLASK FORM FOR ADD NEW EMPLOYEE###
+class EmployeeForm(FlaskForm):
+    # Personal
+    name = StringField('Name:', [validators.DataRequired()])
+    surname = StringField('Surname:', validators=[DataRequired()])
+    # photo = FileField('Image File')
+    birthday = DateField('Birthday:', format='%Y-%m-%d', validators=[DataRequired()])
+    living_place = StringField('Address:', validators=[DataRequired()])
+    phone = StringField('Phone Number:', validators=[DataRequired()])
+    email = StringField('E-mail:', validators=[DataRequired()])
+    driving_licence = SelectField(u'Driving Licence:', choices=[(True, 'YES'), (False, 'NO')],
+                                  validators=[InputRequired()], coerce=lambda x: x == 'True')
+    date_of_assumption = DateField('Hiring Date:', format='%Y-%m-%d')
+
+    role = SelectField(u'Role:', coerce=int)
+    # Education
+    state_in_company = SelectField(u'State in the Company:',
+                                   choices=[('active', 'ACTIVE'), ('layoffs', 'LAYOFFS'), ('holidays', 'HOLIDAYS')],
+                                   validators=[InputRequired()])
+    education_level = StringField('Level of Education')
+    language_certificate = StringField('Language Certifications')
+    submit = SubmitField('Save')
+
+
+### END CLASS FLASK FORM FOR ADD NEW EMPLOYEE###
+
+
+### EMPLOYEE PERSONAL PAGE ###
 @app.route('/employee/<int:id>')
 @login_required
 def employee(id):
-    # Here you have to add all the conditions and the instructions to retrieve the right employee's information from
-    # the db
-    # Also, you will have to pass the entire employee instance to the html page (see the skill(kind) function to see
-    # how to do it
-    # In the employee.html you will have to take the information you have to show from the variable passed from here,
-    # see skills.html to have an example
-    return render_template('employee.html')
+    message = request.args.get("message")
+    employee = get_employee_by_id(id)
+    trainings = get_trainings_of_employee(id)
+    projects = get_projects_of_employee(id)
+    past_projects = get_past_projects()
+    current_projects = get_current_projects()
+    skills = get_skills_of_employee(id)
+    roles = get_roles()
+    list_hard = []
+    list_soft = []
+    past_emp_pjs = []
+    current_emp_pjs = []
+    evaluations = []
+
+    # Employee Skills
+    for skill in skills:
+        score = get_gradeofskill_by_emp_skill(id, skill.id)
+        if skill.type == 'Hard':
+            list_hard.append((skill, score))
+        elif skill.type == 'Soft':
+            list_soft.append((skill, score))
+    # Employee Projects
+    for project in projects:
+        if project in past_projects:
+            for tupla in employee.project_role:
+                role_id = tupla.role_id
+                evaluations = get_evaluation_by_proj_emp_role(project.id, employee.id, role_id)
+            past_emp_pjs.append((project, evaluations))
+            print(str(past_emp_pjs))
+        elif project in current_projects:
+            current_emp_pjs.append(project)
+
+    return render_template('employee.html', employee=employee, trainings=trainings, projects=projects,
+                           list_hard=list_hard, list_soft=list_soft, past_emp_pjs=past_emp_pjs,
+                           current_emp_pjs=current_emp_pjs, message=message, roles=roles)
+
+
+### END EMPLOYEE PERSONAL PAGE ###
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+###ADD NEW EMPLOYEE PAGE###
+@app.route('/add_employee', methods=['GET', 'POST'])
+@login_required
+def new_employee():
+    employee = None
+    form = EmployeeForm()
+    form.role.choices = [(role.id, role.name) for role in get_roles()]
+    skills = get_skills()
+
+    # POST
+    if form.validate_on_submit():
+        ###Flask Form###
+        # Personal
+        first_name = form.name.data
+        last_name = form.surname.data
+        birthday = form.birthday.data
+        phone = form.phone.data
+        email = form.email.data
+        driving_licence = form.driving_licence.data
+        living_place = form.living_place.data
+        date_of_assumption = form.date_of_assumption.data
+        state_in_company = form.state_in_company.data
+        role = form.role.data
+        # Education
+        education_level = form.education_level.data
+        language_certificate = form.language_certificate.data
+
+        # Create instance of Employee
+        employee = Employee(name=first_name, surname=last_name, date_of_birth=birthday, telephone=phone, email=email,
+                            driving_licence=driving_licence, living_place=living_place,
+                            date_of_assumption=date_of_assumption, state_in_company=state_in_company, role=role,
+                            education_level=education_level, language_certificate=language_certificate)
+
+        # Add new employee to db
+        set_employee(employee)
+
+        # Upload Image
+        if 'file' in request.files:
+            file = request.files['file']
+            if file and allowed_file(file.filename) and file.filename != '':
+                filename = "image_profile_" + str(employee.id) + ".jpg"
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                employee.photo = filename
+
+            else:
+                employee.photo = "default.png"
+        update_employee(employee)
+        # Skills
+        number = request.form["number"]
+        number = int(number)
+        dic = []
+        for x in range(number):
+            skill_index = "skill" + str(x)
+            skill = request.form.get(skill_index)
+            if skill != None:
+                skill_id = request.form[skill_index]  # Parametro form (ex. skill0=adaptability)
+                score_index = "score" + str(x)
+                score = request.form[score_index]
+                dic.append((skill_id, score))
+
+        # Delete
+        delete_all_grade_of_skill_of_employee(employee.id)  # delete all skills
+
+        # Delete all duplicate from the dic list
+        seen = set()
+        dic = [(a, b) for a, b in dic if not (a in seen or seen.add(a))]
+
+        # Add the skills of the employee into db
+        for y in dic:
+            set_grade_of_skill_of_employee(y[1], employee.id, y[0])
+            # Once saved employee information in db return the employee.html page
+        return redirect(url_for('employee', id=employee.id, message=""))  # Message neet to show popup save
+
+    return render_template('newemployee.html', employee=employee, form=form, skills=skills)
+
+
+### END ADD NEW EMPLOYEE PAGE###
+
+
+###DELETE EMPLOYEE###
+@app.route('/delete_employee/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_employee_page(id):
+    print("DELETE: " + str(id))
+    delete_employee(id)
+    return redirect(url_for("employees"))
+
+
+###DELETE EMPLOYEE###
+
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
+
+
+###EDIT EMPLOYEE###
+@app.route('/edit_employee/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_employee(id):
+    form = EmployeeForm()
+    skills = get_skills()  # get all the skills in db
+    form.role.choices = [(role.id, role.name) for role in get_roles()]
+    # GET
+    if request.method == 'GET':
+        employee = get_employee_by_id(id)
+        # Flask Form
+        form.name.data = employee.name
+        form.surname.data = employee.surname
+        form.birthday.data = employee.date_of_birth
+        form.phone.data = employee.telephone
+        form.email.data = employee.email
+        form.driving_licence.data = employee.driving_licence
+        form.living_place.data = employee.living_place
+        form.date_of_assumption.data = employee.date_of_assumption
+        form.state_in_company.data = employee.state_in_company
+        form.role.data = employee.role
+        form.education_level.data = employee.education_level
+        form.language_certificate.data = employee.language_certificate
+        # get the skills of the employee in db
+        employee_skills = get_skills_of_employee(employee.id)
+        # get the grades of the skills of the employee in db
+        dic = []
+        for employee_skill in employee_skills:
+            grade = get_gradeofskill_by_emp_skill(id, employee_skill.id)
+            dic.append((employee_skill.id, employee_skill.name, grade))
+    # POST
+    else:
+        # Flask Form
+        first_name = form.name.data
+        last_name = form.surname.data
+        birthday = form.birthday.data
+        phone = form.phone.data
+        email = form.email.data
+        driving_licence = form.driving_licence.data
+        living_place = form.living_place.data
+        date_of_assumption = form.date_of_assumption.data
+        state_in_company = form.state_in_company.data
+        role = form.role.data
+        language_certificate = form.language_certificate.data
+        education_level = form.education_level.data
+        # Create instance of Employee
+        employee = Employee(id=id, name=first_name, surname=last_name, date_of_birth=birthday, telephone=phone,
+                            email=email, driving_licence=driving_licence, living_place=living_place,
+                            date_of_assumption=date_of_assumption, state_in_company=state_in_company, role=role,
+                            education_level=education_level, language_certificate=language_certificate)
+
+        # Update the employee data into db
+
+        # Upload Image
+        if 'file' in request.files:
+            file = request.files['file']
+            if file and allowed_file(file.filename) and file.filename != '':
+                filename = "image_profile_" + str(employee.id) + ".jpg"
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                employee.photo = filename
+            else:
+                photo = get_employee_by_id(id).photo
+                employee.photo = photo
+
+        update_employee(employee)
+
+        # Skills
+        number = request.form["number"]
+        number = int(number)
+        dic = []
+        employee_skills = get_skills_of_employee(employee.id)
+        for x in range(number):
+            skill_index = "skill" + str(x)
+            skill = request.form.get(skill_index)
+            if skill != None:
+                skill_id = request.form[skill_index]  # Parametro form (ex. skill0=adaptability)
+                score_index = "score" + str(x)
+                score = request.form[score_index]
+                dic.append((skill_id, score))
+
+        # Delete all skills
+        delete_all_grade_of_skill_of_employee(employee.id)
+
+        # Delete all duplicate from the list dic
+        seen = set()
+        dic = [(a, b) for a, b in dic if not (a in seen or seen.add(a))]
+        # Add the skills of the employee into db
+        for skill in dic:
+            set_grade_of_skill_of_employee(skill[1], employee.id, skill[0])  # insert all new skills
+        # Once saved employee information in db return the employee.html page
+        return redirect(url_for('employee', id=employee.id, message="Save"))  # Message neet to show popup save
+
+    return render_template('edit_employee.html', employee=employee, form=form, employee_skills=employee_skills,
+                           skills=skills, dic=dic)
 
 
 # //JOBS PAGES\\

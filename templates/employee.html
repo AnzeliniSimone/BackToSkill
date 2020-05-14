@@ -1,11 +1,502 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Employee</title>
+    <title>Ciao</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+
 </head>
 <body>
+{% block pageContent %}
+    <style>
+        .btn-file {
+            position: relative;
+            overflow: hidden;
 
+        }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            cursor: inherit;
+            display: block;
+        }
+    </style>
+    <!--Container-->
+    <div class="container">
+
+
+        <!--row1-Head of the page Employee Name and Surname-->
+        <div class="row mt-3">
+            {% if employee == None %}
+                <div class="col-sm-10"><h1>No Employee </h1></div>
+            {% elif employee!=None %}
+                <div class="col-sm-10"><h1>{{ employee.name }} {{ employee.surname }}</h1></div>
+            {% endif %}
+        </div>
+        {% if message != None %}
+        <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
+            <!-- alert-dismissible is the X in alert-->
+            <strong>Save successful!</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endif %}
+        <!--row2-Employee contenents-->
+        <div class="row mt-5">
+            <div class="col-sm-3">
+                <!--left col, Upload image and below contenents-->
+                <!--Upload image-->
+                <div class="text-center">
+                    {% if employee.photo != ""%}
+                    <img src="/static/images/profile/{{ employee.photo }}" class="avatar img-circle img-thumbnail" alt="avatar">
+                    {% else %}
+                    <img src="/static/images/profile/default.png" class="avatar img-circle img-thumbnail" alt="avatar">
+                    {% endif%}
+                </div>
+                </hr><br>
+
+                <!--Below contenents-->
+                <ul class="list-group">
+                    <li class="list-group-item text-muted">About {{ employee.name }} <i class="fa fa-dashboard fa-1x"></i></li>
+                    <li class="list-group-item text-left"><span class="pull-left"><em> Hiring date: {{ employee.date_of_assumption }}</em></span></li>
+                    {% for role in roles %}
+                        {% if  role.id==employee.role%}
+                            <li class="list-group-item text-left"><span class="pull-left"><em> Role: {{ role.name }}</em></span></li>
+                        {% endif  %}
+                    {% endfor %}
+                    <li class="list-group-item text-left"><span class="pull-left"><em> State in the company : {{ employee.state_in_company }}</em></span></li>
+                </ul>
+            </div><!--left col, Upload image and below contenents-->
+
+            <div class="col-sm-9">
+                <!--Tabs & edit button-->
+                <!--Tabs bar-->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                           aria-controls="home" aria-selected="true">Personal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                           aria-controls="profile" aria-selected="false">Education</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#skills" role="tab"
+                           aria-controls="contact" aria-selected="false">Skills</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#trainings" role="tab"
+                           aria-controls="contact" aria-selected="false">Trainings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#projects" role="tab"
+                           aria-controls="projects" aria-selected="false">Projects</a>
+                    </li>
+                </ul>
+                <!-- Tabs Contents and Edit button-->
+                <form action="" method="post">
+                    <div class="tab-content" id="myTabContent">
+                        <!-- Tab 1 Personal-->
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="personal-tab">
+
+                            <div class="row mt-5">
+                                <div class="col-3">
+                                    <b> Name </b>
+                                </div>
+                                <div class="col-9">
+                                    {{ employee.name }}
+
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-3 mt-1">
+                                    <b> Surname </b>
+                                </div>
+                                <div class="col-9 mt-1">
+                                    {{ employee.surname }}
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-3 mt-1">
+                                    <b> Birthday </b>
+                                </div>
+                                <div class="col-9 mt-1">
+                                    {{ employee.date_of_birth }}
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-3 mt-1">
+                                    <b> Phone Number </b>
+                                </div>
+                                <div class="col-9 mt-1">
+                                    {{ employee.telephone }}
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-3 mt-1">
+                                    <b> E-mail </b>
+                                </div>
+                                <div class="col-9 mt-1">
+                                    {{ employee.email }}
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-3 mt-1">
+                                    <b> Address </b>
+                                </div>
+                                <div class="col-9 mt-1">
+                                    {{ employee.living_place }}
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-3 mt-1">
+                                    <b> Driving Licence </b>
+                                </div>
+                                <div class="col-9 mt-1">
+                                    {% if employee.driving_licence==1 %}
+                                        <h6>YES</h6>
+                                    {% else %}
+                                        <h6>NO</h6>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <!-- Tab 2 Education-->
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="education-tab">
+                            {% if employee.education_level=='' and employee.language_certificate=='' %}
+                                <div class="text-center mt-5 ">
+                                    <h4 ><em>No language certificates or level of education entered  yet. Please to add {{ employee.surname }} {{ employee.name }} certificates and level of education click on edit.</em></h4>
+                                </div>
+                            {% elif  employee.education_level!='' and employee.language_certificate==''%}
+                                <div class="row mt-5">
+                                    <div class="col-3">
+                                        <b> Level of education</b>
+                                    </div>
+                                    <div class="col-9 ">
+                                        {{ employee.education_level }}
+                                    </div>
+                                    <div class="text-center mt-5 ">
+                                        <h4 ><em>No language certificates entered  yet. Please to add {{ employee.surname }} {{ employee.name }} language certificates click on edit.</em></h4>
+                                    </div>
+                                </div>
+                            {% elif  employee.education_level=='' and employee.language_certificate!=''%}
+                                <div class="row mt-5">
+                                    <div class="col-3 ">
+                                        <b> Language Knowledge </b>
+                                    </div>
+                                    <div class="col-9 ">
+                                        {{ employee.language_certificate }}
+                                    </div>
+                                    <div class="text-center mt-5 ">
+                                        <h7 ><em>No level of education entered  yet. Please to add {{ employee.surname }} {{ employee.name }} level of education click on edit.</em></h7>
+                                    </div>
+                                </div>
+                            {% elif  employee.education_level!='' and employee.language_certificate!=''%}
+                                <div class="row mt-5">
+                                    <div class="col-3">
+                                        <b> Level of education</b>
+                                    </div>
+                                    <div class="col-9 ">
+                                        {{ employee.education_level }}
+                                    </div>
+                                    <div class="col-3 mt-3">
+                                        <b> Language Knowledge </b>
+                                    </div>
+                                    <div class="col-9  mt-3">
+                                        {{ employee.language_certificate }}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                        <!-- Tab 3 Skills-->
+                        <div class="tab-pane fade" id="skills" role="tabpanel" aria-labelledby="skills-tab">
+                            {% if list_soft==[] and list_hard==[] %}
+                                <div class="text-center mt-5">
+                                    <h4 ><em>No skills entered yet. Please to enter a skill click edit. </em></h4>
+                                </div>
+                            {% endif %}
+                            {% if list_soft!=[] and list_hard==[] %}
+                                <!--Soft Skills-->
+                                <div class="row mt-5">
+                                    <div class="col-6">
+                                        <h4> Soft Skills </h4>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    {% for tupla in list_soft %}
+                                        <div class="col-6">
+                                            <b> {{ tupla[0].name }} </b>
+                                        </div>
+                                        <div class="col-3">
+                                            {{ tupla[1] }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if list_soft==[] and list_hard!=[] %}
+                                <!--Hard Skills-->
+                                <div class="row mt-5">
+                                    <div class="col-6">
+                                        <h4> Technical Skills </h4>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    {% for tupla in list_hard %}
+                                        <div class="col-6">
+                                            <b> {{ tupla[0].name }} </b>
+                                        </div>
+                                        <div class="col-3">
+                                            {{ tupla[1] }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if list_soft!=[] and list_hard!=[] %}
+                                <!--Soft Skills-->
+                                <div class="row mt-5">
+                                    <div class="col-6">
+                                        <h4> Soft Skills </h4>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    {% for tupla in list_soft %}
+                                        <div class="col-6">
+                                            <b> {{ tupla[0].name }} </b>
+                                        </div>
+                                        <div class="col-3">
+                                            {{ tupla[1] }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <!--Hard Skills-->
+                                <div class="row mt-5">
+                                    <div class="col-6">
+                                        <h4> Technical Skills </h4>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    {% for tupla in list_hard %}
+                                        <div class="col-6">
+                                            <b> {{ tupla[0].name }} </b>
+                                        </div>
+                                        <div class="col-3">
+                                            {{ tupla[1] }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <!-- Tab 4 Trainings-->
+                        <div class="tab-pane fade" id="trainings" role="tabpanel" aria-labelledby="trainings-tab">
+                            {% if trainings!=[] %}
+                                <div class="row mt-3">
+                                    <div class="container-fluid">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">Training </th>
+                                                    <th scope="col">Beginning</th>
+                                                    <th scope="col">Ending</th>
+                                                    <th scope="col">Skill improved</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for training in trainings %}
+                                                    <h4>Trainings</h4>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="/project/{{ training.id }}"> {{ training.name }} </a>
+                                                        </td>
+                                                        <td>{{ training.starting_Date }}</td>
+                                                        <td>{{ project.ending_Date }}</td>
+                                                        <td>{{ project.skill }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div> <
+                                    </div>
+                                </div>
+                            {% elif trainings==[] %}
+                                <div class="text-center mt-5 ">
+                                    <h4 ><em>No trainings selected yet. Please to add {{ employee.surname }} {{ employee.name }} in a training course go to the trainings section of the site.</em></h4>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <!-- Tab 5 Projects-->
+                        <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
+                            <div class="row mt-3">
+                                <div class="container-fluid">
+                                    {% if current_emp_pjs!=[] and past_emp_pjs!=[] %}
+                                        <div class="table-responsive mt-4">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">Project</th>
+                                                    <th scope="col">Beginning</th>
+                                                    <th scope="col">Ending</th>
+                                                    <th scope="col">Description</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for project in current_emp_pjs %}
+                                                    <h4>Projects in Progress</h4>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="/project/{{ project.id }}"> {{ project.name }} </a>
+                                                        </td>
+                                                        <td>{{ project.starting_date }}</td>
+                                                        <td>{{ project.ending_date }}</td>
+                                                        <td>{{ project.description }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div> <!--PROJECTS IN PROGRESS-->
+                                        <div class="table-responsive mt-5">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">Project</th>
+                                                    <th scope="col">Beginning</th>
+                                                    <th scope="col">Ending</th>
+                                                    <th scope="col">Description</th>
+                                                    <th scope="col">Evaluation</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for project in past_emp_pjs %}
+                                                    <h4>Complete Projects</h4>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="/project/{{ project[0].id }}"> {{ project[0].name }} </a>
+                                                        </td>
+                                                        <td>{{ project[0].starting_date }}</td>
+                                                        <td>{{ project[0].ending_date }}</td>
+                                                        <td>{{ project[0].description }}</td>
+                                                        <td>{{ project[1] }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div> <!--COMPLETE PROJECTS-->
+                                    {% elif current_emp_pjs==[] and past_emp_pjs!=[] %}
+                                        <div class="table-responsive mt-3">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">Project</th>
+                                                    <th scope="col">Beginning</th>
+                                                    <th scope="col">Ending</th>
+                                                    <th scope="col">Description</th>
+                                                    <th scope="col">Evaluation</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for project in past_emp_pjs %}
+                                                    <h4>Complete Projects</h4>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="/project/{{ project[0].id }}"> {{ project[0].name }} </a>
+                                                        </td>
+                                                        <td>{{ project[0].starting_date }}</td>
+                                                        <td>{{ project[0].ending_date }}</td>
+                                                        <td>{{ project[0].description }}</td>
+                                                        <td>{{ project[1] }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div> <!--COMPLETE PROJECTS-->
+                                        <div class="text-center mt-3">
+                                            <h4 class="text-center mt-3"><em>There are not project in progress.</em></h4>
+                                            <h4 class="text-center"><em>Please if you want add {{ employee.surname }}  {{ employee.name }} to a new project go to the project section of the site </em></h4>
+                                        </div>
+                                    {% elif current_emp_pjs!=[] and past_emp_pjs==[] %}
+                                        <div class="table-responsive mt-3">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">Project</th>
+                                                    <th scope="col">Beginning</th>
+                                                    <th scope="col">Ending</th>
+                                                    <th scope="col">Description</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for project in current_emp_pjs %}
+                                                    <h4>Projects in Progress</h4>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="/project/{{ project.id }}"> {{ project.name }} </a>
+                                                        </td>
+                                                        <td>{{ project.starting_date }}</td>
+                                                        <td>{{ project.ending_date }}</td>
+                                                        <td>{{ project.description }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div> <!--PROJECTS IN PROGRESS-->
+                                    {% else %}
+                                        <h4 class="text-center mt-3"><em>Projects are not present yet.</em></h4>
+                                        <h4 class="text-center"><em>Please if you want add {{ employee.surname }}  {{ employee.name }} to a project go to the project section of the site</em></h4>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Edit Employee Button--->
+                    <div class="row mt-5 ">
+                        <div class="col-8 text-right">
+                            <a href="{{ url_for('edit_employee',id=employee.id) }}">
+                                <input type="button" style="width: 200px" value="EDIT" class="btn btn-primary">
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div><!--Tabs & edit button-->
+        </div><!--row2-Employee contenents-->
+    </div><!--Container-->
+    <!-- Timeout for alert-->
+    <script>
+        setTimeout(function () {
+            $(".alert").alert('close');
+        }, 5000)
+    </script>
+
+{% endblock %}
 </body>
-</html>
