@@ -64,6 +64,8 @@ class Employee(db.Model):
     education_level = db.Column(db.String)
     language_certificate = db.Column(db.String)
 
+    def get_job(self):
+        return get_role_by_id(self.role).name
 
 class Skill(db.Model):
     __tablename__ = 'skill'
@@ -113,6 +115,12 @@ class Training(db.Model):
     hours = db.Column(db.Integer)
     skill = db.relationship("Skill", secondary="training_skill")
     employee = db.relationship("Employee", secondary="employee_training")
+
+    def get_skill_improvements_list(self):
+        skills=[]
+        for s in self.skill:
+            skills.append(s.name)
+        return skills
 
 
 class Employee_Skill(db.Model):

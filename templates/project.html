@@ -75,23 +75,37 @@
                     <div class="col-sm-6 col-lg-3" style="padding: 1.5rem; padding-top: 1rem; padding-bottom: 0rem">
                         <h5>Supervisor</h5>
                         {% if supervisor %}
-                            <div class="row" style="border: 1px solid; border-color: rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
-                                <div class="col-4 nopadding">
-                                    <img src="static/images/user.png" class="card-img-top" style="width: 100px; " alt="...">
+                            <div class="row"
+                                 style="border: 1px solid; border-color: rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
+                                <div class="col-md-3 nopadding" style="display: flex;
+                            alignItems: center;
+                            justifyContent: center;">
+                                    {% if supervisor.photo == "default" or supervisor.photo == ""%}
+                                        <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" style="height: 100px;max-width: 100px;" alt="avatar">
+                                    {% else %}
+                                        <img src="/static/images/profile/{{ supervisor.photo }}" class="avatar img-circle img-thumbnail"  style="height: 100px; max-width: 100px;" alt="avatar">
+                                    {% endif%}
                                 </div>
-                                <div class="col-6">
+                                <div class="col-md-7 text-truncate">
                                     <div>
-                                        <a class="card-title"><b>{{ supervisor.name }} {{ supervisor.surname }}</b></a>
+                                        <a class="card-title text-truncate"><b>{{ supervisor.name }} {{ supervisor.surname }}</b></a>
                                     </div>
                                     <div>
-                                        <a style="font-size: 13px;" class="card-title">{{ supervisor.role}}</a>
+                                        <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: #0c61ff;">people</i>
+{#                                        {% for role in roles %}#}
+{#                                            {% if role.id==supervisor.role%}#}
+{#                                                <a style="font-size: 13px;" class="card-title">{{ role.name}}</a>#}
+{#                                            {% endif %}#}
+{#                                        {% endfor %}#}
+                                        <a style="font-size: 13px;" class="card-title">{{ supervisor.get_job() }}</a>
                                     </div>
                                     <div>
+                                        <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: #0c61ff;">email</i>
                                         <a style="font-size: 13px;" class="card-title">{{ supervisor.email }}</a>
                                     </div>
                                     <div>
-                                        <i class="fa fa-phone" aria-hidden="true"></i>
-                                        <a style="font-size: 13px;" class="card-title"><i class="fa fa-phone" aria-hidden="true"></i> {{ supervisor.telephone }}</a>
+                                        <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: #0c61ff;">phone</i>
+                                        <a style="font-size: 13px;" class="card-title">{{ supervisor.telephone }}</a>
                                     </div>
                                 </div>
                                 <div class="col-2 align-self-center">

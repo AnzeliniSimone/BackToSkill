@@ -337,11 +337,17 @@
                                                     <h4>Trainings</h4>
                                                     <tr>
                                                         <td>
-                                                            <a href="/project/{{ training.id }}"> {{ training.name }} </a>
+                                                            <a href="/training/{{ training.id }}"> {{ training.name }} </a>
                                                         </td>
-                                                        <td>{{ training.starting_Date }}</td>
-                                                        <td>{{ project.ending_Date }}</td>
-                                                        <td>{{ project.skill }}</td>
+                                                        <td>{{ training.starting_date }}</td>
+                                                        <td>{{ training.ending_date }}</td>
+                                                        {% set skills = training.get_skill_improvements_list() %}
+                                                        <td>
+                                                            |
+                                                            {% for s in skills %}
+                                                                {{ s }} |
+                                                            {% endfor %}
+                                                        </td>
                                                     </tr>
                                                 {% endfor %}
                                                 </tbody>
