@@ -45,7 +45,7 @@ def about():
 
 @app.route('/faq')
 def faq():
-    return render_template('FAQ.html')\
+    return render_template('FAQ.html')
 
 
 @app.route('/team')
@@ -138,10 +138,6 @@ def jobs():
                score = request.form[score_index]
                dic.append((skill_id, score))
 
-
-
-
-
         # Add the skills of the employee into db
         for y in dic:
            add_skill_to_role(id_job, y[0], y[1])
@@ -165,9 +161,8 @@ def jobs():
         else:
              open.append(job)
 
-
-
     return render_template('jobs.html',softskill=soft_skill,hardskill=hard_skill,role=roles,open=open,closed=closed,employee=employee_list,job_skill=job_skill)
+
 
 @app.route('/job/<int:id>',methods=['GET','POST'])
 @app.route('/job/<int:id>')
@@ -192,7 +187,6 @@ def job(id):
                     dic.append((skill_id, score))
 
             delete_all_grade_of_skill_of_job(id)
-
 
             # Delete all duplicate from the list dic
             seen = set()
@@ -306,7 +300,9 @@ def projects(period="all"):
 @login_required
 def project(id):
     if request.method == 'POST':
+        # As there are many forms in the project page, they are distinguished by using an hidden input identifying the action to perform
         action = str(request.form.get('actionToPerform'))
+
         # Edit project basic information
         if action == "editProjectInfo":
             prj_name = str(request.form.get('prjName'))
@@ -333,7 +329,7 @@ def project(id):
                     if emp not in get_employees_in_project(id):
                         new_prj_role=add_employee_to_project(id, role.id, emp_id)
                     else:
-                        error = "An employee can't have more than one role in a project"
+                        print "An employee can't have more than one role in a project"
                 else:
                     print "No employee selected"
 
@@ -341,7 +337,7 @@ def project(id):
         elif action == "addRoles":
             roles = request.form.getlist("new_roles")
             for role_id in roles:
-                added= add_role_to_project(id, role_id)
+                added = add_role_to_project(id, role_id)
 
         # Remove roles from the project
         elif action == "deleteRole":
@@ -367,16 +363,28 @@ def project(id):
 
         return redirect(url_for('project', id=id))
 
+    # If not interrupted before (because of a post request with a different destination)
+    # Get the project instance interested by the GET request
     prj = get_project_by_id(id)
+    # get the supervisor of the project (if existent)
     supervisor = None
     if prj.supervisor:
         supervisor = get_employee_by_id(prj.supervisor)
+    # get a list of all the possible employees
     all_emps = get_employees()
+    # check if the project can be closed (ending date previous w.r.to the current date)
     closable = dt.today().date() > prj.ending_date
+    # get info regarding the employees working on the project and those free in the project time-window
+    # get also a list of the empty roles in the project
     emp_roles = get_employees_in_project_with_roles(id)
     free_roles = get_free_roles_in_project(id)
     free_employees = get_available_employees_in_period(prj.starting_date, prj.ending_date)
     empty_roles_best_employees = []
+    # For every empty role in the project,
+        # divide the available employees into three cathegories:
+            # skilled (have all skills required with sufficient grades)
+            # unskilled (have all skills required but with insufficient grades)
+            # non-skilled (have a portion of the skills required)
     for fr in free_roles:
         se, ue, ne = get_suitable_emp_for_role(fr.id, free_employees)
         erbe =[fr,se,ue,ne]
@@ -384,6 +392,7 @@ def project(id):
     # empty_roles_best_employees will be a list of tuples which contain, in order, the role entity and the 3 lists of
     # available suitable employees for that specific role
     employee_evaluations = get_employees_with_evaluation(id)
+    # get list of every reamining not used role_in_project
     other_roles = get_not_used_roles_in_proj(id)
     return render_template('project.html', project=prj, employees_roles=emp_roles,\
                            free_roles_and_employees=empty_roles_best_employees,\
@@ -394,17 +403,22 @@ def project(id):
 @app.route('/edit_role/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_role(id):
+    # Gets the requested role instance and a list of all the skills
     role_in_project = get_roles_in_projects_by_id(id)
     all_skills=get_skills()
     skills, grades = role_in_project.get_skills_required()
+    # Creates a list of tuples containing the skill id, the skill name and the grade required for the role
     dic=[]
     for s, g in map(None, skills, grades):
         dic.append((s.id, s.name, g))
 
+    # Edits the role's information
     if request.method=='POST':
         description = request.form.get("newDescription")
         role_updated = edit_role_description(id, description)
+
         # Skills
+        # number of required skills
         number = request.form["number"]
         number = int(number)
         dic = []
@@ -479,7 +493,7 @@ def load_user(user_id):
 # //LOGIN AND USER MANAGEMENT\\
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Here we'll have to manage the entire login procedure
+    # Manage login procedure
     if request.method=='POST':
         email = request.form.get("userEmail")
         password = request.form.get("userPassword")
@@ -506,8 +520,12 @@ def logout():
 @app.route('/users', methods=['GET', 'POST'])
 @login_required
 def users():
+    # Returns a list of all the users, divided into admins and common users
+
     if request.method=='POST':
+        # Same method of the project page to handle the various forms
         action = request.form.get("actionToPerform")
+
         if action == "deleteUser":
             user_id = request.form.get("userToDelete")
             if user_id == current_user.id:
@@ -515,13 +533,16 @@ def users():
             deleted = delete_user(user_id)
             if not current_user.is_authenticated:
                 return redirect("/home")
+
         elif action == "editPermission":
             user_id = request.form.get("userToAdmin")
             new_admin = make_user_admin(user_id)
+
         elif action == "editEmail":
             user_id = current_user.id
             new_mail = request.form.get("userEmail")
             user = edit_user_email(user_id, new_mail)
+
         elif action == "newUser":
             name = request.form.get("userName")
             surname = request.form.get("userSurname")
@@ -534,6 +555,7 @@ def users():
                     user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), True)
                 else:
                     user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), False)
+
         elif action == "changePassword":
             user_id = current_user.id
             user = get_user_by_id(user_id)

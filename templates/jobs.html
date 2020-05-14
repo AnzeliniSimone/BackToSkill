@@ -7,6 +7,7 @@
 </head>
 <body>
  {% block pageContent %}
+     {% if current_user.is_authenticated and current_user.admin %}
      <!--modal creation-->
      <div class="modal fade" id="newJobModal">
          <div class="modal-dialog modal-lg" >
@@ -119,13 +120,15 @@
          </div>
      </div>
      <!--end modal -->
+    {% endif %}
 
      <h3>List of jobs </h3>
+     {% if current_user.is_authenticated and current_user.admin %}
      <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#newJobModal">
           New job
      </button>
+    {% endif %}
      <br/>
-
      <div class="table-responsive">
          <table class="table table-bordered table-light table-striped table-hover text-center">
              <thead>
