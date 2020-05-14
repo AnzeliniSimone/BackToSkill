@@ -4,100 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Employees</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
 {% block pageContent %}
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        .nopadding {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        .text {
-    display: block;
-    display: -webkit-box;
-    max-width: 200px;
-    margin: 0 auto;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-    </style>
-    <div class="container-fluid pt-3">
-        <div class="row">
-            <div class="mr-auto">
-                
-                <a href="{{ url_for('new_employee') }}">
-                    <button type="button" class="btn btn-primary btn-lg">
-                        <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px">add</i>
-                        Add new employee</button>
-                </a>
-            </div>
-
-                <div>
-                    <div class="form-inline my-2 my-lg-0">
-                        <form method="post">
-                            <input class="form-control mr-sm-2" type="search" value="{{ search }}" placeholder="Search by Name..." name="search" aria-label="Search">
-                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" >Search</button>
-                        </form>
-                    </div>
-                </div>
-
-        </div>
-        <div class="row">
-
-            {% if employees %}
-                {% for employee in employees %}
-                    <div class="col-sm-6 col-md-6 col-lg-4" style="padding: 1.5rem; padding-top: 1rem; padding-bottom: 0rem">
-                        <div class="row"
-                             style="border: 1px solid; border-color: rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
-                            <div class="col-md-3 nopadding" style="display: flex;
-                            alignItems: center;
-                            justifyContent: center;">
-                                {% if employee.photo == "default" or employee.photo == ""%}
-                                <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" style="height: 100px;max-width: 100px;" alt="avatar">
-                                {% else %}
-                                <img src="/static/images/profile/{{ employee.photo }}" class="avatar img-circle img-thumbnail"  style="height: 100px; max-width: 100px;" alt="avatar">
-                                {% endif%}   
-                            </div>
-                            <div class="col-md-7 text-truncate">
-                                <div>
-                                    <a class="card-title text-truncate"><b>{{ employee.name }} {{ employee.surname }}</b></a>
-                                </div>
-                                <div>
-                                    <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: #0c61ff;">people</i>
-                                    {% for role in roles %}
-                                        {% if role.id==employee.role%}
-                                            <a style="font-size: 13px;" class="card-title">{{ role.name}}</a>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                                <div>
-                                    <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: #0c61ff;">email</i>
-                                    <a style="font-size: 13px;" class="card-title">{{ employee.email }}</a>
-                                </div>
-                                <div>
-                                    <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: #0c61ff;">phone</i>
-                                    <a style="font-size: 13px;" class="card-title">{{ employee.telephone }}</a>
-                                </div>
-                            </div>
-                            <div class="col-2 align-self-center">
-                                <a href="{{ url_for('employee', id=employee.id) }}">
-                                    <i class="material-icons">keyboard_arrow_right</i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                {% endfor %}
-            {% endif %}
-        </div>
-    </div>
+{#    <div class="container">#}
+{#        {% for emp in employees %}#}
+{#            <div class="row">#}
+{#                <div class="col-sm">#}
+{#                  One of three columns#}
+{#                </div>#}
+{#                <div class="col-sm">#}
+{#                  One of three columns#}
+{#                </div>#}
+{#                <div class="col-sm">#}
+{#                  One of three columns#}
+{#                </div>#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#    </div>#}
 {% endblock %}
 </body>
 </html>
-
-
