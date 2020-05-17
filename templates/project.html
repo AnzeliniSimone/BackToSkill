@@ -17,7 +17,7 @@
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <a class="nav-item nav-link active" id="nav-project-tab" data-toggle="tab" href="#nav-project" role="tab" aria-controls="nav-project" aria-selected="true">Outline</a>
             <a class="nav-item nav-link" id="nav-roles-tab" data-toggle="tab" href="#nav-roles" role="tab" aria-controls="nav-roles" aria-selected="false">Team</a>
-            {% if closable %}
+            {% if closable and current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
                 <a class="nav-item nav-link" id="nav-evaluations-tab" data-toggle="tab" href="#nav-evaluations" role="tab" aria-controls="nav-evaluations" aria-selected="false">Evaluations</a>
             {% endif %}
         </div>
@@ -27,51 +27,61 @@
     <div class="tab-content" style="background-color: white; padding:10px" id="nav-tabContent">
         <!-- TAB FOR MAIN PROJECT INFO -->
         <div class="tab-pane fade show active" id="nav-project" role="tabpanel" aria-labelledby="nav-project-tab">
+            {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
             <form action="/project/{{ project.id }}" method="POST">
+            {% endif %}
                 <div class="row">
                     <div class="col-sm-6" style="padding: 1.5rem; padding-top: 1rem; padding-bottom: 0rem">
                         <input type="hidden" value="editProjectInfo" name="actionToPerform">
                         <h5>Name of the project</h5>
                         <p>
                             <span id="currName">{{ project.name }}</span>
-                            <input type="text" value="{{ project.name }}" name="prjName" id="newNameField" style="display: none" required>
-                            <button type="button" class="btn btn-default btn-sm" id="editName">
-                                <span class="material-icons">edit</span>
-                            </button>
+                            {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
+                                <input type="text" value="{{ project.name }}" name="prjName" id="newNameField" style="display: none" required>
+                                <button type="button" class="btn btn-default btn-sm" id="editName">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                            {% endif %}
                         </p>
 
                         <br/>
                         <h5>Description</h5>
                         <p>
                             <span id="currDesc">{{ project.description }}</span>
-                            <input type="text" value="{{ project.description }}" name="prjDesc" id="newDescField" style="display: none">
-                            <button type="button" class="btn btn-default btn-sm" id="editDesc">
-                                <span class="material-icons">edit</span>
-                            </button>
+                            {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
+                                <input type="text" value="{{ project.description }}" name="prjDesc" id="newDescField" style="display: none">
+                                <button type="button" class="btn btn-default btn-sm" id="editDesc">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                            {% endif %}
                         </p>
                         <p>
                             Beginning on:
                             <span id="currStart">{{ project.starting_date }}</span>
-                            <input type="date" value="{{ project.starting_date }}" name="prjStart" id="newStartField" style="display: none" onchange="compareDates()">
-                            <button type="button" class="btn btn-default btn-sm" id="editStart">
-                                <span class="material-icons">edit</span>
-                            </button>
+                            {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
+                                <input type="date" value="{{ project.starting_date }}" name="prjStart" id="newStartField" style="display: none" onchange="compareDates()">
+                                <button type="button" class="btn btn-default btn-sm" id="editStart">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                            {% endif %}
 
                             and ending on:
                             <span id="currEnd">{{ project.ending_date }}</span>
-                            <input type="date" value="{{ project.ending_date }}" name="prjEnd" id="newEndField" style="display: none" onchange="compareDates()">
-                            <button type="button" class="btn btn-default btn-sm" id="editEnd">
-                                <span class="material-icons">edit</span>
-                            </button>
-                        <div class="alert alert-warning" role="alert" id="warningDates" style="display:none">
-                            A project cannot end before its beginning, can it?
-                        </div>
+                            {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
+                                <input type="date" value="{{ project.ending_date }}" name="prjEnd" id="newEndField" style="display: none" onchange="compareDates()">
+                                <button type="button" class="btn btn-default btn-sm" id="editEnd">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                            {% endif %}
                         </p>
                         <br/>
-                        <button type="submit" class="btn btn-info" id="submitChanges">Submit changes</button>
-                        <br/>
+                        {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
+                            <button type="submit" class="btn btn-info" id="submitChanges">Submit changes</button>
+                            <br/>
+                        {% endif %}
                     </div>
 
+                    <!-- Supervisor card -->
                     <div class="col-sm-6 col-lg-3" style="padding: 1.5rem; padding-top: 1rem; padding-bottom: 0rem">
                         <h5>Supervisor</h5>
                         {% if supervisor %}
@@ -86,17 +96,12 @@
                                         <img src="/static/images/profile/{{ supervisor.photo }}" class="avatar img-circle img-thumbnail"  style="height: 100px; max-width: 100px;" alt="avatar">
                                     {% endif%}
                                 </div>
-                                <div class="col-md-7 text-truncate">
+                                <div class="col-md-7 text-truncate" style="padding-right: 10px; padding-left: 20px;">
                                     <div>
                                         <a class="card-title text-truncate"><b>{{ supervisor.name }} {{ supervisor.surname }}</b></a>
                                     </div>
                                     <div>
                                         <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: #0c61ff;">people</i>
-{#                                        {% for role in roles %}#}
-{#                                            {% if role.id==supervisor.role%}#}
-{#                                                <a style="font-size: 13px;" class="card-title">{{ role.name}}</a>#}
-{#                                            {% endif %}#}
-{#                                        {% endfor %}#}
                                         <a style="font-size: 13px;" class="card-title">{{ supervisor.get_job() }}</a>
                                     </div>
                                     <div>
@@ -115,37 +120,41 @@
                                 </div>
                             </div>
                         {% endif %}
-                        <div>
-                            <button type="button" class="btn btn-default btn-sm" id="editSupervisor" data-toggle="tooltip" data-placement="top" title="Change supervisor">
-                                <span class="material-icons">edit</span>
-                            </button>
-                            {% if not supervisor %}
-                                <p>No supervisor assigned yet. Select an employee to assign.</p>
-                                <br/>
-                                <select id="prjSupervisor" name="prjSupervisor" class="form-control">
-                                <option value="" selected>Choose an employee...</option>
-                            {% else %}
-                                <br/>
-                                <div id="selectSupervisorLabel" style="display:None">
-                                    <h6>Select another employee</h6>
-                                </div>
-                                <select id="prjSupervisor" name="prjSupervisor" class="form-control" style="display: None">
-                            {% endif %}
-                            {% for emp in employees %}
-                                <option value="{{ emp.id }}" {% if supervisor.id == emp.id %} selected {% endif %}>
-                                    {{ emp.name }} {{ emp.surname }}
-                                </option>
-                            {% endfor %}
-                            </select>
-                        </div>
+                        {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
+                            <div>
+                                <button type="button" class="btn btn-default btn-sm" id="editSupervisor" data-toggle="tooltip" data-placement="top" title="Change supervisor">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                                {% if not supervisor %}
+                                    <p>No supervisor assigned yet. Select an employee to assign.</p>
+                                    <br/>
+                                    <select id="prjSupervisor" name="prjSupervisor" class="form-control">
+                                    <option value="" selected>Choose an employee...</option>
+                                {% else %}
+                                    <br/>
+                                    <div id="selectSupervisorLabel" style="display:None">
+                                        <h6>Select another employee</h6>
+                                    </div>
+                                    <select id="prjSupervisor" name="prjSupervisor" class="form-control" style="display: None">
+                                {% endif %}
+                                {% for emp in employees %}
+                                    <option value="{{ emp.id }}" {% if supervisor.id == emp.id %} selected {% endif %}>
+                                        {{ emp.name }} {{ emp.surname }}
+                                    </option>
+                                {% endfor %}
+                                </select>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
+            {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
                 <div class="text-center">
                     <button type="button" class="btn btn-danger deleteProject" id="{{ project.id }}" data-toggle="modal" data-target="#deleteProjectModal" data-whatever="{{ project.id }}">
                         Delete project
                     </button>
                 </div>
             </form>
+            {% endif %}
         </div>
 
         <!-- TAB FOR EMPLOYEE-ROLE ASSIGNMENTS -->
@@ -166,22 +175,26 @@
                         <td><a href="/employee/{{ emp.id }}"> {{ emp.name }} {{ emp.surname }}</a></td>
                         <td>{{ role.name }}</td>
                         <td>{{ role.description }}</td>
-                        <td>
-                            <button type="button" class="btn btn-default btn-sm deassignRole" data-toggle="modal" data-target="#deassignRoleModal" data-name="{{ emp.name }} {{ emp.surname }}" data-whatever="{{ role.id }}">
-                                <span class="material-icons" style="color:#a71d2a">clear</span>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm deleteRole" data-toggle="modal" data-target="#deleteRoleModal" data-whatever="{{ role.id }}">
-                                <span class="material-icons" style="color:#a71d2a">delete</span>
-                            </button>
-                        </td>
+                        {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
+                            <td>
+                                <button type="button" class="btn btn-default btn-sm deassignRole" data-toggle="modal" data-target="#deassignRoleModal" data-name="{{ emp.name }} {{ emp.surname }}" data-whatever="{{ role.id }}">
+                                    <span class="material-icons" style="color:#a71d2a">clear</span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm deleteRole" data-toggle="modal" data-target="#deleteRoleModal" data-whatever="{{ role.id }}">
+                                    <span class="material-icons" style="color:#a71d2a">delete</span>
+                                </button>
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
 
             <br/>
+            {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
             <form action="/project/{{ project.id }}" method="POST">
                 <input type="hidden" value="assignEmployees" name="actionToPerform">
+            {% endif %}
                 <h5>Available roles</h5>
                 <table class="table table-hover table-bordered table-striped text-center">
                     <thead>
@@ -195,7 +208,9 @@
                         <tr>
                             <td>{{ role.name }}</td>
                             <td>{{ role.description }}</td>
-                            <td><div class="form-row">
+                            {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
+                            <td>
+                                <div class="form-row">
                                 <button type="button" class="btn btn-default btn-sm" id="addEmployee{{ role.id }}" onclick="toggleSelect({{role.id}})" data-toggle="tooltip" data-placement="top" title="Select an employee for this role">
                                     <span class="material-icons" style="color:#28a745">person_add</span>
                                 </button>
@@ -243,10 +258,12 @@
                                 </button>
                             </div>
                             </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
+            {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
                 {% if free_roles_and_employees %}
                     <button type="submit" class="btn btn-info">Assign employees</button>
                     <br/>
@@ -256,9 +273,10 @@
                     Add a role to the project
                 </button>
             </form>
+            {% endif %}
         </div>
 
-        {% if closable %}
+        {% if closable and current_user.is_authenticated and (current_user.admin or (current_user.project == project.id)) %}
             <!-- TAB FOR EMPLOYEE'S EVALUATION OVERLOOK -->
             <div class="tab-pane fade" id="nav-evaluations" role="tabpanel" aria-labelledby="nav-evaluations-tab">
                 <form action="/project/{{ project.id }}" method="POST">

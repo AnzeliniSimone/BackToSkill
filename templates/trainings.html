@@ -6,153 +6,154 @@
     <title>Trainings</title>
 </head>
 <body>
-    {% block pageContent %}
-        <div class="row">
+{% block pageContent %}
+    <div class="row">
         <div class="col-md-2">
-          <div class="content-section">
-              <div class="list-group">
-                  <a href="/trainings/all" class="list-group-item list-group-item-action">All courses</a>
-                  <a href="/trainings/current" class="list-group-item list-group-item-action">Current courses list</a>
-                  <a href="/trainings/past" class="list-group-item list-group-item-action">Completed courses list</a>
-              </div>
-          </div>
+            <div class="content-section">
+                <div class="list-group">
+                    <a href="/trainings/all" class="list-group-item list-group-item-action">All courses</a>
+                    <a href="/trainings/current" class="list-group-item list-group-item-action">Current courses list</a>
+                    <a href="/trainings/past" class="list-group-item list-group-item-action">Completed courses list</a>
+                </div>
+            </div>
         </div>
-          <div class="col-md-10">
-{#          Table for the trainings that will be taken out from the db#}
-              {% block sectionContent %}
-                  <br/>
+        <div class="col-md-10">
+            {# Table for the trainings that will be taken out from the db #}
+            {% block sectionContent %}
+                <h3 class="section-title">{{ period }} trainings </h3>
+                <br/>
+                {% if current_user.is_authenticated and current_user.admin %}
                     <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#newTrainingModal">
-                      New Training
+                        New Training
                     </button>
-                  <br/>
-                   <!-- Modal -->
+                    <br/>
+                    <!-- Modal -->
                     <div class="modal fade bd-example-modal-lg" id="newTrainingModal" tabindex="-1" role="dialog" aria-labelledby="newProjectModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="newTrainingModalLabel">Define a new training</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="newTrainingModalLabel">Define a new training</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
 
-                            <form action="{{ url_for('trainings') }}" method="POST">
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="inputName">Training name</label>
-                                        <input type="text" class="form-control" id="inputName" name="traName" placeholder="Name of the training" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="inputDescription">Total hours</label>
-                                        <input type="int" class="form-control" id="inputHours" name="traHours" placeholder="Total Amount of hours">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="inputBeginningDate">Beginning on:</label>
-                                        <input type="date" class="form-control" id="inputBeginningDate" name="traStartingDate" placeholder="dd/mm/yyyy" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="inputEndingDate">Ending on:</label>
-                                        <input type="date" class="form-control" id="inputEndingDate" name="traEndingDate" placeholder="dd/mm/yyyy">
-                                    </div>
+                                <form action="{{ url_for('trainings') }}" method="POST">
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="inputName">Training name</label>
+                                            <input type="text" class="form-control" id="inputName" name="traName" placeholder="Name of the training" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputDescription">Total hours</label>
+                                            <input type="int" class="form-control" id="inputHours" name="traHours" placeholder="Total Amount of hours">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputBeginningDate">Beginning on:</label>
+                                            <input type="date" class="form-control" id="inputBeginningDate" name="traStartingDate" placeholder="dd/mm/yyyy" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputEndingDate">Ending on:</label>
+                                            <input type="date" class="form-control" id="inputEndingDate" name="traEndingDate" placeholder="dd/mm/yyyy">
+                                        </div>
 
-                                    <div class="form-group">
-                                         <div > <!--col 6-->
-                                                                 <div class="row">
-                                                                <!--Title and Button add-->
-                                                                <!--Title-->
-                                                                 <label for="skill">Select the skills that will be improved with the training</label>
-                                                                 <div >
-                                                                    <input type="button" value="Add" class="btn btn-primary" onclick="createRow()">
-                                                                </div>
-                                                            </div> <!--Title and Button add-->
-                                                            <!--Skills and buttons-->
-                                                            <!--Skills-->
-                                                            <div class="row">
-                                                                <!--Skills-->
-                                                                <div id="container" class="col-6 mt-3">
-                                                                    <input hidden type="text" id="number" name="number" value="0">
-                                                                    <div hidden class="form-group" id="div_example"></div>
-                                                                    <label hidden id="label_example">Skill</label>
-                                                                    <select hidden class="custom-select mt-3" id="select_example">
-                                                                        {% for skill in skills %}
-                                                                            <option value="{{ skill.id }}">{{ skill.name }}</option>
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                </div>
-                                                                <!--Score-->
-                                                                <div id="container1" class="col-3 mt-3">
-                                                                    <input hidden type="text" id="number1" value="0">
-                                                                    <div hidden class="form-group" id="div_example1"></div>
-                                                                    <label hidden id="label_example1">Points assigned</label>
-                                                                    <select hidden class="custom-select mt-3" id="select_example1">
-                                                                        <option value="1">1</option>
-                                                                        <option value="2">2</option>
-                                                                        <option value="3">3</option>
-                                                                        <option value="4">4</option>
-                                                                        <option value="5">5</option>
-                                                                        <option value="6">6</option>
-                                                                        <option value="7">7</option>
-                                                                        <option value="8">8</option>
-                                                                        <option value="9">9</option>
-                                                                        <option value="10">10</option>
-                                                                    </select>
-                                                                </div>
-                                                                 <!--Delete-->
-                                                                <div id="container2" class="col-3 mt-3">
-                                                                    <!--Sostituire ad employee_skill project_skills o jobskills che vi passate dalla vostra funzione sull app.py-->
-                                                                    {% for job_skill in dic %}
-                                                                    <div>
-                                                                        <a class="btn btn-danger mt-3" style="color:white"
-                                                                            name="remove{{dic.index(job_skill)}}"
-                                                                            onclick="removeRow({{dic.index(job_skill)}})">Remove</a>
-                                                                    </div>
-                                                                    {% endfor %}
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-primary">Submit</button>
-                                                            </div>
-                                                        </div>
-                                                        </div>
-                                                    </form>
-
+                                        <div class="form-group">
+                                            <div > <!--col 6-->
+                                                <div class="row">
+                                                    <!--Title and Button add-->
+                                                    <!--Title-->
+                                                    <label for="skill">Select the skills that will be improved with the training</label>
+                                                    <div >
+                                                        <input type="button" value="Add" class="btn btn-primary" onclick="createRow()">
                                                     </div>
-                                                  </div>
+                                                </div> <!--Title and Button add-->
+                                                <!--Skills and buttons-->
+                                                <!--Skills-->
+                                                <div class="row">
+                                                    <!--Skills-->
+                                                    <div id="container" class="col-6 mt-3">
+                                                        <input hidden type="text" id="number" name="number" value="0">
+                                                        <div hidden class="form-group" id="div_example"></div>
+                                                        <label hidden id="label_example">Skill</label>
+                                                        <select hidden class="custom-select mt-3" id="select_example">
+                                                            {% for skill in skills %}
+                                                                <option value="{{ skill.id }}">{{ skill.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <!--Score-->
+                                                    <div id="container1" class="col-3 mt-3">
+                                                        <input hidden type="text" id="number1" value="0">
+                                                        <div hidden class="form-group" id="div_example1"></div>
+                                                        <label hidden id="label_example1">Points assigned</label>
+                                                        <select hidden class="custom-select mt-3" id="select_example1">
+                                                            <option value="1">1</option>
+                                                            <option value="2">2</option>
+                                                            <option value="3">3</option>
+                                                            <option value="4">4</option>
+                                                            <option value="5">5</option>
+                                                            <option value="6">6</option>
+                                                            <option value="7">7</option>
+                                                            <option value="8">8</option>
+                                                            <option value="9">9</option>
+                                                            <option value="10">10</option>
+                                                        </select>
+                                                    </div>
+                                                    <!--Delete-->
+                                                    <div id="container2" class="col-3 mt-3">
+                                                        <!--Sostituire ad employee_skill project_skills o jobskills che vi passate dalla vostra funzione sull app.py-->
+                                                        {% for job_skill in dic %}
+                                                            <div>
+                                                                <a class="btn btn-danger mt-3" style="color:white"
+                                                                   name="remove{{dic.index(job_skill)}}"
+                                                                   onclick="removeRow({{dic.index(job_skill)}})">Remove</a>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
-         {# list of trainings #}
-                  <h4>List of {{ period }} trainings </h4>
-                  <div class="table-responsive">
-                      <table class="table table-hover">
-                          <thead>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {# list of trainings #}
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered table-striped text-center">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Training</th>
+                            <th scope="col">Beginning</th>
+                            <th scope="col">Ending</th>
+                            <th scope="col">Hours</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for training in trainings_list %}
                             <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">Training</th>
-                              <th scope="col">Beginning</th>
-                              <th scope="col">Ending</th>
-                              <th scope="col">Hours</th>
+                                <th scope="row">{{loop.index}}</th>
+                                <td><a href="/training/{{ training.id }}"> {{ training.name }} </a></td>
+                                <td>{{ training.starting_Date }}</td>
+                                <td>{{ training.ending_Date }}</td>
+                                <td>{{ training.hours }}</td>
                             </tr>
-                          </thead>
-                          <tbody>
-                          {% for training in trainings_list %}
-                                <tr>
-                                  <th scope="row">{{loop.index}}</th>
-                                  <td><a href="/training/{{ training.id }}"> {{ training.name }} </a></td>
-                                  <td>{{ training.starting_Date }}</td>
-                                  <td>{{ training.ending_Date }}</td>
-                                  <td>{{ training.hours }}</td>
-                                </tr>
-                            {% endfor %}
+                        {% endfor %}
 
-                          </tbody>
-                      </table>
-                  </div>
-                  </div>
-                  </div>
-              {% endblock %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                </div>
+            {% endblock %}
 
-        <script type='text/javascript'>
+    <script type='text/javascript'>
         function removeRow(index) {
 
             let skill = "skill" + index
@@ -237,5 +238,5 @@
             container.appendChild(cloneS);
         }
     </script>
-    {% endblock %}
+{% endblock %}
 </body>

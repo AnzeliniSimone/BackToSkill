@@ -7,12 +7,16 @@
 </head>
 <body>
 {% block pageContent %}
-    <h3>List of all the roles available in projects</h3>
+    <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+    <h3 class="section-title">Possible roles in projects</h3>
     <br/>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newRoleModal">
-      Add role
-    </button>
-    <br/>
+    {% if current_user.is_authenticated and current_user.admin %}
+        <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#newRoleModal">
+          New role
+        </button>
+        <br/>
 
     <!-- Modal -->
     <div class="modal fade bd-example-modal-lg" id="newRoleModal" tabindex="-1" role="dialog" aria-labelledby="newRoleModalLabel" aria-hidden="true">
@@ -115,24 +119,27 @@
         </div>
       </div>
     </div>
+    {% endif %}
     <br/>
     <div class="table-responsive">
         {% for role in roles %}
             <div class="card">
                 <div class="card-header">
                     <h5 style="display: inline-block">{{ role.name }}</h5>
-                    <div class="btn-group float-right">
-                        <a class="btn btn-default btn-sm" href="/edit_role/{{ role.id }}">
-                          <i class="material-icons" style="color: goldenrod">edit</i>
-                        </a>
-                        <form action="{{ url_for('roles') }}" method="POST" onsubmit="return confirm('Do you really want to delete this role? Mind that deleting it you will also delete the associations inside the projects involving this role');">
-                            <input type="hidden" value="{{ role.id }}" name="roleToDelete">
-                            <input type="hidden" value="deleteRole" name="actionToPerform">
-                            <button type="submit" class="btn btn-default btn-sm" >
-                              <i class="material-icons" style="color: #b22222">delete</i>
-                            </button>
-                        </form>
-                    </div>
+                    {% if current_user.is_authenticated and current_user.admin %}
+                        <div class="btn-group float-right">
+                            <a class="btn btn-default btn-sm" href="/edit_role/{{ role.id }}">
+                              <i class="material-icons" style="color: goldenrod">edit</i>
+                            </a>
+                            <form action="{{ url_for('roles') }}" method="POST" onsubmit="return confirm('Do you really want to delete this role? Mind that deleting it you will also delete the associations inside the projects involving this role');">
+                                <input type="hidden" value="{{ role.id }}" name="roleToDelete">
+                                <input type="hidden" value="deleteRole" name="actionToPerform">
+                                <button type="submit" class="btn btn-default btn-sm" >
+                                  <i class="material-icons" style="color: #b22222">delete</i>
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="card-body">
                     <h6 class="card-title">{{ role.description }}</h6>
@@ -150,7 +157,7 @@
                         <tbody>
                             {% for s in skills %}
                                 <tr>
-                                    <td><a href="/skill/{{ s.id }}"> {{ s.name }} </a></td>
+                                    <td>{{ s.name }}</td>
                                     <td>{{ s.description }}</td>
                                     <td>{{ s.type }}</td>
                                     <td>{{ grades[loop.index - 1] }}</td>
@@ -162,6 +169,9 @@
             </div>
             <br/>
         {% endfor %}
+    </div>
+    </div>
+    <div class="col-md-1"></div>
     </div>
 
     <!-- Javascript for skills selection -->

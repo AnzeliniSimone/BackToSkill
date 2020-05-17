@@ -44,7 +44,7 @@
     </style>
     <div class="container">
         <!--Alert-->
-
+        {% if current_user.is_authenticated and current_user.admin %}
         {% for field, errors in form.errors.items() %}
         <div class="alert alert-warning alert-dismissible fade show mt-5" role="alert">
             <!-- alert-dismissible is the X in alert-->
@@ -331,6 +331,9 @@
             </div>
             <!--row2-Employee contenents-->
         </form>
+        {% else %}
+            <h2>You don't have the necessary permisssions to add a new employee</h2>
+        {% endif %}
     </div>
     <!--Container-->
     <!-- Timeout for alert-->

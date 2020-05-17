@@ -9,32 +9,18 @@
 </head>
 <body>
 {% block pageContent %}
-    <style>
-        .nopadding {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        .text {
-    display: block;
-    display: -webkit-box;
-    max-width: 200px;
-    margin: 0 auto;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-    </style>
     <div class="container-fluid pt-3">
         <div class="row">
+            {% if current_user.is_authenticated and current_user.admin %}
             <div class="mr-auto">
-                
                 <a href="{{ url_for('new_employee') }}">
                     <button type="button" class="btn btn-primary btn-lg">
                         <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px">add</i>
-                        Add new employee</button>
+                        Add new employee
+                    </button>
                 </a>
             </div>
+            {% endif %}
 
                 <div>
                     <div class="form-inline my-2 my-lg-0">

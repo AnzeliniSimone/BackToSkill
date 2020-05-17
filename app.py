@@ -110,7 +110,6 @@ def employees():
         if search!="":
             employees=[]
             for employee in get_employees():
-                print (employee.name)
                 if search in employee.name or search in employee.surname:
                     employees.append(employee)
 
@@ -157,8 +156,11 @@ def employee(id):
     employee = get_employee_by_id(id)
     trainings = get_trainings_of_employee(id)
     projects = get_projects_of_employee(id)
-    past_projects = get_past_projects()
-    current_projects = get_current_projects()
+    past_projects, past_supervisors = get_past_projects()
+    current_projects, current_supervisors = get_current_projects()
+    print projects
+    print past_projects
+    print current_projects
     skills = get_skills_of_employee(id)
     roles = get_roles()
     list_hard = []
@@ -181,7 +183,6 @@ def employee(id):
                 role_id = tupla.role_id
                 evaluations = get_evaluation_by_proj_emp_role(project.id, employee.id, role_id)
             past_emp_pjs.append((project, evaluations))
-            print(str(past_emp_pjs))
         elif project in current_projects:
             current_emp_pjs.append(project)
 
@@ -345,6 +346,7 @@ def edit_employee(id):
         role = form.role.data
         language_certificate = form.language_certificate.data
         education_level = form.education_level.data
+
         # Create instance of Employee
         employee = Employee(id=id, name=first_name, surname=last_name, date_of_birth=birthday, telephone=phone,
                             email=email, driving_licence=driving_licence, living_place=living_place,
@@ -480,28 +482,34 @@ def job(id):
             for skill in dic:
                 add_skill_to_role(id, skill[0], skill[1])  # insert all new skills
             # Once saved employee information in db return the employee.html page
-            return redirect(url_for('job', id=id, message="Save"))  # Message neet to show popup save
 
         elif action =="assignEmployees":
             empl_id = request.form.get('AssignEmployee')
-            update_employee(id,empl_id)
-            return redirect(url_for('jobs',message="Save"))
-    else:
-        skill = get_skills_required_by_role(id)
-        # get the grades of the skills of the employee in db
-        dic = []
-        for i in skill:
-            grade = get_gradeofskill_of_a_role(id, i.id)
-            dic.append((i.id,i.name, grade))
-        role=get_role_by_id(id)
-        all_skills=get_skills()
-        skill_id=get_skill_id_of_a_role(id)
-        var1,var2,var3=get_suitable_emp_for_job(id)
-        empl=True
-        if role.employee:
-            empl=False
+            update_employee_job(id,empl_id)
 
-        return render_template('job.html', role=role, skill=skill, grade =skill_id, var1=var1, var2=var2, var3=var3, empl=empl, all_skill=all_skills, dic=dic)
+        elif action == "deleteJob":
+            deleted = delete_role(id)
+            return redirect(url_for('jobs'))
+
+        elif action == "removeEmployee":
+            emp_id = request.form.get("employeeToRemove")
+            remove_employee_from_job(id, emp_id)
+
+    skill = get_skills_required_by_role(id)
+    # get the grades of the skills of the employee in db
+    dic = []
+    for i in skill:
+        grade = get_gradeofskill_of_a_role(id, i.id)
+        dic.append((i.id,i.name, grade))
+    role=get_role_by_id(id)
+    all_skills=get_skills()
+    skill_id=get_skill_id_of_a_role(id)
+    var1,var2,var3=get_suitable_emp_for_job(id)
+    empl=True
+    if role.employee:
+        empl=False
+
+    return render_template('job.html', role=role, skill=skill, grade =skill_id, var1=var1, var2=var2, var3=var3, empl=empl, all_skill=all_skills, dic=dic)
 
 
 # //TRAININGS PAGES (trainings dropdown)\\
@@ -582,6 +590,9 @@ def training(id):
         elif action=="deleteTraining":
             delete_training(id)
             return redirect('/trainings/all')
+
+        elif action=="closeTraining":
+            close_training(id)
 
         elif action=="deleteSkill":
             skill=request.form.get('skillToDelete')
@@ -721,8 +732,6 @@ def project(id):
                         new_prj_role=add_employee_to_project(id, role.id, emp_id)
                     else:
                         print "An employee can't have more than one role in a project"
-                else:
-                    print "No employee selected"
 
         # Add roles to the project
         elif action == "addRoles":
@@ -797,15 +806,10 @@ def edit_role(id):
     # Gets the requested role instance and a list of all the skills
     role_in_project = get_roles_in_projects_by_id(id)
     all_skills=get_skills()
-    skills, grades = role_in_project.get_skills_required()
-    # Creates a list of tuples containing the skill id, the skill name and the grade required for the role
-    dic=[]
-    for s, g in map(None, skills, grades):
-        dic.append((s.id, s.name, g))
 
     # Edits the role's information
     if request.method=='POST':
-        description = request.form.get("newDescription")
+        description = request.form.get("roleDesc")
         role_updated = edit_role_description(id, description)
 
         # Skills
@@ -830,8 +834,12 @@ def edit_role(id):
         # Update skill requirements
         for skill in dic:
             add_skill_to_role_in_project(role_updated.id, skill[0], skill[1])  # insert all new skills requirements
-        return redirect(url_for('roles'))
 
+    # Creates a list of tuples containing the skill id, the skill name and the grade required for the role
+    skills, grades = role_in_project.get_skills_required()
+    dic = []
+    for s, g in map(None, skills, grades):
+        dic.append((s.id, s.name, g))
     return render_template('edit_role.html', role=role_in_project, all_skills=all_skills, dic=dic)
 
 
@@ -872,7 +880,6 @@ def roles():
 
     roles = get_roles_in_projects()
     skills = get_skills()
-    print skills
     return render_template('roles.html', roles=roles, all_skills=skills)
 
 
@@ -941,11 +948,12 @@ def users():
             password = request.form.get("userPassword")
             confirm_password = request.form.get("userConfirmPassword")
             permission = request.form.get("userPermission")
+            prj = request.form.get("projectResponsible")
             if password == confirm_password:
                 if permission == "True":
-                    user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), True)
+                    user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), prj, True)
                 else:
-                    user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), False)
+                    user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), prj, False)
 
         elif action == "changePassword":
             user_id = current_user.id
@@ -963,7 +971,8 @@ def users():
 
     admins = get_admins(True)
     normal_users = get_admins(False)
-    return render_template("users.html", admins=admins, users=normal_users)
+    prjs = get_projects()
+    return render_template("users.html", admins=admins, users=normal_users, projects = prjs)
 
 
 if __name__ == '__main__':

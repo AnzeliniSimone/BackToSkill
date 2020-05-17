@@ -1,0 +1,202 @@
+{% extends 'layout.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Role edit</title>
+</head>
+<body>
+{% block pageContent %}
+    {% if current_user.is_authenticated and current_user.admin %}
+    <form action="/edit_role/{{ role.id }}" method="POST">
+        <input type="hidden" value="editRoleInfo" name="actionToPerform">
+        <div class="row">
+            <div class="col-md-4">
+                <br/>
+                <h5>Name of the role</h5>
+                <p>
+                    <span id="currName">{{ role.name }}</span>
+                </p>
+                <br/>
+                <h5>Description</h5>
+                <p>
+                    <span id="currDesc">{{ role.description }}</span>
+                    <input type="text" value="{{ role.description }}" name="roleDesc" id="newDescField" style="display: none">
+                    <button type="button" class="btn btn-default btn-sm" id="editDesc">
+                        <span class="material-icons">edit</span>
+                    </button>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <!-- Skills required for the role -->
+                <!--Title-->
+                <br/>
+                <h5>Skills required</h5>
+                <!--Skills and buttons-->
+                <!--Skills-->
+                <div class="row">
+                    <!--Skills-->
+                    <div id="container" class="col-6">
+                        <input hidden type="text" id="number" name="number" value="{{dic|length}}">
+                        <div hidden class="form-group" id="div_example"></div>
+                        {% for role_skill in dic %}
+                            <select class="custom-select mt-3"
+                                    name="skill{{dic.index(role_skill)}}">
+                                {% for skill in all_skills %}
+                                    <option {% if role_skill[0] == skill.id %}selected{% endif %}
+                                            value="{{skill.id}}">{{ skill.name }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endfor %}
+                    </div>
+                    <!--Score-->
+                    <div id="container1" class="col-3">
+                        {% for role_skill in dic %}
+                            <select class="custom-select mt-3"
+                                    name="score{{dic.index(role_skill)}}">
+                                {% for i in range(1,11) %}
+                                    <option {% if  role_skill[2] == i %}selected{% endif %}
+                                            value="{{i}}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endfor %}
+                    </div>
+                    <!--Delete-->
+                    <div id="container2" class="col-3">
+                        {% for role_skill in dic %}
+                            <div>
+                                <a class="btn btn-danger mt-3" style="color:white"
+                                   name="remove{{dic.index(role_skill)}}"
+                                   onclick="removeRow({{dic.index(role_skill)}})">Remove</a>
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                    <!--Select Skills Format-->
+                    <select hidden class="custom-select mt-3" id="select_example">
+                        {% for skill in all_skills %}
+                            <option value="{{ skill.id }}">{{ skill.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <!--New Score Format-->
+                    <select hidden class="custom-select mt-3" id="select_example1" mt-3>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <br/>
+                <input type="button" value="Add" class="btn btn-primary" onclick="createRow()">
+            </div>
+        </div>
+        <br/>
+        <button type="submit" class="btn btn-info" id="submitChanges">Submit changes</button>
+    </form>
+    <br/>
+    {% else %}
+        <h2>You must be an admin to edit a role information</h2>
+    {% endif %}
+
+    <script type='text/javascript'>
+        function removeRow(index) {
+
+            let skill = "skill" + index
+            let score = "score" + index
+            let remove = "remove" + index
+
+            $("[name='" + skill + "']").remove();
+            $("[name='" + score + "']").remove();
+            $("[name='" + remove + "']").remove();
+
+
+            console.log("removed " + skill)
+        }
+
+        function createRow() {
+            let rowNumber = getRowNumber();
+
+            addSkill(rowNumber);
+            addScore(rowNumber);
+            addRemove(rowNumber)
+
+            updateRowNumber();
+        }
+
+        function getRowNumber() {
+            // Number of inputs to create
+            return number = parseInt(document.getElementById("number").value);
+        }
+
+        function updateRowNumber() {
+            // Number of inputs to update
+            document.getElementById("number").value = number + 1;
+        }
+
+        function addRemove(number) {
+
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container2");
+
+            let div = document.createElement("div");
+            let buttorRemove = document.createElement("a");
+
+            buttorRemove.setAttribute("class", "btn btn-danger mt-3");
+            buttorRemove.setAttribute("name", "remove" + number);
+            buttorRemove.setAttribute("onclick", "removeRow(" + number + ")");
+            buttorRemove.setAttribute("style", "color:'white'");
+            buttorRemove.style = "color:white"
+            buttorRemove.innerHTML = "Remove"
+
+
+            div.appendChild(buttorRemove);
+            container.appendChild(div);
+        }
+
+
+        function addSkill(number) {
+
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container");
+
+            //Get select hidden
+            var select_example = document.getElementById("select_example");
+
+            // Clone select
+            let cloneSelect = select_example.cloneNode(true);
+            cloneSelect.hidden = false;
+            cloneSelect.setAttribute('name', "skill" + number);
+            container.appendChild(cloneSelect);
+        }
+
+        function addScore(number) {
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container1");
+
+            //Select
+            var select_example = document.getElementById("select_example1");
+
+            // Clone
+            let cloneS = select_example.cloneNode(true);
+            cloneS.hidden = false;
+            cloneS.setAttribute('name', "score" + number);
+            container.appendChild(cloneS);
+        }
+
+        $(document).ready(function() {
+            $("#editDesc").click(function() {
+                $("#newDescField").toggle();
+                $("#currDesc").toggle();
+                $("#editDesc").hide();
+            });
+        });
+        </script>
+{% endblock %}
+</body>
+</html>

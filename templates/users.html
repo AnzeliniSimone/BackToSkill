@@ -9,234 +9,260 @@
 {% block pageContent %}
     <br/>
     <div class="card w-25">
-      <div class="card-body">
-        <h5 class="card-title">You</h5>
-        <form action="/users" method="POST">
-            <div class="row">
-                <div class="col-md-8">
-                    <p class="card-text">{{ current_user.name }} {{ current_user.surname }}</p>
-                    <p class="card-text" id="currentEmail">{{ current_user.email }}</p>
-                    <input type="hidden" value="editEmail" name="actionToPerform">
-                    <input type="text" id="userEmail" name="userEmail" value="{{ current_user.email }}" style="display:none">
-                    <p class="card-text">Role: {% if current_user.admin %}Admin{% else %}User{% endif %}</p>
+        <div class="card-body">
+            <h5 class="card-title" style="text-align: center">You</h5>
+            <form action="/users" method="POST">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p class="card-text">{{ current_user.name }} {{ current_user.surname }}</p>
+                        <p class="card-text" id="currentEmail">{{ current_user.email }}</p>
+                        <input type="hidden" value="editEmail" name="actionToPerform">
+                        <input type="text" id="userEmail" name="userEmail" value="{{ current_user.email }}" style="display:none">
+                        <p class="card-text">Role: {% if current_user.admin %}Admin{% else %}User{% endif %}</p>
+                    </div>
+                    <div class="col-md-4" style="display:flex; align-items:center; justify-content: center;">
+                        <button type="button" class="btn btn-outline-secondary d-flex justify-content-center align-content-between" id="editMail">
+                            <i class="material-icons" style="color: goldenrod">edit</i>
+                            Email
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-4" style="display:flex; align-items:center; justify-content: center;">
-                    <button type="button" class="btn btn-outline-secondary d-flex justify-content-center align-content-between" id="editMail">
-                        <i class="material-icons" style="color: goldenrod">edit</i>
-                        Email
+                <div style="width:100%; display: flex; justify-content: center; margin-bottom: 2px">
+                    <button id="saveEmail" class="btn btn-outline-success d-flex justify-content-center align-content-between" style="display:none">
+                        Save changes
                     </button>
                 </div>
-            </div>
-            <div style="width:100%; display: flex; justify-content: center; margin-bottom: 2px">
-                <button id="saveEmail" class="btn btn-outline-success d-flex justify-content-center align-content-between" style="display:none">
-                    Save changes
+            </form>
+            <div style="width:100%; display: flex; justify-content: center">
+                <button class="btn btn-outline-secondary d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#changePasswordModal">
+                    <i class="material-icons" style="color: goldenrod">lock</i>
+                    Change password
                 </button>
             </div>
-        </form>
-        <div style="width:100%; display: flex; justify-content: center">
-            <button class="btn btn-outline-secondary d-flex justify-content-center align-content-between" data-toggle="modal" data-target="#changePasswordModal">
-                <i class="material-icons" style="color: goldenrod">lock</i>
-                Change password
-            </button>
         </div>
-      </div>
     </div>
-    <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#newUserModal">
-      New user
-    </button>
-    <br/>
-    <h3 style="color:white">List of the authorized users</h3>
-    <h4 style="color:white">Admins</h4>
-    <div class="table-responsive">
-        <table class="table table-bordered table-light table-striped text-center">
-          <thead>
-          <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-            </tr>
-          </thead>
-          <tbody>
-              {% for admin in admins %}
-                  <tr>
-                      <th class="align-middle" scope="row">{{ loop.index }}</th>
-                      <td class="align-middle">{{admin.name}} {{ admin.username }}</td>
-                      <td class="align-middle">{{admin.email}}</td>
-                  </tr>
-              {% endfor %}
-          </tbody>
-        </table>
-    </div>
-    <br/>
-    <h4 style="color:white">Users</h4>
-    <div class="table-responsive">
-        <table class="table table-bordered table-light table-striped text-center">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-            </tr>
-          </thead>
-          <tbody>
-              {% for user in users %}
-                  <tr>
-                      <th class="align-middle" scope="row">{{ loop.index }}</th>
-                      <td class="align-middle">{{user.name}} {{ user.username }}</td>
-                      <td class="align-middle">{{user.email}}</td>
-                      {% if current_user.admin %}
-                      <td>
-                          <div class="btn-group" role="group" aria-label="Basic example">
-                              <form action="{{ url_for('users') }}" method="POST" onsubmit="return confirm('Do you really want to make this user an admin?');">
-                                  <input type="hidden" value="editPermission" name="actionToPerform">
-                                  <input type="hidden" value="{{ user.id }}" name="userToAdmin">
-                                  <button type="submit" class="btn d-flex justify-content-center align-content-between" data-toggle="tooltip" data-placement="top" title="Change to admin">
-                                      <i class="material-icons" style="color: green">supervisor_account</i>
-                                  </button>
-                              </form>
-                              <form action="{{ url_for('users') }}" method="POST" onsubmit="return confirm('Do you really want to delete this user?');">
-                                  <input type="hidden" value="deleteUser" name="actionToPerform">
-                                  <input type="hidden" value="{{ user.id }}" name="userToDelete">
-                                  <button type="submit" class="btn d-flex justify-content-center align-content-between">
-                                      <i class="material-icons" style="color: #b22222">delete</i>
-                                  </button>
-                              </form>
-                          </div>
-                      </td>
-                    {% endif %}
-                  </tr>
-              {% endfor %}
-          </tbody>
-        </table>
-    </div>
-
-    <div class="modal fade bd-example-modal-lg" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="changePasswordModalLabel">Change password</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#newUserModal">
+                New user
             </button>
-          </div>
-            <form action="/users" method="POST">
-                <input type="hidden" value="changePassword" name="actionToPerform">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="oldPassword">Your password</label>
-                        <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="newPassword">New password</label>
-                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm your new password</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                        <span id="message" ></span>
-                    </div>
-                    <div>
-                        <p style="color:red">Warning: submitting will permanently change your password</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" id="submitPassword" class="btn btn-primary" disabled>Submit</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-      </div>
-    </div>
+            <br/>
+            <h3 class="section-title">List of the authorized users</h3>
+            <h4>Admins</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered table-light table-striped text-center">
+                    <thead>
+                    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for admin in admins %}
+                        <tr>
+                            <th class="align-middle" scope="row">{{ loop.index }}</th>
+                            <td class="align-middle">{{admin.name}} {{ admin.username }}</td>
+                            <td class="align-middle">{{admin.email}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <br/>
+            <h4>Users</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered table-light table-striped text-center">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Project</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <th class="align-middle" scope="row">{{ loop.index }}</th>
+                            <td class="align-middle">{{user.name}} {{ user.username }}</td>
+                            <td class="align-middle">{{user.email}}</td>
+                            <td class="align-middle">
+                                {% if user.project %}
+                                    {% for p in projects %}
+                                        {% if p.id == user.project %}
+                                            <a href="/project/{{ p.id }}">{{ p.name }}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                            {% if current_user.admin %}
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <form action="{{ url_for('users') }}" method="POST" onsubmit="return confirm('Do you really want to make this user an admin?');">
+                                            <input type="hidden" value="editPermission" name="actionToPerform">
+                                            <input type="hidden" value="{{ user.id }}" name="userToAdmin">
+                                            <button type="submit" class="btn d-flex justify-content-center align-content-between" data-toggle="tooltip" data-placement="top" title="Change to admin">
+                                                <i class="material-icons" style="color: green">supervisor_account</i>
+                                            </button>
+                                        </form>
+                                        <form action="{{ url_for('users') }}" method="POST" onsubmit="return confirm('Do you really want to delete this user?');">
+                                            <input type="hidden" value="deleteUser" name="actionToPerform">
+                                            <input type="hidden" value="{{ user.id }}" name="userToDelete">
+                                            <button type="submit" class="btn d-flex justify-content-center align-content-between">
+                                                <i class="material-icons" style="color: #b22222">delete</i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="modal fade bd-example-modal-lg" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="newUserModalLabel">Create a new user</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-
-            <form action="{{ url_for('users') }}" method="POST">
-                <input type="hidden" value="newUser" name="actionToPerform">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="newUser">User name</label>
-                        <input type="text" class="form-control" id="newUser" name="userName" placeholder="Name of the user" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="newUserSurname">User surname</label>
-                        <input type="text" class="form-control" id="newUserSurname" name="userSurname" placeholder="Surname">
-                    </div>
-                    <div class="form-group">
-                        <label for="newUserEmail">Email</label>
-                        <input type="email" class="form-control" id="newUserEmail" name="userEmail" placeholder="Email">
-                    </div>
-                    <div class="form-group">
-                        <label for="newUserPassword">Password</label>
-                        <input type="password" class="form-control" id="newUserPassword" name="userPassword" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                        <label for="newUserConfirmPassword">Password</label>
-                        <input type="password" class="form-control" id="newUserConfirmPassword" name="userConfirmPassword" placeholder="Confirm password">
-                    </div>
-                    <span id="messageError" ></span>
-                    <div class="form-group">
-                        <label for="userTypeSelection">Skill type</label>
-                        <div id="userTypeSelection">
-                          <div class="custom-control custom-radio custom-control-inline">
-                            <input name="userPermission" class="custom-control-input" type="radio" id="radioadmin" value="True">
-                            <label for="radioadmin" class="custom-control-label">Admin</label>
-                          </div>
-                          <div class="custom-control custom-radio custom-control-inline">
-                            <input name="userPermission" class="custom-control-input" type="radio" id="radionormaluser" value="False">
-                            <label for="radionormaluser" class="custom-control-label">User</label>
-                          </div>
+            <div class="modal fade bd-example-modal-lg" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="changePasswordModalLabel">Change password</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" id="submitNewUser" class="btn btn-primary" disabled>Submit</button>
+                        <form action="/users" method="POST">
+                            <input type="hidden" value="changePassword" name="actionToPerform">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="oldPassword">Your password</label>
+                                    <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword">New password</label>
+                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm your new password</label>
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                    <span id="message" ></span>
+                                </div>
+                                <div>
+                                    <p style="color:red">Warning: submitting will permanently change your password</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" id="submitPassword" class="btn btn-primary" disabled>Submit</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </form>
-        </div>
-      </div>
-    </div>
+            </div>
 
+            <div class="modal fade bd-example-modal-lg" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="newUserModalLabel">Create a new user</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <form action="{{ url_for('users') }}" method="POST">
+                            <input type="hidden" value="newUser" name="actionToPerform">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="newUser">User name</label>
+                                    <input type="text" class="form-control" id="newUser" name="userName" placeholder="Name of the user" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newUserSurname">User surname</label>
+                                    <input type="text" class="form-control" id="newUserSurname" name="userSurname" placeholder="Surname">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newUserEmail">Email</label>
+                                    <input type="email" class="form-control" id="newUserEmail" name="userEmail" placeholder="Email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newUserPassword">Password</label>
+                                    <input type="password" class="form-control" id="newUserPassword" name="userPassword" placeholder="Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newUserConfirmPassword">Password</label>
+                                    <input type="password" class="form-control" id="newUserConfirmPassword" name="userConfirmPassword" placeholder="Confirm password">
+                                </div>
+                                <span id="messageError" ></span>
+                                <div class="form-group">
+                                    <label for="userTypeSelection">User type</label>
+                                    <div id="userTypeSelection">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input name="userPermission" class="custom-control-input" type="radio" id="radioadmin" value="True">
+                                            <label for="radioadmin" class="custom-control-label">Admin</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input name="userPermission" class="custom-control-input" type="radio" id="radionormaluser" value="False">
+                                            <label for="radionormaluser" class="custom-control-label">User</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="projectResponsible">Associated to project:</label>
+                                    <select class="custom-select mt-3" name="projectResponsible" id="projectResponsible">
+                                        <option value="" selected>None</option>
+                                        {% for proj in projects %}
+                                            <option value="{{proj.id}}">{{ proj.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" id="submitNewUser" class="btn btn-primary" disabled>Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
     <script>
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
-    $(document).ready(function() {
-      $("#editMail").click(function() {
-        $("#currentEmail").hide();
-        $("#userEmail").show();
-      });
-    });
-    $('#newPassword, #confirmPassword').on('keyup', function () {
-        var btnSubmit = document.getElementById('submitPassword');
-      if ($('#newPassword').val() == $('#confirmPassword').val()) {
-        $('#message').html('<i class="material-icons" style="color: green">check</i>');
-        btnSubmit.disabled = false;
-      } else {
-        $('#message').html('<i class="material-icons" style="color: #b22222">error</i>Fields not matching');
-        btnSubmit.disabled=true;
-      }
-    });
-    $('#newUserPassword, #newUserConfirmPassword').on('keyup', function () {
-        var btnSubmit = document.getElementById('submitNewUser');
-      if ($('#newUserPassword').val() == $('#newUserConfirmPassword').val()) {
-        $('#messageError').html('<i class="material-icons" style="color: green">check</i>');
-        btnSubmit.disabled = false;
-      } else {
-        $('#messageError').html('<i class="material-icons" style="color: #b22222">error</i>Fields not matching');
-        btnSubmit.disabled=true;
-      }
-    });
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+        $(document).ready(function() {
+            $("#editMail").click(function() {
+                $("#currentEmail").hide();
+                $("#userEmail").show();
+            });
+        });
+        $('#newPassword, #confirmPassword').on('keyup', function () {
+            var btnSubmit = document.getElementById('submitPassword');
+            if ($('#newPassword').val() == $('#confirmPassword').val()) {
+                $('#message').html('<i class="material-icons" style="color: green">check</i>');
+                btnSubmit.disabled = false;
+            } else {
+                $('#message').html('<i class="material-icons" style="color: #b22222">error</i>Fields not matching');
+                btnSubmit.disabled=true;
+            }
+        });
+        $('#newUserPassword, #newUserConfirmPassword').on('keyup', function () {
+            var btnSubmit = document.getElementById('submitNewUser');
+            if ($('#newUserPassword').val() == $('#newUserConfirmPassword').val()) {
+                $('#messageError').html('<i class="material-icons" style="color: green">check</i>');
+                btnSubmit.disabled = false;
+            } else {
+                $('#messageError').html('<i class="material-icons" style="color: #b22222">error</i>Fields not matching');
+                btnSubmit.disabled=true;
+            }
+        });
     </script>
 {% endblock %}
 </body>

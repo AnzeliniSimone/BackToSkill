@@ -1,4 +1,3 @@
-<!--manca extend layout-->
 {% extends 'layout.html' %}
 <!DOCTYPE html>
 <html lang="en">
@@ -10,62 +9,114 @@
 <body>
 
 {% block pageContent %}
-    <div class="col-md-10">
-        {% block sectionContent %}
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
             <!-- Title -->
-            <h3>Job: {{ role.name }}</h3>
+            <h3 class="section-title">{{ role.name }}</h3>
             <div class="table-responsive">
-            <!-- Tables with description and skills required -->
-            <table class="table table-bordered table-light table-striped table-hover text-center">
-                <thead>
-                <tr>
-                    <th>Description</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td> {{ role.description }} </td>
-                </tr>
-                </tbody>
-            </table>
-            <table class="table table-bordered table-light table-striped table-hover text-center">
-                <thead>
-                <tr>
-                    <th>Skills required</th> <th>Grade required</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for skill in skill %}
+                <!-- Tables with description and skills required -->
+                <br/>
+                <h4 style="text-align: center">Description</h4>
+                <table class="table table-bordered table-light table-striped table-hover text-center">
+                    <tbody>
                     <tr>
-                        <td>{{ skill.name }}</td>
-                        <td>
-                            {% for grade in grade %}
-                                {% if grade.skill_id == skill.id%}
-                                    {{ grade.grade_required }}
-                                {% endif %}
-                            {% endfor %}
-                        </td>
+                        <td> {{ role.description }} </td>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
-            <!-- List of the employees suitable for the job. View is allowed only to admins, who have the permission to assign jobs -->
-            {% if current_user.is_authenticated and current_user.admin %}
-                {% if empl %}
-                    <table class="table table-bordered table-light table-striped table-hover text-center">
+                    </tbody>
+                </table>
+                <br/>
+                <h4 style="text-align: center">Skills required</h4>
+                <table class="table table-bordered table-light table-striped table-hover text-center">
+                    {% if not skill %}
+                        <tr>
+                            <td colspan="2">No skills required</td>
+                        </tr>
+                    {% else %}
                         <thead>
                         <tr>
-                            <th> Possible employees </th>
+                            <th>Skill</th>
+                            <th>Grade required</th>
                         </tr>
                         </thead>
+                        <tbody>
+                        {% for skill in skill %}
+                            <tr>
+                                <td>{{ skill.name }}</td>
+                                <td>
+                                    {% for grade in grade %}
+                                        {% if grade.skill_id == skill.id%}
+                                            {{ grade.grade_required }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    {% endif %}
+                </table>
+
+                {% set employees = role.get_employee_assigned() %}
+                {% if employees %}
+                    <br/>
+                    <h4 style="text-align: center">Assigned employees</h4>
+                    {% for e in employees %}
+                        <div class="col-sm-6 col-lg-4" style="padding: 1.5rem; padding-top: 1rem; padding-bottom: 0rem">
+                            <div class="row" style="border: 1px solid; border-color: rgba(0, 0, 0, 0.125); border-radius: 0.25rem;">
+                                <div class="col-md-3 nopadding" style="display: flex;
+                                alignItems: center;
+                                justifyContent: center;">
+                                    {% if e.photo == "default" or e.photo == ""%}
+                                        <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" style="height: 100px;max-width: 100px;" alt="avatar">
+                                    {% else %}
+                                        <img src="/static/images/profile/{{ e.photo }}" class="avatar img-circle img-thumbnail"  style="height: 100px; max-width: 100px;" alt="avatar">
+                                    {% endif%}
+                                </div>
+                                <div class="col-md-7 text-truncate" style="padding-right: 15px; padding-left: 15px;">
+                                    <div>
+                                        <a class="card-title text-truncate"><b>{{ e.name }} {{ e.surname }}</b></a>
+                                    </div>
+                                    <div>
+                                        <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: #0c61ff;">email</i>
+                                        <a style="font-size: 13px;" class="card-title">{{ e.email }}</a>
+                                    </div>
+                                    <div>
+                                        <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: #0c61ff;">phone</i>
+                                        <a style="font-size: 13px;" class="card-title">{{ e.telephone }}</a>
+                                    </div>
+                                    <div>
+                                        <form action="/job/{{ role.id }}" method="POST" onsubmit="return confirm('Do you want to remove this employee from the job?');">
+                                            <input type="hidden" value="removeEmployee" name="actionToPerform">
+                                            <input type="hidden" value="{{ e.id }}" name="employeeToRemove" id="employeeToRemove">
+                                            <button class="btn" type="submit" data-toggle="tooltip" data-placement="top" title="Remove from job">
+                                                <i class="material-icons" style="font-size: 12px; margin-top:5px;margin-right:5px;color: red;">clear</i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="col-2 align-self-center">
+                                    <a href="{{ url_for('employee', id=e.id) }}">
+                                        <i class="material-icons">keyboard_arrow_right</i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <br/>
+                {% endif %}
+
+                <!-- List of the employees suitable for the job. View is allowed only to admins, who have the permission to assign jobs -->
+                {% if current_user.is_authenticated and current_user.admin %}
+                    {% if empl %}
+                        <br/>
+                        <h4 style="text-align: center">Suggested employees</h4>
 
                         <tbody>
                         <!-- List of the employees having all the skills required with sufficient grades -->
                         <table class="table table-bordered table-light table-striped table-hover text-center">
                             <thead>
                             <tr>
-                                <th>Skilled Employees</th>
+                                <th colspan="3">Skilled Employees</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -91,7 +142,7 @@
                         <table class="table table-bordered table-light table-striped table-hover text-center">
                             <thead>
                             <tr>
-                                <th>Unskilled Employees</th>
+                                <th colspan="3">Unskilled Employees</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -118,7 +169,7 @@
                         <table class="table table-bordered table-light table-striped table-hover text-center">
                             <thead>
                             <tr>
-                                <th>No-SKilled Employees</th>
+                                <th colspan="3">No-SKilled Employees</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -140,205 +191,211 @@
                             {% endfor %}
                             </tbody>
                         </table>
-                        </tbody>
-                    </table>
-                {% endif %}
+                    {% endif %}
 
-                <!-- Modal for job editing -->
+                    <!-- Modal for job editing -->
 
-                <div class="modal fade" id="myModal">
-                    <div class="modal-dialog modal-lg" >
-                        <div class="modal-content">
-                            <div class="modal-header ">
-                                <h1>Edit Job</h1>
+                    <div class="modal fade" id="myModal">
+                        <div class="modal-dialog modal-lg" >
+                            <div class="modal-content">
+                                <div class="modal-header ">
+                                    <h1>Edit Job</h1>
+                                </div>
+
+                                <form  action="/job/{{ role.id }}" method="POST">
+                                    <input type="hidden" value="editJob" name="actionToPerform">
+                                    <div class="modal-body ">
+                                        <div class="form-group">
+                                            <label for="Role">Description</label>
+                                            <input value="{{ role.description }}"  type="text" class="form-control" id="Jdescription"  name="Jdescription">
+                                        </div>
+                                        <div class="row justify-content-center">
+                                            <!--col 6-->
+                                            <div class="col-6">
+                                                <div class="row mt-5">
+                                                    <!--Title and Button add-->
+                                                    <!--Title-->
+                                                    <label for="Skill">Skill </label>
+                                                    <!--Button add-->
+                                                    <div class="col align-self-end text-right">
+                                                        <input type="button" value="Add" class="btn btn-primary"
+                                                               onclick="createRow()">
+                                                    </div>
+                                                </div><!--Title and Button add-->
+                                                <!--Skills and buttons-->
+                                                <!--Skills-->
+                                                <div class="row">
+                                                    <!--Skills-->
+                                                    <div id="container" class="col-6">
+                                                        <input hidden type="text" id="number" name="number" value="{{dic|length}}">
+                                                        <div hidden class="form-group" id="div_example"></div>
+                                                        <label hidden id="label_example">Skill</label>
+                                                        {% for job_skill in dic %}
+                                                            <select class="custom-select mt-3"
+                                                                    name="skill{{dic.index(job_skill)}}">
+                                                                {% for skill in all_skill %}
+                                                                    <option {% if  job_skill[1] == skill.name %}selected{% endif %}
+                                                                            value="{{skill.id}}">{{ skill.name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        {% endfor %}
+                                                    </div>
+                                                    <!--Score-->
+                                                    <div id="container1" class="col-3">
+                                                        {% for job_skill in dic %}
+                                                            <select class="custom-select mt-3"
+                                                                    name="score{{dic.index(job_skill)}}">
+                                                                {% for i in range(1,11) %}
+                                                                    <option {% if  job_skill[2] == i %}selected{% endif %}
+                                                                            value="{{i}}">{{ i }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        {% endfor %}
+                                                    </div>
+                                                    <!--Delete-->
+                                                    <div id="container2" class="col-3">
+                                                        {% for job_skill in dic %}
+                                                            <div>
+                                                                <a class="btn btn-danger mt-3" style="color:white"
+                                                                   name="remove{{dic.index(job_skill)}}"
+                                                                   onclick="removeRow({{dic.index(job_skill)}})">Remove</a>
+                                                            </div>
+
+                                                        {% endfor %}
+                                                    </div>
+                                                    <!--Select Skills Format-->
+                                                    <select hidden class="custom-select mt-3" id="select_example">
+                                                        {% for skill in all_skill %}
+                                                            <option value="{{ skill.id }}">{{ skill.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <!--New Score Format-->
+                                                    <select hidden class="custom-select mt-3" id="select_example1" mt-3>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                        <option value="6">6</option>
+                                                        <option value="7">7</option>
+                                                        <option value="8">8</option>
+                                                        <option value="9">9</option>
+                                                        <option value="10">10</option>
+                                                    </select>
+                                                </div>
+                                            </div><!--col 6-->
+                                        </div> <!--row-->
+                                    </div>
+                                    <div class="modal-footer ">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button class="btn btn-primary"  type="submit"> Submit </button>
+                                    </div>
+                                </form>
                             </div>
 
-                            <form  action="/job/{{ role.id }}" method="POST">
-                                <input type="hidden" value="editJob" name="actionToPerform">
-                                <div class="modal-body ">
-                                    <div class="form-group">
-                                        <label for="Role">Description</label>
-                                        <input value="{{ role.description }}"  type="text" class="form-control" id="Jdescription"  name="Jdescription">
-                                    </div>
-                                    <div class="row justify-content-center">
-                                        <!--col 6-->
-                                        <div class="col-6">
-                                            <div class="row mt-5">
-                                                <!--Title and Button add-->
-                                                <!--Title-->
-                                                <label for="Skill">Skill </label>
-                                                <!--Button add-->
-                                                <div class="col align-self-end text-right">
-                                                    <input type="button" value="Add" class="btn btn-primary"
-                                                           onclick="createRow()">
-                                                </div>
-                                            </div><!--Title and Button add-->
-                                            <!--Skills and buttons-->
-                                            <!--Skills-->
-                                            <div class="row">
-                                                <!--Skills-->
-                                                <div id="container" class="col-6">
-                                                    <input hidden type="text" id="number" name="number" value="{{dic|length}}">
-                                                    <div hidden class="form-group" id="div_example"></div>
-                                                    <label hidden id="label_example">Skill</label>
-                                                    {% for job_skill in dic %}
-                                                        <select class="custom-select mt-3"
-                                                                name="skill{{dic.index(job_skill)}}">
-                                                            {% for skill in all_skill %}
-                                                                <option {% if  job_skill[1] == skill.name %}selected{% endif %}
-                                                                        value="{{skill.id}}">{{ skill.name }}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    {% endfor %}
-                                                </div>
-                                                <!--Score-->
-                                                <div id="container1" class="col-3">
-                                                    {% for job_skill in dic %}
-                                                        <select class="custom-select mt-3"
-                                                                name="score{{dic.index(job_skill)}}">
-                                                            {% for i in range(1,11) %}
-                                                                <option {% if  job_skill[2] == i %}selected{% endif %}
-                                                                        value="{{i}}">{{ i }}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    {% endfor %}
-                                                </div>
-                                                <!--Delete-->
-                                                <div id="container2" class="col-3">
-                                                    {% for job_skill in dic %}
-                                                        <div>
-                                                            <a class="btn btn-danger mt-3" style="color:white"
-                                                               name="remove{{dic.index(job_skill)}}"
-                                                               onclick="removeRow({{dic.index(job_skill)}})">Remove</a>
-                                                        </div>
-
-                                                    {% endfor %}
-                                                </div>
-                                                <!--Select Skills Format-->
-                                                <select hidden class="custom-select mt-3" id="select_example">
-                                                    {% for skill in all_skill %}
-                                                        <option value="{{ skill.id }}">{{ skill.name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                                <!--New Score Format-->
-                                                <select hidden class="custom-select mt-3" id="select_example1" mt-3>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                    <option value="6">6</option>
-                                                    <option value="7">7</option>
-                                                    <option value="8">8</option>
-                                                    <option value="9">9</option>
-                                                    <option value="10">10</option>
-                                                </select>
-                                            </div>
-                                        </div><!--col 6-->
-                                    </div> <!--row-->
-                                </div>
-                                <div class="modal-footer ">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button class="btn btn-primary"  type="submit"> Submit </button>
-                                </div>
-                            </form>
                         </div>
-
                     </div>
-                </div>
 
-                <!-- Button for modal toggle -->
-                <button type="button" class="btn btn-outline-danger"><a href="#" data-toggle="modal" data-target="#myModal">Edit Job </a></button>
-            {% endif %}
-        {% endblock %}
+                    <!-- Button for modal toggle -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#myModal">Edit Job</button>
+                        <form action="/job/{{ role.id }}" method="POST" onsubmit="return confirm('Do you really want to delete this job?');">
+                            <input type="hidden" value="deleteJob" name="actionToPerform">
+                            <button type="submit" class="btn btn-danger">Delete job</button>
+                        </form>
+                    </div>
+                {% endif %}
 
+            </div>
         </div>
-        <script type='text/javascript'>
-            function removeRow(index) {
-
-                let skill = "skill" + index
-                let score = "score" + index
-                let remove = "remove" + index
-
-                $("[name='" + skill + "']").remove();
-                $("[name='" + score + "']").remove();
-                $("[name='" + remove + "']").remove();
-
-
-                console.log("removed " + skill)
-            }
-
-            function createRow() {
-                let rowNumber = getRowNumber();
-
-                addSkill(rowNumber);
-                addScore(rowNumber);
-                addRemove(rowNumber)
-
-                updateRowNumber();
-            }
-
-            function getRowNumber() {
-                // Number of inputs to create
-                return number = parseInt(document.getElementById("number").value);
-            }
-
-            function updateRowNumber() {
-                // Number of inputs to update
-                document.getElementById("number").value = number + 1;
-            }
-
-            function addRemove(number) {
-
-                // Container <div> where dynamic content will be placed
-                var container = document.getElementById("container2");
-
-                let div = document.createElement("div");
-                let buttorRemove = document.createElement("a");
-
-                buttorRemove.setAttribute("class","btn btn-danger mt-3");
-                buttorRemove.setAttribute("name","remove"+number);
-                buttorRemove.setAttribute("onclick","removeRow("+number+")");
-                buttorRemove.setAttribute("style","color:'white'");
-                buttorRemove.style="color:white"
-                buttorRemove.innerHTML="Remove"
-
-
-                div.appendChild(buttorRemove);
-                container.appendChild(div);
-            }
-
-
-            function addSkill(number) {
-
-                // Container <div> where dynamic content will be placed
-                var container = document.getElementById("container");
-
-                //Get select hidden
-                var select_example = document.getElementById("select_example");
-
-                // Clone select
-                let cloneSelect = select_example.cloneNode(true);
-                cloneSelect.hidden = false;
-                cloneSelect.setAttribute('name', "skill" + number);
-                container.appendChild(cloneSelect);
-            }
-
-            function addScore(number) {
-                // Container <div> where dynamic content will be placed
-                var container = document.getElementById("container1");
-
-                //Select
-                var select_example = document.getElementById("select_example1");
-
-                // Clone
-                let cloneS = select_example.cloneNode(true);
-                cloneS.hidden = false;
-                cloneS.setAttribute('name', "score" + number);
-                container.appendChild(cloneS);
-            }
-        </script>
+        <div class="col-md-1"></div>
     </div>
+
+    <script type='text/javascript'>
+        function removeRow(index) {
+
+            let skill = "skill" + index
+            let score = "score" + index
+            let remove = "remove" + index
+
+            $("[name='" + skill + "']").remove();
+            $("[name='" + score + "']").remove();
+            $("[name='" + remove + "']").remove();
+
+
+            console.log("removed " + skill)
+        }
+
+        function createRow() {
+            let rowNumber = getRowNumber();
+
+            addSkill(rowNumber);
+            addScore(rowNumber);
+            addRemove(rowNumber)
+
+            updateRowNumber();
+        }
+
+        function getRowNumber() {
+            // Number of inputs to create
+            return number = parseInt(document.getElementById("number").value);
+        }
+
+        function updateRowNumber() {
+            // Number of inputs to update
+            document.getElementById("number").value = number + 1;
+        }
+
+        function addRemove(number) {
+
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container2");
+
+            let div = document.createElement("div");
+            let buttorRemove = document.createElement("a");
+
+            buttorRemove.setAttribute("class","btn btn-danger mt-3");
+            buttorRemove.setAttribute("name","remove"+number);
+            buttorRemove.setAttribute("onclick","removeRow("+number+")");
+            buttorRemove.setAttribute("style","color:'white'");
+            buttorRemove.style="color:white"
+            buttorRemove.innerHTML="Remove"
+
+
+            div.appendChild(buttorRemove);
+            container.appendChild(div);
+        }
+
+
+        function addSkill(number) {
+
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container");
+
+            //Get select hidden
+            var select_example = document.getElementById("select_example");
+
+            // Clone select
+            let cloneSelect = select_example.cloneNode(true);
+            cloneSelect.hidden = false;
+            cloneSelect.setAttribute('name', "skill" + number);
+            container.appendChild(cloneSelect);
+        }
+
+        function addScore(number) {
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("container1");
+
+            //Select
+            var select_example = document.getElementById("select_example1");
+
+            // Clone
+            let cloneS = select_example.cloneNode(true);
+            cloneS.hidden = false;
+            cloneS.setAttribute('name', "score" + number);
+            container.appendChild(cloneS);
+        }
+    </script>
 {% endblock %}
 
 </body>

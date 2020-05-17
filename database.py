@@ -14,6 +14,7 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     admin = db.Column(db.Boolean)
+    project = db.Column(db.Integer, db.ForeignKey('project.id'))
 
     @property
     def is_authenticated(self):
@@ -41,6 +42,9 @@ class Role(db.Model):
     description = db.Column(db.String)
     employee = db.relationship("Employee")
     skill = db.relationship("Skill", secondary="role_skill")
+
+    def get_employee_assigned(self):
+        return Employee.query.filter(Employee.role == self.id).all()
 
 
 class Employee(db.Model):
@@ -115,6 +119,7 @@ class Training(db.Model):
     hours = db.Column(db.Integer)
     skill = db.relationship("Skill", secondary="training_skill")
     employee = db.relationship("Employee", secondary="employee_training")
+    closed = db.Column(db.Boolean)
 
     def get_skill_improvements_list(self):
         skills=[]
@@ -556,17 +561,19 @@ def delete_skill(skill):
 
 
 def set_grade_of_skill_of_employee(grade, emp_id, skill_id):
-    emp_skill=Employee_Skill.query.filter(Employee_Skill.emp_id==emp_id, Employee_Skill.skill_id==skill_id).first()
-    if emp_skill:
-        emp_skill.grade = grade
-        db.session.commit()
+    increase_grade_of_skill_of_employee(grade, emp_id, skill_id)
 
 
 def increase_grade_of_skill_of_employee(points_to_add, emp_id, skill_id):
     emp_skill = Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id, Employee_Skill.skill_id == skill_id).first()
     if emp_skill:
         emp_skill.grade += points_to_add
-        db.session.commit()
+        if emp_skill.grade > 10:
+            emp_skill.grade = 10
+    else:
+        emp_skill = Employee_Skill(emp_id=emp_id, skill_id=skill_id, grade=points_to_add)
+        db.session.add(emp_skill)
+    db.session.commit()
 
 
 def set_evaluation_project_employee_role(evaluation, emp_id, prj_id, role_id):
@@ -897,13 +904,20 @@ def update_employee(new_employee):
     db.session.commit()
 
 
+def update_employee_job(job_id, emp_id):
+    emp = get_employee_by_id(emp_id)
+    emp.role = job_id
+    db.session.commit()
+    return emp
+
+
 def delete_all_grade_of_skill_of_job(job_id):
     Role_Skill.query.filter(Role_Skill.role_id == job_id).delete(synchronize_session='fetch')
     db.session.commit()
 
 
-def create_user(name, surname, email, password, admin=False):
-    user = User(name=name, surname=surname, email=email, password=password, admin=admin)
+def create_user(name, surname, email, password, project, admin=False):
+    user = User(name=name, surname=surname, email=email, password=password, admin=admin, project=project)
     db.session.add(user)
     db.session.commit()
     return user
@@ -955,10 +969,12 @@ def delete_employee(id):
     Employee.query.filter_by(id=id).delete()
     db.session.commit()
 
+
 #AGGIUNTA
 def delete_all_grade_of_skill_of_employee(emp_id):
     Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id).delete()
     db.session.commit()
+
 
 #AGGIUNTA
 def delete_grade_of_skill_of_employee(emp_id, skill_id):
@@ -970,3 +986,41 @@ def delete_grade_of_skill_of_employee(emp_id, skill_id):
 def get_grade_of_skill_of_employee(emp_id, skill_id):
     emp_skill = Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id,Employee_Skill.skill_id == skill_id).first()
     return emp_skill
+
+
+def delete_role(role_id):
+    links = Role_Skill.query.filter(Role_Skill.role_id == role_id).delete()
+    emps = Employee.query.filter(Employee.role==role_id).all()
+    for e in emps:
+        e.role = None
+    role = Role.query.filter(Role.id == role_id).delete()
+    db.session.commit()
+    return "deleted"
+
+
+def remove_employee_from_job(job_id, emp_id):
+    emp = get_employee_by_id(emp_id)
+    if emp.role == job_id:
+        emp.role = None
+    db.session.commit()
+    return emp
+
+
+def alter_db():
+    result = db.session.execute("ALTER TABLE training ADD closed Boolean ")
+    result = db.session.execute("ALTER TABLE user ADD project integer ")
+    result = db.session.execute("ALTER TABLE user ADD FOREIGN KEY (project) REFERENCES project(id);")
+    db.session.commit()
+    return "done"
+
+
+def close_training(trn_id):
+    employees = Employee_Training.query.filter(Employee_Training.train_id==trn_id).all()
+    skills = Training_Skill.query.filter(Training_Skill.train_id==trn_id).all()
+    for e in employees:
+        for s in skills:
+            increase_grade_of_skill_of_employee(s.points, e.emp_id, s.skill_id)
+    training = get_trainings_by_id(trn_id)
+    training.closed = True
+    db.session.commit()
+    return "done"

@@ -8,6 +8,7 @@
 <body>
     {% block pageContent %}
 {#        container for the content part, the container stays the same in every subpage#}
+        <div class="view" style="background-image: url('https://www.touchsupport.com/wp-content/uploads/2015/06/picjumbo.com_HNCK3562.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center center;" />
         <div>
 
 {#        variable content, will be overwritten in every subpage#}
@@ -17,7 +18,7 @@
                 <div class="p-5 "> </div>
                 <div class="p-3 "> </div>
 
-                <header class=" text-center py-2 mb-1 text-white">
+                <header class=" text-center py-2 mb-1 text-white" style="background-color: #2f2d2e">
                 <h1 class="display-2">Welcome to BackToSkill</h1>
 
                 <h3><p class="text-white">The dynamic and interactive HR assistant you never knew you needed</h3>
@@ -33,6 +34,11 @@
             {% endblock %}
         </div>
       </div>
+        <style>
+        #main-container{
+            padding: 0px;
+        }
+        </style>
     {% endblock %}
 </body>
 </html>

@@ -1,73 +1,64 @@
 <!DOCTYPE html>
-{#This is the main skeleton for the website, it is the page that most of the other pages will use (by 'extend' feature) to provide the
+{# This is the main skeleton for the website, it is the page that most of the other pages will use (by 'extend' feature) to provide the
 user with the navbar and the main buttons like login and logout. Plus, it gives basic style to the website, so that if we want to make some
-changes in the layout of main components we just have to do it once in this file
-
-
-#}
+changes in the layout of main components we just have to do it once in this file #}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-{#    Links to css files in the static folder#}
+    <title>BackToSkill</title>
+    {#    Links to css files in the static folder#}
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.css') }}" >
     <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-override.css') }}" >
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-{#    Links to jquery and popper#}
+    {#    Links to jquery and popper#}
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-{#   link to bootstrap js in the static folder#}
+    {#   link to bootstrap js in the static folder#}
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
 </head>
 
 <body>
-
-    <div class="view" style="background-image: url('https://www.touchsupport.com/wp-content/uploads/2015/06/picjumbo.com_HNCK3562.jpg'); background-repeat: no-repeat; background-size: cover; background-position: center center;" />
-
-</body>
-
-<body>
-    <header>
-        <!-- navbar with login button, probably to change into a dropdown with options: my profile, logout-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-dark" id="loginNavbar">
-{#        logo#}
-            <a class="navbar-brand" href="/home"><img src="/static/images/Logosmall.png" alt=""></a>
-{#        check on authentication, if user logged in it shows logout button and link to user profile#}
-                {% if current_user.is_authenticated%}
-                    <div class="btn-group ml-auto mr-1">
-                        <h4 style="color: white; margin-right: 5px; font-family:'cursive'">Hi, {{ current_user.name }}</h4>
-                        {% if current_user.admin %}
-                            <a href="/users"><button class="btn btn-info">Users</button></a>
-                        {% endif %}
-                        <form action="/logout" method="POST">
-                            <button type="submit" class="btn btn-danger">Logout</button>
-                        </form>
-                    </div>
-{#        otherwise shows login button#}
+<header>
+    <!-- navbar with login button, probably to change into a dropdown with options: my profile, logout-->
+    <nav class="navbar navbar-expand-lg navbar-light light-dark" id="loginNavbar">
+        {#logo#}
+        <a class="navbar-brand" href="/home"><img src="/static/images/Logosmallwhite.png" alt=""></a>
+        {#        check on authentication, if user logged in it shows logout button and link to user profile#}
+        {% if current_user.is_authenticated%}
+            <div class="btn-group ml-auto mr-1">
+                <h5 style="color: white; margin-right: 5px;">Hi, {{ current_user.name }}</h5>
+                {% if current_user.admin %}
+                    <a href="/users"><button class="btn btn-info">Users</button></a>
                 {% else %}
-                    <a href="/login" class="btn btn-info ml-auto mr-1" role="button">Login</a>
+                    {% if current_user.project %}
+                        <a href="/project/{{ current_user.project }}"><button class="btn btn-info">Your project</button></a>
+                    {% endif %}
                 {% endif %}
-        </nav>
+                <form action="/logout" method="POST">
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
+            </div>
+            {#        otherwise shows login button#}
+        {% else %}
+            <a href="/login" class="btn btn-info ml-auto mr-1" role="button">Login</a>
+        {% endif %}
+    </nav>
 
-        <!-- navbar with dropdown buttons to navigate the site-->
-        <nav class="navbar navbar-expand-lg navbar-light text-white bg-dark" id="menuNavbar">
-{#            button for responsive purposes, makes the navbar collapse when screen is too little#}
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <!-- navbar with dropdown buttons to navigate the site-->
+    <nav class="navbar navbar-expand-lg navbar-light text-white light-dark" id="menuNavbar">
+        {#            button for responsive purposes, makes the navbar collapse when screen is too little#}
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-          </button>
+        </button>
 
-{#            Container for all the buttons linking to the different pages and for the search bar#}
+        {# Container for all the buttons linking to the different pages and for the search bar#}
 
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-              <ul class="navbar-nav mr-auto">
-
-
-
-                 <!-- Main page dropdown button -->
-                  <li class="nav-item dropdown ">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <!-- Main page dropdown button -->
+                <li class="nav-item dropdown ">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="homepageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Home
+                        Home
                     </a>
                     <div class="dropdown-menu" aria-labelledby="homepageDropdown">
                         <a class="dropdown-item" href="/home">Welcome</a>
@@ -76,142 +67,142 @@ changes in the layout of main components we just have to do it once in this file
                         <a class="dropdown-item" href="/about">About BackToSkill</a>
                         <a class="dropdown-item" href="/team">Meet our team</a>
                     </div>
-                  </li>
+                </li>
 
-                  <li class="nav-item dropdown">
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="/skills" id="skillsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Skills
+                        Skills
                     </a>
                     <div class="dropdown-menu" aria-labelledby="skillsDropdown">
-                      <a class="dropdown-item" href="/skills/soft">Soft skills list</a>
-                      <a class="dropdown-item" href="/skills/technical">Technical skills list</a>
+                        <a class="dropdown-item" href="/skills/soft">Soft skills list</a>
+                        <a class="dropdown-item" href="/skills/technical">Technical skills list</a>
                     </div>
 
-                  </li>
+                </li>
 
-                  <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="/employees" id="employeesButton" role="button" aria-haspopup="true" aria-expanded="false" >
-                      <p class="text-light"> Employees</p>
+                        <p class="text-light"> Employees</p>
                     </a>
-                  </li>
+                </li>
 
-                  <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="/jobs" id="jobsButton" role="button" aria-haspopup="true" aria-expanded="false">
-                      <p class="text-light">Job Openings</p>
+                        <p class="text-light">Job Openings</p>
                     </a>
-                  </li>
+                </li>
 
-                  <li class="nav-item dropdown">
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="trainingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Trainings
+                        Trainings
                     </a>
                     <div class="dropdown-menu" aria-labelledby="trainingsDropdown">
-                      <a class="dropdown-item" href="/trainings/all">Courses list</a>
-                      <a class="dropdown-item" href="/trainings/current">Current courses</a>
-                      <a class="dropdown-item" href="/trainigns/past">Courses archive</a>
+                        <a class="dropdown-item" href="/trainings/all">Courses list</a>
+                        <a class="dropdown-item" href="/trainings/current">Current courses</a>
+                        <a class="dropdown-item" href="/trainigns/past">Courses archive</a>
                     </div>
-                  </li>
+                </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Projects
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="projectsDropdown">
-                          <a class="dropdown-item" href="/projects/all">Projects list</a>
-                          <a class="dropdown-item" href="/projects/current">Current projects</a>
-                          <a class="dropdown-item" href="/projects/past">Projects archive</a>
-                        </div>
-                    </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="projectsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Projects
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="projectsDropdown">
+                        <a class="dropdown-item" href="/projects/all">Projects list</a>
+                        <a class="dropdown-item" href="/projects/current">Current projects</a>
+                        <a class="dropdown-item" href="/projects/past">Projects archive</a>
+                    </div>
+                </li>
             </ul>
-          </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
+</header>
 
 {#    container for the "dynamic" content, will be overwritten in every different page#}
-    <main role="main" id="main-container">
-        {% block pageContent %}
-        {% endblock %}
-    </main>
+<main role="main" id="main-container">
+    {% block pageContent %}
+    {% endblock %}
+</main>
 
-    <footer class="page-footer font-small bg-dark pt-4">
+<footer class="page-footer font-small light-dark pt-4">
 
-        <!-- Footer Links -->
-        <div class="container-fluid text-center text-md-left">
-            <!-- Grid row -->
-            <div class="row">
-                <hr class="clearfix w-100 d-md-none pb-3">
-                <!-- Grid column -->
-                <div class="col-md-3 mb-md-0 mb-3">
-                    <!-- Links -->
-                    <ul class="list-unstyled">
-                        <li>
-                            <a href="#">Copyrights</a>
-                        </li>
-                        <li>
-                            <a href="#">Privacy & Terms of use</a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Grid column -->
-                <hr class="clearfix w-100 d-md-none pb-3">
-                <!-- Grid column -->
-                <div class="col-md-3 mb-md-0 mb-3">
-                    <ul>
-                        <li>
-                            <a href="/faq" role="button">FAQ</a>
-                        </li>
-                        <li>
-                            <a href="#">Our Partners</a>
-                        </li>
-                        <li>
-                            <a href="#">Work with us</a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Grid column -->
-                <hr class="clearfix w-100 d-md-none">
-                <!-- Grid column -->
-                <div class="col-md-3 mx-auto">
-                    <!-- Links -->
-                    <ul class="list-unstyled">
-                        <li>
-                            <a href="#!">Duca Degli Abruzzi 1, Torino, Italy</a>
-                        </li>
-                        <li>
-                            <a href="#!">+39 01 12345678</a>
-                        </li>
-                        <li>
-                            <a href="#!">xxx@studenti.polito.it</a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Grid column -->
+    <!-- Footer Links -->
+    <div class="container-fluid text-center text-md-left">
+        <!-- Grid row -->
+        <div class="row">
+            <hr class="clearfix w-100 d-md-none pb-3">
+            <!-- Grid column -->
+            <div class="col-md-3 mb-md-0 mb-3">
+                <!-- Links -->
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="#">Copyrights</a>
+                    </li>
+                    <li>
+                        <a href="#">Privacy & Terms of use</a>
+                    </li>
+                </ul>
             </div>
-            <!-- Grid row -->
+            <!-- Grid column -->
+            <hr class="clearfix w-100 d-md-none pb-3">
+            <!-- Grid column -->
+            <div class="col-md-3 mb-md-0 mb-3">
+                <ul>
+                    <li>
+                        <a href="/faq" role="button">FAQ</a>
+                    </li>
+                    <li>
+                        <a href="#">Our Partners</a>
+                    </li>
+                    <li>
+                        <a href="#">Work with us</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Grid column -->
+            <hr class="clearfix w-100 d-md-none">
+            <!-- Grid column -->
+            <div class="col-md-3 mx-auto">
+                <!-- Links -->
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="#!">Duca Degli Abruzzi 1, Torino, Italy</a>
+                    </li>
+                    <li>
+                        <a href="#!">+39 01 12345678</a>
+                    </li>
+                    <li>
+                        <a href="#!">xxx@studenti.polito.it</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Grid column -->
         </div>
-        <!-- Footer Links -->
+        <!-- Grid row -->
+    </div>
+    <!-- Footer Links -->
 
-        <!-- Footer Elements -->
-        <div class="container">
-            <div class="mx-auto" style="width: 400px;">
-                <!-- Social buttons -->
-                <!-- Add icon library -->
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-                <div class=" text-center">
-                    <!-- Add font awesome icons -->
-                    <a href="#" class="fa fa-facebook" style="font-size: medium"></a>
-                    <a href="#" class="fa fa-twitter" style="font-size: medium"></a>
-                    <a href="#" class="fa fa-linkedin" style="font-size: medium"></a>
-                    <a href="#" class="fa fa-google" style="font-size: medium"></a>
-                </div>
+    <!-- Footer Elements -->
+    <div class="container">
+        <div class="mx-auto" style="width: 400px;">
+            <!-- Social buttons -->
+            <!-- Add icon library -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            <div class=" text-center">
+                <!-- Add font awesome icons -->
+                <a href="#" class="fa fa-facebook" style="font-size: medium"></a>
+                <a href="#" class="fa fa-twitter" style="font-size: medium"></a>
+                <a href="#" class="fa fa-linkedin" style="font-size: medium"></a>
+                <a href="#" class="fa fa-google" style="font-size: medium"></a>
             </div>
         </div>
-        <!-- Social buttons -->
-        <!-- Footer Elements -->
-        <!-- Copyright -->
-        <div class="footer-copyright text-white text-center py-3">© 2020 Copyright:
-            <a href=""> Back2Skills</a>
-        </div>
-    </footer>
+    </div>
+    <!-- Social buttons -->
+    <!-- Footer Elements -->
+    <!-- Copyright -->
+    <div class="footer-copyright text-white text-center py-3">© 2020 Copyright:
+        <a href=""> Back2Skills</a>
+    </div>
+</footer>
 </body>
 </html>

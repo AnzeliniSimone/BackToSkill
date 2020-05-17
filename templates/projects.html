@@ -14,13 +14,15 @@
                     <a href="/projects/all" class="list-group-item list-group-item-action">All projects</a>
                     <a href="/projects/current" class="list-group-item list-group-item-action">Current projects</a>
                     <a href="/projects/past" class="list-group-item list-group-item-action">Completed projects</a>
+                    <a href="/roles" class="list-group-item list-group-item-secondary list-group-item-action">Roles for projects</a>
                 </div>
             </div>
         </div>
         <div class="col-md-10">
-            {#          Table for the projects that will be taken out from the db#}
+            {#Table for the projects that will be taken out from the db#}
             {% block sectionContent %}
                 <!-- Button trigger modal for new project -->
+                <h3 class="section-title">{{ period }} projects</h3>
                 <br/>
                 {% if current_user.is_authenticated and current_user.admin %}
                     <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#newProjectModal">
@@ -88,9 +90,8 @@
                 {% endif %}
                 {#                  LIST OF PROJECTS    #}
 
-                <h4>List of {{ period }} projects</h4>
                 <div class="table-responsive">
-                    <table class="table table-hover table-light table-bordered table-striped text-center">
+                    <table class="table table-hover table-bordered table-striped text-center">
                         <thead>
                         <tr>
                             <th scope="col">#</th>

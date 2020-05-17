@@ -13,6 +13,7 @@
         <h3>Training: {{ training.name }}</h3>
     {% endif %}
 
+    <!-- Nav for the tab panel -->
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <a class="nav-item nav-link active" id="nav-training-tab" data-toggle="tab" href="#nav-training" role="tab" aria-controls="nav-training" aria-selected="true">Outline</a>
@@ -20,135 +21,178 @@
         </div>
     </nav>
 
+    <!-- Tab panel -->
     <div class="tab-content" id="nav-tabContent">
-        <!--table del training generale -->
+
+        <!--Tab for the general information about the training -->
         <div class="tab-pane fade show active" id="nav-training" role="tabpanel" aria-labelledby="nav-training-tab">
-            <form action="/training/{{ training.id }}" method="POST">
-                <input type="hidden" value="editTrainingInfo" name="actionToPerform">
-                <br/>
-                <h5>Name of the training</h5>
-                <p>
-                    <span id="currName">{{ training.name }}</span>
-                    <input type="text" value="{{ training.name }}" name="traName" id="newNameField" style="display: none" required>
-                    <button type="button" class="btn btn-default btn-sm" id="editName">
-                        <span class="material-icons">edit</span>
-                    </button>
-                </p>
-                <br/>
-                <h5>Beginning on:</h5>
-                <p>
-                    <span id="currStart">{{ training.starting_Date }}</span>
-                    <input type="date" value="{{ training.starting_Date }}" name="traStart" id="newStartField" style="display: none" onchange="compareDates()">
-                    <button type="button" class="btn btn-default btn-sm" id="editStart">
-                        <span class="material-icons">edit</span>
-                    </button>
-                </p>
+            <!-- If the training is closed, we don't want a user to edit the information about it -->
+            {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                <form action="/training/{{ training.id }}" method="POST">
+                    <input type="hidden" value="editTrainingInfo" name="actionToPerform">
+            {% endif %}
 
-                <br/>
-                <h5>Ending on:</h5>
-                <p>
-                    <span id="currEnd">{{ training.ending_Date }}</span>
-                    <input type="date" value="{{ training.ending_Date }}" name="traEnd" id="newEndField" style="display: none" onchange="compareDates()">
-                    <button type="button" class="btn btn-default btn-sm" id="editEnd">
-                        <span class="material-icons">edit</span>
-                    </button>
-                <div class="alert alert-warning" role="alert" id="warningDates" style="display:none">
-                    A training cannot end before its beginning, can it?
+            <div class="row">
+                <div class="col-md-4">
+                    <br/>
+                    <h5>Name of the training</h5>
+                    <p>
+                        <span id="currName">{{ training.name }}</span>
+                        {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                            <input type="text" value="{{ training.name }}" name="traName" id="newNameField" style="display: none" required>
+                            <button type="button" class="btn btn-default btn-sm" id="editName">
+                                <span class="material-icons">edit</span>
+                            </button>
+                        {% endif %}
+                    </p>
+                    <br/>
+                    <h5>Beginning on:</h5>
+                    <p>
+                        <span id="currStart">{{ training.starting_Date }}</span>
+                        {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                            <input type="date" value="{{ training.starting_Date }}" name="traStart" id="newStartField" style="display: none" onchange="compareDates()">
+                            <button type="button" class="btn btn-default btn-sm" id="editStart">
+                                <span class="material-icons">edit</span>
+                            </button>
+                        {% endif %}
+                    </p>
+
+                    <br/>
+                    <h5>Ending on:</h5>
+                    <p>
+                        <span id="currEnd">{{ training.ending_Date }}</span>
+                        {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                            <input type="date" value="{{ training.ending_Date }}" name="traEnd" id="newEndField" style="display: none" onchange="compareDates()">
+                            <button type="button" class="btn btn-default btn-sm" id="editEnd">
+                                <span class="material-icons">edit</span>
+                            </button>
+                        {% endif %}
+                    </p>
+
+                    <br/>
+                    <h5>Hours</h5>
+                    <p>
+                        <span id="currHours">{{ training.hours }}</span>
+                        {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                            <input value="{{ training.hours }}" name="traHours" id="newHoursField" style="display:none" required>
+                            <button type="button" class="btn btn-default btn-sm" id="editHours">
+                                <span class="material-icons">edit</span>
+                            </button>
+                        {% endif %}
+                    </p>
+                    <br/>
                 </div>
-                </p>
-                <br/>
-                <h5>Hours</h5>
-                <p>
-                    <span id="currHours">{{ training.hours }}</span>
-                    <input value="{{ training.hours }}" name="traHours" id="newHoursField" style="display:none" required>
-                    <button type="button" class="btn btn-default btn-sm" id="editHours">
-                        <span class="material-icons">edit</span>
-                    </button>
-                </p>
-                <br/>
-                <h5>Skill achieve</h5>
-                <table class="table table-hover table-bordered table-striped text-center">
-                    <thead>
-                    <tr>
-                        <th scope="col">Skill</th>
-                        <th scope="col">Points assigned</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for skill,point in skill_point %}
-                        <tr>
-                            <td>{{ skill.name }}</td>
-                            <td>{{ point }}</td>
-                            <td>
-                                <button type="button" class="btn btn-default btn-sm deleteSkill" id={{ skill.id }} data-toggle="modal" data-target="#deleteSkillModal" data-whatever="{{ skill.id }}">
-                                    <span class="material-icons" style="color:#a71d2a">delete</span>
-                                </button>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
 
-                <br/>
-                <button type="submit" class="btn btn-info" id="submitChanges">Submit changes</button>
-            </form>
-            <br/>
-            <button type="button" class="btn btn-outline-info float-right" data-toggle="modal" data-target="#editSkillModal">
-                Edit Skill
-            </button>
-            <br/>
-            <button type="button" class="btn btn-danger deleteTraining" id="{{ training.id }}" data-toggle="modal" data-target="#deleteTrainingModal" data-whatever="{{ training.id }}">
-                Delete Training
-            </button>
-        </div>
-        <!-- table dei employee nel training -->
-        <div class="tab-pane fade" id="nav-partecipant" role="tabpanel" aria-labelledby="nav-partecipant-tab">
-            <br/>
-            <form action="/training/{{ training.id }}" method="POST">
-                <input type="hidden" value="assignEmployees" name="actionToPerform">
-                <h5>Partecipants of the trainings</h5>
-                <table class="table table-hover table-bordered table-striped text-center">
-                    <thead>
-                    <tr>
-                        <td scope="col">Name</td>
-                        <td scope="col">Surname</td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for emp in employees %}
-                        <tr>
-                            <td><a href="/employee/{{ emp.id }}"> {{ emp.name }}</a></td>
-                            <td>{{ emp.surname }}</td>
-                            <td>
-
-                                <button type="button" class="btn btn-default btn-sm deleteEmployee" id={{ emp.id }} data-toggle="modal" data-target="#deassignEmployeeModal" data-whatever="{{ emp.id }}">
-                                    <span class="material-icons" style="color:#a71d2a">delete</span>
-                                </button>
-
-                            </td>
-
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                    <tfoot>
-                    <div class="form-row">
-                        <button type="button" class="btn btn-default btn-sm" id="addEmployee{{ training.id }}" onclick="toggleSelect({{training.id}})" data-toggle="tooltip" data-placement="top" title="Select an employee for this training">
-                            <span class="material-icons" style="color:#28a745">person_add</span>
+                <!-- Skills improved by the training -->
+                <div class="col-md-8">
+                    <h5>Skills trained</h5>
+                    {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                        <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#editSkillModal">
+                            Edit Skills
                         </button>
-                        <select class="addEmp" id="addEmployeeTraining{{ training.id }}" name="addEmployeeTraining{{ training.id }}" style="display: none">
-                            <option value="" selected disabled hidden>Choose an employee</option>
-                            <optgroup label="Available employee">
-                                {% for emp in employees1 %}
-                                    <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}</option>
-                                {% endfor %}
-                            </optgroup>
-                        </select>
-                    </div>
-                    </tfoot>
-                </table>
-                <button type="submit" class="btn btn-info">Assign employees</button>
+                    {% endif %}
+
+                    <table class="table table-hover table-bordered table-striped text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">Skill</th>
+                                <th scope="col">Points assigned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for skill,point in skill_point %}
+                                <tr>
+                                    <td>{{ skill.name }}</td>
+                                    <td>{{ point }}</td>
+                                    {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                                        <td>
+                                            <button type="button" class="btn btn-default btn-sm deleteSkill" id={{ skill.id }} data-toggle="modal" data-target="#deleteSkillModal" data-whatever="{{ skill.id }}">
+                                                <span class="material-icons" style="color:#a71d2a">delete</span>
+                                            </button>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="btn-group">
+                {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                    <br/>
+                    <button type="submit" class="btn btn-info" id="submitChanges">Submit changes</button>
+                    </form>
+                    <br/>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.admin %}
+                    <button type="button" class="btn btn-danger deleteTraining" id="{{ training.id }}" data-toggle="modal" data-target="#deleteTrainingModal" data-whatever="{{ training.id }}">
+                        Delete Training
+                    </button>
+                {% endif %}
+            </div>
+        {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+            <form action="/training/{{ training.id }}" method="POST" onsubmit="return confirm('By closing the training you will increase the related participants skills. Plus, you will not be able to edit the training info anymore. Do you want to close it?');">
+                <input type="hidden" value="closeTraining" name="actionToPerform">
+                <button type="submit" class="btn btn-outline-danger" name="closeTrainingSubmit" id="closeTrainingSubmit">Close training</button>
             </form>
-        </div>
+        {% endif %}
+    </div>
+    <!-- table dei employee nel training -->
+    <div class="tab-pane fade" id="nav-partecipant" role="tabpanel" aria-labelledby="nav-partecipant-tab">
+        <br/>
+        {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+            <form action="/training/{{ training.id }}" method="POST">
+            <input type="hidden" value="assignEmployees" name="actionToPerform">
+        {% endif %}
+        <h5>Partecipants of the trainings</h5>
+        <table class="table table-hover table-bordered table-striped text-center">
+            <thead>
+            <tr>
+                <td scope="col">Name</td>
+                <td scope="col">Surname</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for emp in employees %}
+                <tr>
+                    <td><a href="/employee/{{ emp.id }}"> {{ emp.name }}</a></td>
+                    <td>{{ emp.surname }}</td>
+                    <td>
+                        {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                            <button type="button" class="btn btn-default btn-sm deleteEmployee" id={{ emp.id }} data-toggle="modal" data-target="#deassignEmployeeModal" data-whatever="{{ emp.id }}">
+                                <span class="material-icons" style="color:#a71d2a">delete</span>
+                            </button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+                <tfoot>
+                <div class="form-row">
+                    <button type="button" class="btn btn-default btn-sm" id="addEmployee{{ training.id }}" onclick="toggleSelect({{training.id}})" data-toggle="tooltip" data-placement="top" title="Select an employee for this training">
+                        <span class="material-icons" style="color:#28a745">person_add</span>
+                    </button>
+                    <select class="addEmp" id="addEmployeeTraining{{ training.id }}" name="addEmployeeTraining{{ training.id }}" style="display: none">
+                        <option value="" selected disabled hidden>Choose an employee</option>
+                        <optgroup label="Available employee">
+                            {% for emp in employees1 %}
+                                <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    </select>
+                </div>
+                </tfoot>
+            {% endif %}
+        </table>
+        {% if not training.closed and current_user.is_authenticated and current_user.admin %}
+            <button type="submit" class="btn btn-info">Assign employees</button>
+            </form>
+        {% endif %}
+    </div>
+    </div>
+
+    {% if not training.closed and current_user.is_authenticated and current_user.admin %}
         <!--fine table partecipant-->
         <!--MODALS -->
         <div class="modal fade bd-example-modal-lg" id="deleteTrainingModal" tabindex="-1" role="dialog" aria-labelledby="deleteTrainingModalLabel" aria-hidden="true">
@@ -322,7 +366,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 
     <script type='text/javascript'>
         function removeRow(index) {
