@@ -761,9 +761,6 @@ def matching_algorithm(role_id, employee_list, job_or_role):
 
             # if the skill considered at the moment is in the list of the employee's skills
             has_single_skill = skill in employee_skills
-            # for emp_skill in employee_skills:
-            #     if emp_skill == s:
-            #         has_single_skill = True
 
             if has_single_skill == False:
                 has_all_skills = False

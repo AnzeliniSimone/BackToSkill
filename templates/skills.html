@@ -32,7 +32,6 @@
                           <thead>
                           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
                             <tr>
-                              <th scope="col">#</th>
                               <th scope="col">Name</th>
                               <th scope="col">Description</th>
                             </tr>
@@ -41,7 +40,6 @@
 {#                              {% set count=0 %}#}
                               {% for skill in skills %}
                                   <tr>
-                                      <th class="align-middle" scope="row">{{ loop.index }}</th>
                                       <td class="align-middle">{{skill.name}}</td>
                                       <td class="align-middle">{{ skill.description }}</td>
                                       {% if current_user.is_authenticated and current_user.admin %}
