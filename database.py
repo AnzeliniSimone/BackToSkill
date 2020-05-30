@@ -561,7 +561,7 @@ def get_skill_in_training_with_points(train_id):
     skills = Skill.query.filter(Skill.id.in_(skill_ids)).all()
     array=[]
     for skill in skills:
-        points = get_pointsassigned_by_training_to_skill(id,skill.id)
+        points = get_pointsassigned_by_training_to_skill(train_id,skill.id)
         array.append(tuple([skill,points]))
     return array
 
