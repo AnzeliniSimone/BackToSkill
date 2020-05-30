@@ -45,16 +45,22 @@
     <div class="container">
         <!--Alert-->
         {% if current_user.is_authenticated and current_user.admin %}
-        {% for field, errors in form.errors.items() %}
+        <!--Warning alert-->
+        {% if  form.errors.items()%}
         <div class="alert alert-warning alert-dismissible fade show mt-5" role="alert">
             <!-- alert-dismissible is the X in alert-->
-            <strong>Warning!</strong> {{ form[field].label }} {{ ', '.join(errors) }}
+            <strong>Warning!</strong><br><br>
+            <ul>
+                {% for field, errors in form.errors.items() %}
+                <li>{{ form[field].label }} {{ ', '.join(errors) }}</li>
+                {% endfor %}
+            </ul>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        {% endfor %}
-
+        {% endif %}
+        <!-- Save successfull alert -->
         {% if employee!=None %}
         <div class="alert alert-success alert-dismissible fade show mt-5" role="alert">
             <!-- alert-dismissible is the X in alert-->

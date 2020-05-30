@@ -127,8 +127,11 @@
 
                                     <tr>
                                         <td>
-                                            {{ emp.name }}
-                                            {{ emp.surname }}</td>
+                                            <a href="/employee/{{ emp.id }}">
+                                                {{ emp.name }}
+                                                {{ emp.surname }}
+                                            </a>
+                                        </td>
                                         <td>{{ grade  }}
                                         </td>
                                         <td><button  type="submit" class="btn btn-outline-primary btn-sm"> Assign Employee </button></td>
@@ -152,8 +155,10 @@
                                     <input type="hidden" value="{{ emp.id }}" name="AssignEmployee" id="AssignEmployee">
                                     <tr>
                                         <td >
-                                            {{ emp.name }}
-                                            {{ emp.surname }}
+                                            <a href="/employee/{{ emp.id }}">
+                                                {{ emp.name }}
+                                                {{ emp.surname }}
+                                            </a>
                                         </td>
                                         <td>
                                             {{ grade  }}
@@ -179,8 +184,10 @@
                                     <input type="hidden" value="{{ emp.id }}" name="AssignEmployee" id="AssignEmployee">
                                     <tr>
                                         <td>
-                                            {{ emp.name }}
-                                            {{ emp.surname }}
+                                            <a href="/employee/{{ emp.id }}">
+                                                {{ emp.name }}
+                                                {{ emp.surname }}
+                                            </a>
                                         </td>
                                         <td>
                                             {{ grade  }}

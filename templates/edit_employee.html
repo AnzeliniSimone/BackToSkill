@@ -249,23 +249,8 @@
                             <!--row-->
                         </div>
                         <!--Edit Employee Button--->
-                        <div class="row mt-5 ">
-                            <div class="col-6 text-right">
-                                <input type="reset" style="width: 200px" value="Reset" class="btn btn-light">
-                            </div>
-                            <div class="col-6">
-                                {{ form.submit(class="btn btn-primary",style="width: 200px" ) }}{{ form.hidden_tag() }}
-                            </div>
-                        </div>
-                        <div class="row mt-5 justify-content-center">
-                            {% if employee!=None %}
-                            <div>
-                                <a style="width: 200px" class=" text-white btn btn-danger"
-                                    href="{{ url_for('delete_employee_page',id=employee.id) }}">
-                                    Delete
-                                </a>
-                            </div>
-                            {% endif %}
+                        <div class="row mt-5 justify-content-center ">
+                            {{ form.submit(class="btn btn-primary",style="width: 200px" ) }}{{ form.hidden_tag() }}
                         </div>
                     </div>
                     <!--Tabs & edit button-->

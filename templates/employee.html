@@ -241,10 +241,10 @@
                         <div class="tab-pane fade" id="skills" role="tabpanel" aria-labelledby="skills-tab">
                             {% if list_soft==[] and list_hard==[] %}
                                 <div class="text-center mt-5">
-                                    <h4 ><em>No skills entered yet. Please to enter a skill click edit. </em></h4>
+                                    <h4><em>No skills entered yet. Please to enter a skill click edit. </em></h4>
                                 </div>
                             {% endif %}
-                            {% if list_soft!=[] and list_hard==[] %}
+                            {% if list_soft!=[]%}
                                 <!--Soft Skills-->
                                 <div class="row mt-5">
                                     <div class="col-6">
@@ -263,41 +263,7 @@
                                 </div>
                             {% endif %}
 
-                            {% if list_soft==[] and list_hard!=[] %}
-                                <!--Hard Skills-->
-                                <div class="row mt-5">
-                                    <div class="col-6">
-                                        <h4> Technical Skills </h4>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    {% for tupla in list_hard %}
-                                        <div class="col-6">
-                                            <b> {{ tupla[0].name }} </b>
-                                        </div>
-                                        <div class="col-3">
-                                            {{ tupla[1] }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            {% if list_soft!=[] and list_hard!=[] %}
-                                <!--Soft Skills-->
-                                <div class="row mt-5">
-                                    <div class="col-6">
-                                        <h4> Soft Skills </h4>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    {% for tupla in list_soft %}
-                                        <div class="col-6">
-                                            <b> {{ tupla[0].name }} </b>
-                                        </div>
-                                        <div class="col-3">
-                                            {{ tupla[1] }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                            {% if list_hard!=[] %}
                                 <!--Hard Skills-->
                                 <div class="row mt-5">
                                     <div class="col-6">
@@ -328,12 +294,12 @@
                                                     <th scope="col">Training </th>
                                                     <th scope="col">Beginning</th>
                                                     <th scope="col">Ending</th>
-                                                    <th scope="col">Skill improved</th>
+                                                    <th scope="col">Skills addressed</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                <h4>Trainings</h4>
                                                 {% for training in trainings %}
-                                                    <h4>Trainings</h4>
                                                     <tr>
                                                         <td>
                                                             <a href="/training/{{ training.id }}"> {{ training.name }} </a>
@@ -376,8 +342,8 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                <h4>Active projects</h4>
                                                 {% for project in current_emp_pjs %}
-                                                    <h4>Projects in Progress</h4>
                                                     <tr>
                                                         <td>
                                                             <a href="/project/{{ project.id }}"> {{ project.name }} </a>
@@ -403,8 +369,8 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                <h4>Complete Projects</h4>
                                                 {% for project in past_emp_pjs %}
-                                                    <h4>Complete Projects</h4>
                                                     <tr>
                                                         <td>
                                                             <a href="/project/{{ project[0].id }}"> {{ project[0].name }} </a>
@@ -431,8 +397,8 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                <h4>Complete Projects</h4>
                                                 {% for project in past_emp_pjs %}
-                                                    <h4>Complete Projects</h4>
                                                     <tr>
                                                         <td>
                                                             <a href="/project/{{ project[0].id }}"> {{ project[0].name }} </a>
@@ -447,8 +413,7 @@
                                             </table>
                                         </div> <!--COMPLETE PROJECTS-->
                                         <div class="text-center mt-3">
-                                            <h4 class="text-center mt-3"><em>There are not project in progress.</em></h4>
-                                            <h4 class="text-center"><em>Please if you want add {{ employee.surname }}  {{ employee.name }} to a new project go to the project section of the site </em></h4>
+                                            <h4 class="text-center"><em>The employees is not taking part in any project. Please if you want add {{ employee.surname }}  {{ employee.name }} to a new project go to the project section of the site </em></h4>
                                         </div>
                                     {% elif current_emp_pjs!=[] and past_emp_pjs==[] %}
                                         <div class="table-responsive mt-3">
@@ -462,8 +427,8 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
+                                                <h4>Active projects</h4>
                                                 {% for project in current_emp_pjs %}
-                                                    <h4>Projects in Progress</h4>
                                                     <tr>
                                                         <td>
                                                             <a href="/project/{{ project.id }}"> {{ project.name }} </a>
@@ -477,8 +442,7 @@
                                             </table>
                                         </div> <!--PROJECTS IN PROGRESS-->
                                     {% else %}
-                                        <h4 class="text-center mt-3"><em>Projects are not present yet.</em></h4>
-                                        <h4 class="text-center"><em>Please if you want add {{ employee.surname }}  {{ employee.name }} to a project go to the project section of the site</em></h4>
+                                        <h4 class="text-center"><em>The employee has no projects registered. Please if you want add {{ employee.surname }}  {{ employee.name }} to a project go to the project section of the site</em></h4>
                                     {% endif %}
 
                                 </div>
@@ -488,10 +452,20 @@
                     <!--Edit Employee Button--->
                     {% if current_user.is_authenticated and current_user.admin %}
                         <div class="row mt-5 ">
-                            <div class="col-8 text-right">
+                            <div class="col-6 text-right">
                                 <a href="{{ url_for('edit_employee',id=employee.id) }}">
-                                    <input type="button" style="width: 200px" value="EDIT" class="btn btn-primary">
+                                    <input type="button" style="width: 200px" value="Edit Employee" class="btn btn-primary">
                                 </a>
+                            </div>
+                            <div class="col-6 ">
+                                {% if employee!=None %}
+                                <div>
+                                    <a style="width: 200px" class=" text-white btn btn-danger"
+                                        href="{{ url_for('delete_employee_page',id=employee.id) }}">
+                                        Delete Employee
+                                    </a>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     {% endif %}

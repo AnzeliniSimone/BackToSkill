@@ -64,7 +64,7 @@
                                             <select class="form-control" id="inputSupervisor" name="prjSupervisor">
                                                 <option value="" selected>No supervisor</option>
                                                 {% for emp in employees %}
-                                                    <option value="{{ emp.id }}">{{ emp.name }} {{ emp.surname }}</option>
+                                                    <option value="{{ emp.id }}">{{ emp.name }} {{ emp.surname }} - {{ emp.get_job() }}</option>
                                                 {% endfor %}
                                             </select>
                                             <small id="selectHelp" class="form-text text-muted">To select multiple roles hold CTRL while clicking on them.</small>
@@ -94,7 +94,6 @@
                     <table class="table table-hover table-bordered table-striped text-center">
                         <thead>
                         <tr>
-                            <th scope="col">#</th>
                             <th scope="col">Project</th>
                             <th scope="col">Beginning</th>
                             <th scope="col">Ending</th>
@@ -105,12 +104,11 @@
                         <tbody>
                         {% for project in projects %}
                             <tr>
-                                <th scope="row">{{loop.index}}</th>
-                                <td><a href="/project/{{ project.id }}"> {{ project.name }} </a></td>
-                                <td>{{ project.starting_date }}</td>
-                                <td>{{ project.ending_date }}</td>
+                                <td style="width: 15%"><a href="/project/{{ project.id }}"> {{ project.name }} </a></td>
+                                <td style="width: 10%">{{ project.starting_date }}</td>
+                                <td style="width: 10%">{{ project.ending_date }}</td>
                                 <td>{{ project.description }}</td>
-                                <td>
+                                <td style="width: 15%">
                                     {% for sup in supervisors %}
                                         {% if sup.id == project.supervisor %}
                                             <a href="/employee/{{ sup.id }}">{{ sup.name }} {{ sup.surname }}</a>

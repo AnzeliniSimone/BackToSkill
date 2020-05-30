@@ -10,7 +10,7 @@
     {% if training is none %}
         <div class="alert alert-warning" role="alert"> No corresponding training found </div>
     {% else %}
-        <h3>Training: {{ training.name }}</h3>
+        <h3>Training: {{ training.name }}  {% if training.closed %}<span style="color: red">Closed</span>{% endif %}</h3>
     {% endif %}
 
     <!-- Nav for the tab panel -->
@@ -50,7 +50,7 @@
                     <p>
                         <span id="currStart">{{ training.starting_Date }}</span>
                         {% if not training.closed and current_user.is_authenticated and current_user.admin %}
-                            <input type="date" value="{{ training.starting_Date }}" name="traStart" id="newStartField" style="display: none" onchange="compareDates()">
+                            <input type="date" value="{{ training.starting_Date }}" name="traStart" id="newStartField" style="display: none">
                             <button type="button" class="btn btn-default btn-sm" id="editStart">
                                 <span class="material-icons">edit</span>
                             </button>
@@ -62,7 +62,7 @@
                     <p>
                         <span id="currEnd">{{ training.ending_Date }}</span>
                         {% if not training.closed and current_user.is_authenticated and current_user.admin %}
-                            <input type="date" value="{{ training.ending_Date }}" name="traEnd" id="newEndField" style="display: none" onchange="compareDates()">
+                            <input type="date" value="{{ training.ending_Date }}" name="traEnd" id="newEndField" style="display: none">
                             <button type="button" class="btn btn-default btn-sm" id="editEnd">
                                 <span class="material-icons">edit</span>
                             </button>
@@ -74,7 +74,7 @@
                     <p>
                         <span id="currHours">{{ training.hours }}</span>
                         {% if not training.closed and current_user.is_authenticated and current_user.admin %}
-                            <input value="{{ training.hours }}" name="traHours" id="newHoursField" style="display:none" required>
+                            <input type="number" value="{{ training.hours }}" name="traHours" id="newHoursField" style="display:none" required>
                             <button type="button" class="btn btn-default btn-sm" id="editHours">
                                 <span class="material-icons">edit</span>
                             </button>
@@ -170,17 +170,17 @@
             {% if not training.closed and current_user.is_authenticated and current_user.admin %}
                 <tfoot>
                 <div class="form-row">
-                    <button type="button" class="btn btn-default btn-sm" id="addEmployee{{ training.id }}" onclick="toggleSelect({{training.id}})" data-toggle="tooltip" data-placement="top" title="Select an employee for this training">
+                    <button type="button" class="btn btn-default btn-sm" id="addEmployee" onclick="toggleSelect()" data-toggle="tooltip" data-placement="top" title="Select an employee for this training">
                         <span class="material-icons" style="color:#28a745">person_add</span>
                     </button>
-                    <select class="addEmp" id="addEmployeeTraining{{ training.id }}" name="addEmployeeTraining{{ training.id }}" style="display: none">
-                        <option value="" selected disabled hidden>Choose an employee</option>
-                        <optgroup label="Available employee">
+
+                    <div class="form-group">
+                        <select multiple class="form-control addEmp" id="addEmployeeTraining" name="addEmployeeTraining" style="display: none" aria-describedby="selectHelp">
                             {% for emp in employees1 %}
-                                <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }}</option>
+                                <option value="{{emp.id}}">{{emp.name}} {{ emp.surname }} - {{ emp.get_job() }}</option>
                             {% endfor %}
-                        </optgroup>
-                    </select>
+                        </select>
+                    </div>
                 </div>
                 </tfoot>
             {% endif %}
@@ -475,11 +475,10 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
 
-        function toggleSelect(index) {
-            $("#addEmployeeTraining"+index).toggle();
-            $("#addEmployee"+index).toggle();
-            $("#undoAdd"+index).toggle();
-            $("#addEmployeeTraining"+index).val("");
+        function toggleSelect() {
+            $("#addEmployeeTraining").toggle();
+            $("#addEmployee").toggle();
+            $("#addEmployeeTraining").val("");
         }
 
         function toggleEvaluations() {
@@ -487,21 +486,6 @@
             $(".evaluationLabel").hide();
             $("#submitEvaluations").show();
             $("#toggleEvaluationInput").hide();
-        }
-
-        function compareDates(){
-            var start = document.getElementById("newStartField").value;
-            var end = document.getElementById("newEndField").value;
-            var alert = document.getElementById("warningDates");
-            var submitDates = document.getElementById("submitChanges");
-            if (new Date(start).getTime() < new Date(end).getTime()){
-                submitDates.disabled = true;
-                alert.show();
-            }
-            else{
-                submitDates.disabled = false;
-                alert.hide();
-            }
         }
 
         $(window).bind('beforeunload', function(){

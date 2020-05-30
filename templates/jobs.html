@@ -139,17 +139,23 @@
                         <th colspan="3">Vacant jobs</th>
                     </tr>
                     <tr>
-                        <th>#</th>
                         <th>Job</th>
                         <th>Description</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for role in open %}
                         <tr>
-                            <th scope="row">{{ loop.index }}</th>
                             <td><a href="/job/{{ role.id }}"> {{ role.name }} </a></td>
                             <td>{{ role.description}}</td>
+                            <td>
+                                <a href="/job/{{ role.id }}">
+                                    <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Select an employee for this job">
+                                        <span class="material-icons" style="color:#28a745">person_add</span>
+                                    </button>
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -160,20 +166,20 @@
                         <th colspan="3">Assigned jobs</th>
                     </tr>
                     <tr>
-                        <th>#</th>
                         <th>Job</th>
+                        <th>Description</th>
                         <th>Employee</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for role in closed %}
                         <tr>
-                            <th scope="row">{{ loop.index }}</th>
                             <td><a href="/job/{{ role.id }}"> {{ role.name }} </a></td>
+                            <td> {{ role.description }} </td>
                             <td>
                                 {% for empl in employee %}
                                     {% if empl.role==role.id %}
-                                        {{empl.name}} {{ empl.surname }}
+                                        <a href="/employee/{{ empl.id }}">{{empl.name}} {{ empl.surname }}</a>
                                     {% endif %}
                                 {% endfor %}
                             </td>

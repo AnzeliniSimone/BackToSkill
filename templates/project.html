@@ -59,7 +59,7 @@
                             Beginning on:
                             <span id="currStart">{{ project.starting_date }}</span>
                             {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
-                                <input type="date" value="{{ project.starting_date }}" name="prjStart" id="newStartField" style="display: none" onchange="compareDates()">
+                                <input type="date" value="{{ project.starting_date }}" name="prjStart" id="newStartField" style="display: none">
                                 <button type="button" class="btn btn-default btn-sm" id="editStart">
                                     <span class="material-icons">edit</span>
                                 </button>
@@ -68,7 +68,7 @@
                             and ending on:
                             <span id="currEnd">{{ project.ending_date }}</span>
                             {% if current_user.is_authenticated and (current_user.admin or (current_user.project == project.id))%}
-                                <input type="date" value="{{ project.ending_date }}" name="prjEnd" id="newEndField" style="display: none" onchange="compareDates()">
+                                <input type="date" value="{{ project.ending_date }}" name="prjEnd" id="newEndField" style="display: none">
                                 <button type="button" class="btn btn-default btn-sm" id="editEnd">
                                     <span class="material-icons">edit</span>
                                 </button>
@@ -471,21 +471,6 @@
             $(".evaluationLabel").hide();
             $("#submitEvaluations").show();
             $("#toggleEvaluationInput").hide();
-        }
-
-        function compareDates(){
-            var start = document.getElementById("newStartField").value;
-            var end = document.getElementById("newEndField").value;
-            var alert = document.getElementById("warningDates");
-            var submitDates = document.getElementById("submitChanges");
-            if (new Date(start).getTime() < new Date(end).getTime()){
-                submitDates.disabled = true;
-                alert.show();
-            }
-            else{
-                submitDates.disabled = false;
-                alert.hide();
-            }
         }
 
         $(window).bind('beforeunload', function(){

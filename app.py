@@ -1,17 +1,11 @@
 from flask import Flask, request, session, render_template, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import not_, or_, and_
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 import datetime
 from datetime import datetime as dt
 from flask_wtf import Form, FlaskForm
 from wtforms import StringField, SubmitField, DateField, SelectField, FileField, validators
 from wtforms.validators import DataRequired, InputRequired
-from flask_uploads import UploadSet
-from flask_uploads import configure_uploads
-from flask_uploads import IMAGES, patch_request_class
 import os, sys
-from sqlalchemy import true, false
 
 from database import *
 from flask_bcrypt import Bcrypt
@@ -21,7 +15,7 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'nksndfkvnfjkvn'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database_per_prove.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 track_modifications = app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', False)
 bcrypt=Bcrypt(app)
@@ -29,35 +23,134 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# /// ROUTES \\\
-# Here we define the routes used to get to the html pages and the functions performing the actions needed to retrieve
-# the correct data from the db
+#            /// ROUTES \\\
+#            Here we define the routes used to get to the html pages and the functions performing the actions needed to retrieve
+#            the correct data from the db
 
 # I will subdivide the routes based on their "macro page"
 
+# //LOGIN AND USER MANAGEMENT\\
+
+### LOGIN MANAGER SETTINGS ###
+@login_manager.user_loader
+def load_user(user_id):
+    return get_user_by_id(user_id)
+
+
+### LOGIN PAGE ###
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Manage login procedure
+    if request.method=='POST':
+        email = request.form.get("userEmail")
+        password = request.form.get("userPassword")
+        user = get_user_by_email(email)
+        if user and bcrypt.check_password_hash(user.password, password):
+            if request.form.get("rememberMe"):
+                login_user(user,True)
+            else:
+                login_user(user)
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html', error="Incorrect username or password", email=email)
+
+    return render_template('login.html')
+
+
+### LOGOUT PROCEDURE ROUTE ###
+@app.route('/logout', methods=['POST'])
+def logout():
+    if request.method=="POST":
+        logout_user()
+    return redirect("/home")
+
+
+### USERS MANAGEMENT PAGE ###
+@app.route('/users', methods=['GET', 'POST'])
+@login_required
+def users():
+    # Returns a list of all the users, divided into admins and common users
+
+    if request.method=='POST':
+        # Same method of the project page to handle the various forms
+        action = request.form.get("actionToPerform")
+
+        if action == "deleteUser":
+            user_id = request.form.get("userToDelete")
+            if user_id == current_user.id:
+                logout_user()
+            deleted = delete_user(user_id)
+            if not current_user.is_authenticated:
+                return redirect("/home")
+
+        elif action == "editPermission":
+            user_id = request.form.get("userToAdmin")
+            new_admin = make_user_admin(user_id)
+
+        elif action == "editEmail":
+            user_id = current_user.id
+            new_mail = request.form.get("userEmail")
+            user = edit_user_email(user_id, new_mail)
+
+        elif action == "newUser":
+            name = request.form.get("userName")
+            surname = request.form.get("userSurname")
+            mail = request.form.get("userEmail")
+            password = request.form.get("userPassword")
+            confirm_password = request.form.get("userConfirmPassword")
+            permission = request.form.get("userPermission")
+            prj = request.form.get("projectResponsible")
+            if password == confirm_password:
+                if permission == "True":
+                    user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), prj, True)
+                else:
+                    user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), prj, False)
+
+        elif action == "changePassword":
+            user_id = current_user.id
+            user = get_user_by_id(user_id)
+            old_password = request.form.get("oldPassword")
+            if user and bcrypt.check_password_hash(user.password, old_password):
+                new_password = request.form.get("newPassword")
+                confirm_password = request.form.get("confirmPassword")
+                if new_password == confirm_password:
+                    edited = edit_user_password(user_id, bcrypt.generate_password_hash(new_password).encode('utf-8'))
+                else:
+                    return render_template("users.html", error_password="Confirmation is different from new password")
+            else:
+                return render_template("users.html", error_password="Error with your old password")
+
+    admins = get_admins(True)
+    normal_users = get_admins(False)
+    prjs = get_projects()
+    return render_template("users.html", admins=admins, users=normal_users, projects = prjs)
+
+
 # //MAIN PAGES (first dropdown menu)\\
+
+### HOME PAGE ###
 @app.route('/')
 @app.route('/home')
 @app.route('/index')
 def index():
     return render_template('index.html')
 
-
+### GUIDE PAGE ###
 @app.route('/guide')
 def guide():
     return render_template('guide.html')
 
-
+### ABOUT US PAGE ###
 @app.route('/about')
 def about():
     return render_template('about.html')
 
-
+### FREQUENTLY ASKED QUESTIONS PAGE ###
 @app.route('/faq')
 def faq():
     return render_template('FAQ.html')
 
-
+### TEAM MEMBERS PAGE ###
 @app.route('/team')
 def team():
     return render_template('team.html')
@@ -68,7 +161,7 @@ def team():
 @app.route("/skills", methods=['GET','POST'])
 @app.route('/skills/<kind>')
 @login_required
-def skills(kind="soft", s=None):
+def skills(kind="soft"):
     if request.method == 'POST':
         action = request.form.get("actionToPerform")
         kind="soft"
@@ -98,6 +191,7 @@ def skills(kind="soft", s=None):
 
 
 # //EMPLOYEES PAGES (third button of navbar)\\
+
 ###EMPLOYEES GRID###
 @app.route('/employees',methods=["GET","POST"])
 @login_required
@@ -118,7 +212,6 @@ def employees():
     else:
         employees = get_employees()
     return render_template('employees.html', employees=employees,search=search,roles=roles)
-###END EMPLOYEES GRID###
 
 
 ###CLASS FLASK FORM FOR ADD NEW EMPLOYEE###
@@ -143,8 +236,6 @@ class EmployeeForm(FlaskForm):
     education_level = StringField('Level of Education')
     language_certificate = StringField('Language Certifications')
     submit = SubmitField('Save')
-
-
 ### END CLASS FLASK FORM FOR ADD NEW EMPLOYEE###
 
 
@@ -158,9 +249,6 @@ def employee(id):
     projects = get_projects_of_employee(id)
     past_projects, past_supervisors = get_past_projects()
     current_projects, current_supervisors = get_current_projects()
-    print projects
-    print past_projects
-    print current_projects
     skills = get_skills_of_employee(id)
     roles = get_roles()
     list_hard = []
@@ -172,9 +260,9 @@ def employee(id):
     # Employee Skills
     for skill in skills:
         score = get_gradeofskill_by_emp_skill(id, skill.id)
-        if skill.type == 'Hard':
+        if skill.type.lower() == 'hard':
             list_hard.append((skill, score))
-        elif skill.type == 'Soft':
+        elif skill.type.lower() == 'soft':
             list_soft.append((skill, score))
     # Employee Projects
     for project in projects:
@@ -191,14 +279,12 @@ def employee(id):
                            current_emp_pjs=current_emp_pjs, message=message, roles=roles)
 
 
-### END EMPLOYEE PERSONAL PAGE ###
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-###ADD NEW EMPLOYEE PAGE###
+### NEW EMPLOYEE PAGE ###
 @app.route('/add_employee', methods=['GET', 'POST'])
 @login_required
 def new_employee():
@@ -274,9 +360,6 @@ def new_employee():
     return render_template('newemployee.html', employee=employee, form=form, skills=skills)
 
 
-### END ADD NEW EMPLOYEE PAGE###
-
-
 ###DELETE EMPLOYEE###
 @app.route('/delete_employee/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -285,8 +368,6 @@ def delete_employee_page(id):
     delete_employee(id)
     return redirect(url_for("employees"))
 
-
-###DELETE EMPLOYEE###
 
 @app.after_request
 def add_header(r):
@@ -398,7 +479,9 @@ def edit_employee(id):
                            skills=skills, dic=dic)
 
 
-# //JOBS PAGES\\
+# //JOBS PAGES (fourth dropdown menu)\\
+
+### JOBS LIST PAGE ###
 @app.route('/jobs',methods=['POST'])
 @app.route('/jobs')
 @login_required
@@ -435,10 +518,7 @@ def jobs():
     hard_skill=get_hard_skills()
     job_skill=soft_skill+hard_skill
     roles=get_roles()
-    employee_list=[]
-
-    for role in roles:
-        employee_list.append(get_employee_by_role(role.id))
+    employee_list=get_employees()
 
     open=[]
     closed=[]
@@ -451,6 +531,7 @@ def jobs():
     return render_template('jobs.html',softskill=soft_skill,hardskill=hard_skill,role=roles,open=open,closed=closed,employee=employee_list,job_skill=job_skill)
 
 
+### SINGLE JOB PAGE ###
 @app.route('/job/<int:id>',methods=['GET','POST'])
 @app.route('/job/<int:id>')
 @login_required
@@ -499,7 +580,7 @@ def job(id):
     # get the grades of the skills of the employee in db
     dic = []
     for i in skill:
-        grade = get_gradeofskill_of_a_role(id, i.id)
+        grade = get_gradeofskill_required_for_a_job(id, i.id)
         dic.append((i.id,i.name, grade))
     role=get_role_by_id(id)
     all_skills=get_skills()
@@ -512,7 +593,9 @@ def job(id):
     return render_template('job.html', role=role, skill=skill, grade =skill_id, var1=var1, var2=var2, var3=var3, empl=empl, all_skill=all_skills, dic=dic)
 
 
-# //TRAININGS PAGES (trainings dropdown)\\
+# //TRAININGS PAGES (fifth dropdown)\\
+
+### TRAININGS LIST PAGE ###
 @app.route('/trainings',methods=['POST'])
 @app.route('/trainings/<period>')
 @login_required
@@ -563,6 +646,7 @@ def trainings(period="all"):
     return render_template('trainings.html',skills=skills,trainings_list=trainings_list,range=ranges)
 
 
+### SINGLE TRAINING PAGE ###
 @app.route('/training/<int:id>', methods=['GET','POST'])
 @login_required
 def training(id):
@@ -581,11 +665,9 @@ def training(id):
             edited_Tra=edit_training_info(id,tra_name,tra_start_date,tra_end_date,tra_hours)
 
         elif action=="assignEmployees":
-            training=get_trainings()
-            for tra in training:
-                emp_id = request.form.get("addEmployeeTraining"+str(tra.id))
-                if emp_id:
-                    add_employee_to_training(id,emp_id)
+            emp_ids = request.form.getlist("addEmployeeTraining")
+            for emp_id in emp_ids:
+                add_employee_to_training(id,emp_id)
 
         elif action=="deleteTraining":
             delete_training(id)
@@ -636,7 +718,6 @@ def training(id):
         skill=get_skill_by_id(k)
         skills.append(skill)
 
-
     # get the grades of the skills of the employee in db
     dic = []
     for i in skills:
@@ -647,12 +728,14 @@ def training(id):
     training=get_trainings_by_id(id)
     skill_point=get_skill_in_training_with_points(id)
     emp=get_employees_in_training(id)
-    employees1=get_employees()
+    employees1=get_employees_not_in_training(id)
 
     return render_template('training.html',training=training,skill_point=skill_point,employees=emp,dic=dic,skills=skills,all_skill=all_skill,employees1=employees1)
 
 
-# //PROJECTS PAGES\\
+# //PROJECTS PAGES (last dropdown in the navbar)\\
+
+### PROJECTS LIST PAGE ###
 @app.route('/projects', methods=['GET', 'POST'])
 @app.route('/projects/<period>')
 @login_required
@@ -698,6 +781,7 @@ def projects(period="all"):
     return render_template('projects.html', projects=projects_list, period=period, supervisors=supervisors, roles=possible_roles, employees=emp)
 
 
+### SINGLE PROJECT PAGE ###
 @app.route('/project/<int:id>', methods=['GET', 'POST'])
 @login_required
 def project(id):
@@ -800,6 +884,9 @@ def project(id):
                            other_roles=other_roles, closable=closable, supervisor=supervisor, employees=all_emps)
 
 
+# // ROLES IN PROJECTS PAGES \\
+
+### EDIT ROLE PAGE ###
 @app.route('/edit_role/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_role(id):
@@ -835,6 +922,8 @@ def edit_role(id):
         for skill in dic:
             add_skill_to_role_in_project(role_updated.id, skill[0], skill[1])  # insert all new skills requirements
 
+        return redirect('/roles')
+
     # Creates a list of tuples containing the skill id, the skill name and the grade required for the role
     skills, grades = role_in_project.get_skills_required()
     dic = []
@@ -843,6 +932,7 @@ def edit_role(id):
     return render_template('edit_role.html', role=role_in_project, all_skills=all_skills, dic=dic)
 
 
+### ROLES LIST PAGE ###
 @app.route('/roles', methods=['GET', 'POST'])
 @login_required
 def roles():
@@ -881,98 +971,6 @@ def roles():
     roles = get_roles_in_projects()
     skills = get_skills()
     return render_template('roles.html', roles=roles, all_skills=skills)
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return get_user_by_id(user_id)
-
-
-# //LOGIN AND USER MANAGEMENT\\
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    # Manage login procedure
-    if request.method=='POST':
-        email = request.form.get("userEmail")
-        password = request.form.get("userPassword")
-        user = get_user_by_email(email)
-        if user and bcrypt.check_password_hash(user.password, password):
-            if request.form.get("rememberMe"):
-                login_user(user,True)
-            else:
-                login_user(user)
-            return redirect(url_for('index'))
-        else:
-            return render_template('login.html', error="Incorrect username or password", email=email)
-
-    return render_template('login.html')
-
-
-@app.route('/logout', methods=['POST'])
-def logout():
-    if request.method=="POST":
-        logout_user()
-    return redirect("/home")
-
-
-@app.route('/users', methods=['GET', 'POST'])
-@login_required
-def users():
-    # Returns a list of all the users, divided into admins and common users
-
-    if request.method=='POST':
-        # Same method of the project page to handle the various forms
-        action = request.form.get("actionToPerform")
-
-        if action == "deleteUser":
-            user_id = request.form.get("userToDelete")
-            if user_id == current_user.id:
-                logout_user()
-            deleted = delete_user(user_id)
-            if not current_user.is_authenticated:
-                return redirect("/home")
-
-        elif action == "editPermission":
-            user_id = request.form.get("userToAdmin")
-            new_admin = make_user_admin(user_id)
-
-        elif action == "editEmail":
-            user_id = current_user.id
-            new_mail = request.form.get("userEmail")
-            user = edit_user_email(user_id, new_mail)
-
-        elif action == "newUser":
-            name = request.form.get("userName")
-            surname = request.form.get("userSurname")
-            mail = request.form.get("userEmail")
-            password = request.form.get("userPassword")
-            confirm_password = request.form.get("userConfirmPassword")
-            permission = request.form.get("userPermission")
-            prj = request.form.get("projectResponsible")
-            if password == confirm_password:
-                if permission == "True":
-                    user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), prj, True)
-                else:
-                    user = create_user(name, surname, mail, bcrypt.generate_password_hash(password).encode('utf-8'), prj, False)
-
-        elif action == "changePassword":
-            user_id = current_user.id
-            user = get_user_by_id(user_id)
-            old_password = request.form.get("oldPassword")
-            if user and bcrypt.check_password_hash(user.password, old_password):
-                new_password = request.form.get("newPassword")
-                confirm_password = request.form.get("confirmPassword")
-                if new_password == confirm_password:
-                    edited = edit_user_password(user_id, bcrypt.generate_password_hash(new_password).encode('utf-8'))
-                else:
-                    return render_template("users.html", error_password="Confirmation is different from new password")
-            else:
-                return render_template("users.html", error_password="Error with your old password")
-
-    admins = get_admins(True)
-    normal_users = get_admins(False)
-    prjs = get_projects()
-    return render_template("users.html", admins=admins, users=normal_users, projects = prjs)
 
 
 if __name__ == '__main__':

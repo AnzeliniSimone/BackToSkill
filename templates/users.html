@@ -55,7 +55,6 @@
                     <thead>
                     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
                     <tr>
-                        <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                     </tr>
@@ -63,8 +62,7 @@
                     <tbody>
                     {% for admin in admins %}
                         <tr>
-                            <th class="align-middle" scope="row">{{ loop.index }}</th>
-                            <td class="align-middle">{{admin.name}} {{ admin.username }}</td>
+                            <td class="align-middle">{{admin.name}} {{ admin.surname }}</td>
                             <td class="align-middle">{{admin.email}}</td>
                         </tr>
                     {% endfor %}
@@ -77,7 +75,6 @@
                 <table class="table table-bordered table-light table-striped text-center">
                     <thead>
                     <tr>
-                        <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Project</th>
@@ -86,8 +83,7 @@
                     <tbody>
                     {% for user in users %}
                         <tr>
-                            <th class="align-middle" scope="row">{{ loop.index }}</th>
-                            <td class="align-middle">{{user.name}} {{ user.username }}</td>
+                            <td class="align-middle">{{user.name}} {{ user.surname }}</td>
                             <td class="align-middle">{{user.email}}</td>
                             <td class="align-middle">
                                 {% if user.project %}

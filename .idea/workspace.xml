@@ -3,9 +3,34 @@
   <component name="ChangeListManager">
     <list default="true" id="5a303f48-731f-4e1a-8642-c38f1325a365" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/database.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database_per_prove.db" beforeDir="false" afterPath="$PROJECT_DIR$/database_per_prove.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/skills.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/skills.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/profile/image_profile_11.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/profile/image_profile_12.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/profile/image_profile_2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/static/images/profile/image_profile_2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/profile/image_profile_3.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/static/images/profile/image_profile_3.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/profile/image_profile_5.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/static/images/profile/image_profile_5.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/profile/image_profile_6.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/static/images/profile/image_profile_6.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/images/profile/image_profile_7.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/static/images/profile/image_profile_7.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/FAQ.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/FAQ.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/edit_employee.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/edit_employee.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/employee.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/employee.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/employees.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/employees.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/guide.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/guide.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/job.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/job.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/jobs.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/jobs.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/layout.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/newemployee.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/newemployee.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/project.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/project.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/projects.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/projects.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/training.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/training.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/trainings.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/trainings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/users.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/users.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -52,9 +77,9 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../BackToSkill_Giulia" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../BackToSkill_really_final 2" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -167,7 +192,16 @@
       <workItem from="1589631856021" duration="23006000" />
       <workItem from="1589726818168" duration="24000" />
       <workItem from="1589812166954" duration="1232000" />
-      <workItem from="1589879065464" duration="1852000" />
+      <workItem from="1589879065464" duration="2952000" />
+      <workItem from="1589886457369" duration="23577000" />
+      <workItem from="1590043779548" duration="616000" />
+      <workItem from="1590155185964" duration="1513000" />
+      <workItem from="1590238231964" duration="3894000" />
+      <workItem from="1590338143991" duration="2361000" />
+      <workItem from="1590496841548" duration="2473000" />
+      <workItem from="1590744519977" duration="645000" />
+      <workItem from="1590770878245" duration="577000" />
+      <workItem from="1590828097364" duration="403000" />
     </task>
     <servers />
   </component>
@@ -188,6 +222,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/BackToSkill$BackToSkill.coverage" NAME="BackToSkill Coverage Results" MODIFIED="1589879080948" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BackToSkill$BackToSkill.coverage" NAME="BackToSkill Coverage Results" MODIFIED="1590828137749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

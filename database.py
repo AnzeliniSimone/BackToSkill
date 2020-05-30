@@ -5,7 +5,10 @@ from random import randint
 
 db = SQLAlchemy()
 
+### MODEL CLASSES FOR SQLAlchemy DB MANAGEMENT ###
 
+
+# User who has access to the website's features
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -35,6 +38,7 @@ class User(db.Model):
             raise NotImplementedError('No `id` attribute - override `get_id`')
 
 
+# Role that an employee has in the company, i.e. his/her job
 class Role(db.Model):
     __tablename__ = 'role'
     id = db.Column(db.Integer, primary_key=True)
@@ -47,6 +51,7 @@ class Role(db.Model):
         return Employee.query.filter(Employee.role == self.id).all()
 
 
+# Person employed in the firm
 class Employee(db.Model):
     __tablename__ = 'employee'
     id = db.Column(db.Integer, primary_key=True)
@@ -69,8 +74,14 @@ class Employee(db.Model):
     language_certificate = db.Column(db.String)
 
     def get_job(self):
-        return get_role_by_id(self.role).name
+        r= get_role_by_id(self.role)
+        if r:
+            return r.name
+        else:
+            return "No job assigned"
 
+
+# Skills can be hard (technical, practical) or soft (interaction, personal attitude)
 class Skill(db.Model):
     __tablename__ = 'skill'
     id = db.Column(db.Integer, primary_key=True)
@@ -83,6 +94,7 @@ class Skill(db.Model):
     role = db.relationship("Role", secondary="role_skill")
 
 
+# Projects carried on by the firm
 class Project(db.Model):
     __tablename__ = 'project'
     id = db.Column(db.Integer, primary_key=True)
@@ -94,6 +106,7 @@ class Project(db.Model):
     supervisor = db.Column(db.Integer, db.ForeignKey('employee.id'))
 
 
+# Role that an employee can have inside a project team
 class Role_in_project(db.Model):
     __tablename__ = 'role_in_project'
     id = db.Column(db.Integer, primary_key=True)
@@ -110,6 +123,7 @@ class Role_in_project(db.Model):
         return skills,grades
 
 
+# Trainings are set by the firm to help employees improve specific skills
 class Training(db.Model):
     __tablename__ = 'training'
     id = db.Column(db.Integer, primary_key=True)
@@ -127,6 +141,7 @@ class Training(db.Model):
             skills.append(s.name)
         return skills
 
+### MANY TO MANY ASSOCIATIONS BETWEEN CLASSES ###
 
 class Employee_Skill(db.Model):
     __tablename__ = 'employee_skill'
@@ -173,7 +188,6 @@ class Role_in_project_Skill(db.Model):
     skill = db.relationship("Skill", backref='role_in_project_skill')
 
 
-# // NEW ADDITIONS \\
 class Role_Skill(db.Model):
     __tablename__ = 'role_skill'
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), primary_key=True)
@@ -183,32 +197,25 @@ class Role_Skill(db.Model):
     skill = db.relationship("Skill", backref='role_skill')
 
 
-def fill_users(db):
-    emp = Employee()
-    for i in range(10):
-        emp = Employee(name="Emp "+str(i+1), surname="loyee", email="emp"+str(i)+"@b2s.com", date_of_birth=datetime.date(randint(1965,1998),randint(1,12),randint(1,28)), driving_licence=True)
-        db.session.add(emp)
-    db.session.commit()
-
-
-    # // GETTERS \\
+### FUNCTIONS TO RETRIEVE DATA
 
 # Returns a list of all the employees
 def get_employees():
     employees=Employee.query.all()
-    employees.sort(key=lambda x: x.name)
+    employees.sort(key=lambda x: x.surname)
     return employees
+
 
 def get_employee_skill_by_id(emp_id):
     employee = Employee.query.filter(Employee.id == emp_id).first()
     skills = employee.skill
     return skills
 
+
 def get_employee_by_id(emp_id):
     return Employee.query.filter(Employee.id==emp_id).first()
 
 
-    # Returns a list of all the projects
 def get_projects():
     projects=Project.query.all()
     projects.sort(key=lambda x: x.name)
@@ -235,18 +242,20 @@ def get_skills_required_by_role(role_id):
     skill_list=role.skill
     return skill_list
 
-def get_gradeofskill_of_a_role(role_id,skill_id):
+
+def get_gradeofskill_required_for_a_job(role_id,skill_id):
     role_skill= Role_Skill.query.filter(Role_Skill.role_id==role_id,Role_Skill.skill_id==skill_id).first()
     return role_skill.grade_required
-
 
 
 def get_skill_id_of_a_role(role_id):
     role=Role_Skill.query.filter(Role_Skill.role_id==role_id).all()
     return role
 
+
 def get_project_by_id(prj_id):
     return Project.query.filter(Project.id==prj_id).first()
+
 
 def get_employee_by_role(role_id):
     empl=Employee.query.filter(Employee.role==role_id).first()
@@ -307,7 +316,7 @@ def get_soft_skills():
     ss.sort(key=lambda x: x.name)
     return ss
 
-# CHANGED!!!!
+
 # Returns a list of all the hardskills
 def get_hard_skills():
     hs=Skill.query.filter(or_(Skill.type=="hard", Skill.type=="Hard")).all()
@@ -335,11 +344,14 @@ def get_trainings():
     trainings.sort(key=lambda x: x.name)
     return trainings
 
+
 def get_past_trainings():
-    past_tra = Training.query.filter(Training.ending_Date < datetime.date.today()).all()
+    past_tra = Training.query.filter(Training.closed==True).all()
     return past_tra
+
+
 def get_current_trainings():
-    current_tra= Training.query.filter(Training.ending_Date>=datetime.date.today()).all()
+    current_tra= Training.query.filter(Training.closed==False).all()
     return current_tra
 
 
@@ -394,6 +406,7 @@ def get_employees_in_training(train_id):
             emp_ids.append(l.emp_id)
     employees = Employee.query.filter(Employee.id.in_(emp_ids)).all()
     return employees
+
 
 # Returns a list of all the projects in which is involved a given employee (identified by the id passed)
 def get_projects_of_employee(emp_id):
@@ -525,16 +538,55 @@ def get_employees_with_evaluation(prj_id):
     return emp_eva
 
 
-# TODO: RISCRIVERE
 def get_number_of_skills():
-    descending = Skill.query.order_by(Skill.id.desc())
-    return descending.first().id
+    skills = get_skills()
+    return len(skills)
 
 
 def get_suitable_emp_for_job(role_id):
     return matching_algorithm(role_id, get_employees(), True)
-# // SETTERS \\
 
+
+def get_trainings_by_id(train_id):
+    tra=Training.query.filter(Training.id==train_id).first()
+    return tra
+
+
+def get_skill_in_training_with_points(train_id):
+    link=Training_Skill.query.filter(Training_Skill.train_id==train_id).all()
+    skill_ids=[]
+    for l in link:
+        if l.skill_id:
+            skill_ids.append(l.skill_id)
+    skills = Skill.query.filter(Skill.id.in_(skill_ids)).all()
+    array=[]
+    for skill in skills:
+        points = get_pointsassigned_by_training_to_skill(id,skill.id)
+        array.append(tuple([skill,points]))
+    return array
+
+
+# if admin == false returns normal users, if admin == true returns admins
+def get_admins(admin):
+    admins=User.query.filter(User.admin==admin).all()
+    return admins
+
+
+def get_grade_of_skill_of_employee(emp_id, skill_id):
+    emp_skill = Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id,Employee_Skill.skill_id == skill_id).first()
+    return emp_skill
+
+
+def get_employees_not_in_training(train_id):
+    emps_in_training = get_employees_in_training(train_id)
+    ids = []
+    for e in emps_in_training:
+        ids.append(e.id)
+    emps_not_in_training = Employee.query.filter(Employee.id.notin_(ids)).all()
+    return emps_not_in_training
+
+
+# // SETTERS \\
 def add_skill(name, skill_type, desc):
     skill = Skill(name=name, description=desc, type=skill_type)
     db.session.add(skill)
@@ -623,7 +675,7 @@ def remove_role_from_project(prj_id, role_id):
     prj_role = Project_Role.query.filter(Project_Role.role_id==role_id, Project_Role.prj_id==prj_id).delete(synchronize_session='fetch')
 
 
-def add_role_todb(name, description):
+def add_role_todb(name, description=None):
     role=Role(name=name,description=description)
     db.session.add(role)
     db.session.commit()
@@ -654,34 +706,20 @@ def add_employee_to_project(prj_id, role_id, emp_id):
     db.session.commit()
     return prj_role
 
+
 def add_skill_to_training(train_id,skill_id,grade):
     skill_train=Training_Skill(train_id=train_id,skill_id=skill_id,points=grade)
     db.session.add(skill_train)
     db.session.commit()
 
+
 def add_training_to_db(name,start,end,hours):
-    training=Training(name=name,starting_Date=start,ending_Date=end,hours=hours)
+    training=Training(name=name,starting_Date=start,ending_Date=end,hours=hours, closed=False)
     db.session.add(training)
     db.session.commit()
     just_added=Training.query.filter(Training.name==name).first()
     return just_added.id
 
-def get_trainings_by_id(id):
-    tra=Training.query.filter(Training.id==id).first()
-    return tra
-
-def get_skill_in_training_with_points(id):
-    link=Training_Skill.query.filter(Training_Skill.train_id==id).all()
-    skill_ids=[]
-    for l in link:
-        if l.skill_id:
-            skill_ids.append(l.skill_id)
-    skills = Skill.query.filter(Skill.id.in_(skill_ids)).all()
-    array=[]
-    for skill in skills:
-        points = get_pointsassigned_by_training_to_skill(id,skill.id)
-        array.append(tuple([skill,points]))
-    return array
 
 def edit_training_info(id,name,start,end,hours):
     training=get_trainings_by_id(id)
@@ -691,6 +729,7 @@ def edit_training_info(id,name,start,end,hours):
     training.hours=hours
     db.session.commit()
     return training
+
 
 def add_employee_to_training(id,emp_id):
     link=Employee_Training.query.filter(Employee_Training.train_id==id).all()
@@ -714,6 +753,7 @@ def delete_training(tra_id):
     db.session.commit()
     return "Training deleted"
 
+
 def delete_skill_from_training(tra_id,skill):
     tra_skill= Training_Skill.query.filter(Training_Skill.train_id == tra_id, Training_Skill.skill_id == skill).delete(synchronize_session='fetch')
     db.session.commit()
@@ -724,6 +764,7 @@ def delete_employee_from_training(tra_id,emp):
     tra_emp= Employee_Training.query.filter(Employee_Training.train_id == tra_id, Employee_Training.emp_id == emp).delete(synchronize_session='fetch')
     db.session.commit()
     return "done"
+
 
 def delete_project(prj_id):
     links = Project_Role.query.filter(Project_Role.prj_id==prj_id).delete(synchronize_session='fetch')
@@ -762,7 +803,7 @@ def matching_algorithm(role_id, employee_list, job_or_role):
             # if the skill considered at the moment is in the list of the employee's skills
             has_single_skill = skill in employee_skills
 
-            if has_single_skill == False:
+            if not has_single_skill:
                 has_all_skills = False
 
         # if the employee has every skill requested
@@ -771,9 +812,12 @@ def matching_algorithm(role_id, employee_list, job_or_role):
             check = True
             for s in skills_required:
                 eg = get_gradeofskill_by_emp_skill(emp.id, s.id)
-                rg = get_grade_of_skill_required_by_role_in_project(role_id, s.id)
+                if job_or_role:
+                    rg = get_gradeofskill_required_for_a_job(role_id, s.id)
+                else:
+                    rg = get_grade_of_skill_required_by_role_in_project(role_id, s.id)
                 tot += eg
-                if eg<rg:
+                if eg < rg:
                     check = False
             # after the loop, check will be false if one (or more) of the skills possessed by the employee have a lower
             # grade than the one requested
@@ -818,26 +862,12 @@ def matching_algorithm(role_id, employee_list, job_or_role):
     return skilled_employees, unskilled_employees, noskill_employees
 
 
-def add_role_todb(name, description=None):
-    role=Role(name=name,description=description)
-    db.session.add(role)
+def modify_role_todb(role_id, name, description=None):
+    role = get_role_by_id(role_id)
+    role.name=name
+    role.description=description
     db.session.commit()
-    just_added=Role.query.order_by(Role.id.desc()).first()
-    return just_added.id
-
-def modify_role_todb(id,name, description=None,):
-    role=Role(id=id,name=name,description=description)
-    db.session.add(role)
-    db.session.commit()
-    just_added=Role.query.order_by(Role.id.desc()).first()
-    return just_added.id
-
-
-def add_skill_to_role(role_id,skill_id):
-    skill_role=Role_Skill(role_id=role_id, skill_id=skill_id)
-    db.session.add(skill_role)
-    db.session.commit()
-    return skill_role
+    return role
 
 
 def add_skill_to_role_in_project(role_id, skill_id, grade_required):
@@ -882,7 +912,7 @@ def update_role(role_id,desc):
    return job
 
 
-#Aggiorna gli attributi di un employee and db
+# Aggiorna gli attributi di un employee and db
 def update_employee(new_employee):
     old_employee = get_employee_by_id(new_employee.id)
     old_employee.name = new_employee.name
@@ -947,19 +977,13 @@ def edit_user_email(user_id, new_email):
     return user
 
 
-def get_admins(admin):
-    admins=User.query.filter(User.admin==admin).all()
-    return admins
-
-
-###### EMPLOYEE
-#Aggiunge employee and db
+# Adds employee to db
 def set_employee(employee):
     db.session.add(employee)
     db.session.commit()
 
 
-#Cancella employee
+# Deletes employee
 def delete_employee(id):
     Employee_Skill.query.filter_by(emp_id=id).delete()
     Employee_Training.query.filter_by(emp_id=id).delete()
@@ -967,22 +991,14 @@ def delete_employee(id):
     db.session.commit()
 
 
-#AGGIUNTA
 def delete_all_grade_of_skill_of_employee(emp_id):
     Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id).delete()
     db.session.commit()
 
 
-#AGGIUNTA
 def delete_grade_of_skill_of_employee(emp_id, skill_id):
     Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id,Employee_Skill.skill_id == skill_id).delete()
     db.session.commit()
-
-
-#AGGIUNTA
-def get_grade_of_skill_of_employee(emp_id, skill_id):
-    emp_skill = Employee_Skill.query.filter(Employee_Skill.emp_id == emp_id,Employee_Skill.skill_id == skill_id).first()
-    return emp_skill
 
 
 def delete_role(role_id):
@@ -1003,14 +1019,6 @@ def remove_employee_from_job(job_id, emp_id):
     return emp
 
 
-def alter_db():
-    result = db.session.execute("ALTER TABLE training ADD closed Boolean ")
-    result = db.session.execute("ALTER TABLE user ADD project integer ")
-    result = db.session.execute("ALTER TABLE user ADD FOREIGN KEY (project) REFERENCES project(id);")
-    db.session.commit()
-    return "done"
-
-
 def close_training(trn_id):
     employees = Employee_Training.query.filter(Employee_Training.train_id==trn_id).all()
     skills = Training_Skill.query.filter(Training_Skill.train_id==trn_id).all()
@@ -1021,3 +1029,39 @@ def close_training(trn_id):
     training.closed = True
     db.session.commit()
     return "done"
+
+
+### FUNCTIONS FOR DB POPULATION AND TESTING PURPOSES
+
+def create_random_employees():
+    names=["Marco", "John", "Emily", "Mary", "Raphael", "Ann", "Harry", "Michael", "Silvia", "Jade"]
+    surnames=["Potter", "Smith", "Rossi", "Gillian", "Parker", "Rajid", "White", "Shelby", "Gold", "Moss", "Gray"]
+    phone = "390289378"
+    address = "Via Casuale, 109"
+    education = "Bachelor degree, Management Engineering"
+    language = "English B2"
+    state = "active"
+    jobs = get_roles()
+    jobs_ids =[]
+    for j in jobs:
+        jobs_ids.append(j.id)
+
+    for i in range(0, 9):
+        n = names[randint(0, len(names)-1)]
+        s = surnames[randint(0, len(names)-1)]
+        birth = datetime.date(randint(1965, 1998), randint(1, 12), randint(1, 28))
+        assumption = datetime.date(randint(2015, 2020), randint(1, 12), randint(1, 28))
+        email = str(n)+"."+str(s)+"@b2s.com"
+        emp = Employee(name=n, surname=s, telephone=phone, living_place=address, driving_licence=True, email=email, state_in_company=state,
+                       date_of_birth=birth, date_of_assumption=assumption, language_certificate=language,
+                       education_level=education, role=jobs_ids[randint(0, len(jobs_ids)-1)])
+        db.session.add(emp)
+        assign_random_skills_to_employee(emp)
+    db.session.commit()
+
+
+def assign_random_skills_to_employee(emp):
+    skills = get_skills_required_by_role(emp.role)
+    for s in skills:
+        link = Employee_Skill(emp_id=emp.id,skill_id=s.id,grade=randint(1,10))
+        db.session.add(link)
