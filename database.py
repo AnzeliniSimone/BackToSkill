@@ -679,7 +679,7 @@ def add_role_todb(name, description=None):
     role=Role(name=name,description=description)
     db.session.add(role)
     db.session.commit()
-    return "done"
+    return role.id
 
 
 def remove_employee_from_project(prj_id, role_id):
